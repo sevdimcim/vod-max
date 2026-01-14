@@ -27,7 +27,7 @@ jobs:
 
       - name: Scraper'ı Çalıştır
         run: |
-          python show.py
+          python startv.py
 
       - name: Git yapılandırması
         run: |
