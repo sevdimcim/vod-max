@@ -816,7 +816,7 @@ def create_html_file(data):
 </body>
 </html>'''
     
-    filename = "showtv_diziler.html"
+    filename = "showtv.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_template)
     
