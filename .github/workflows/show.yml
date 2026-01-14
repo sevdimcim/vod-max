@@ -51,6 +51,6 @@ jobs:
 
       - name: HTML Çıktısını Commit Et
         run: |
-          git add show.html
+          git add showtv.html
           git commit -m "ShowTV güncellendi [$(date +"%Y-%m-%d %H:%M:%S")]"
           git push
