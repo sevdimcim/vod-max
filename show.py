@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import time
 import re
+import os
 
 # Web sitesi kök adresi
 BASE_URL = "https://www.showtv.com.tr"
@@ -243,7 +244,8 @@ def main():
 def create_html_file(data):
     json_str = json.dumps(data, ensure_ascii=False)
     
-    html_content = f"""<!DOCTYPE html>
+    # HTML içeriğini ayrı bir değişkende oluşturalım
+    html_template = '''<!DOCTYPE html>
 <html lang="tr">
 <head>
     <title>TITAN TV YERLİ VOD</title>
@@ -254,15 +256,15 @@ def create_html_file(data):
     <script src="https://kit.fontawesome.com/bbe955c5ed.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
     <style>
-        *:not(input):not(textarea) {{
+        *:not(input):not(textarea) {
             -moz-user-select: -moz-none;
             -khtml-user-select: none;
             -webkit-user-select: none;
             -o-user-select: none;
             -ms-user-select: none;
             user-select: none
-        }}
-        body {{
+        }
+        body {
             margin: 0;
             padding: 0;
             background: #00040d;
@@ -275,24 +277,24 @@ def create_html_file(data):
             text-decoration: none;
             -webkit-text-decoration: none;
             overflow-x: hidden;
-        }}
-        .slider-slide {{
+        }
+        .slider-slide {
             background: #15161a;
             box-sizing: border-box;
-        }}  
-        .slidefilmpanel {{
+        }  
+        .slidefilmpanel {
             transition: .35s;
             box-sizing: border-box;
             background: #15161a;
             overflow: hidden;
-        }}
-        .slidefilmpanel:hover {{
+        }
+        .slidefilmpanel:hover {
             background-color: #572aa7;
-        }}
-        .slidefilmpanel:hover .filmresim img {{
+        }
+        .slidefilmpanel:hover .filmresim img {
             transform: scale(1.2);
-        }}
-        .slider {{
+        }
+        .slider {
             position: relative;
             padding-bottom: 0px;
             width: 100%;
@@ -300,8 +302,8 @@ def create_html_file(data):
             --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
             --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
             box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-        }}
-        .slider-container {{
+        }
+        .slider-container {
             display: flex;
             width: 100%;
             scroll-snap-type: x var(--tw-scroll-snap-strictness);
@@ -309,8 +311,8 @@ def create_html_file(data):
             align-items: center;
             overflow: auto;
             scroll-behavior: smooth;
-        }}
-        .slider-container .slider-slide {{
+        }
+        .slider-container .slider-slide {
             aspect-ratio: 9/13.5;
             display: flex;
             flex-shrink: 0;
@@ -319,20 +321,20 @@ def create_html_file(data):
             flex-wrap: nowrap;
             align-items: center;
             justify-content: center;
-        }}
-        .slider-container::-webkit-scrollbar {{
+        }
+        .slider-container::-webkit-scrollbar {
             width: 0px;
-        }}
-        .clear {{
+        }
+        .clear {
             clear: both;
-        }}
-        .hataekran i {{
+        }
+        .hataekran i {
             color: #572aa7;
             font-size: 80px;
             text-align: center;
             width: 100%;
-        }}
-        .hataekran {{
+        }
+        .hataekran {
             width: 80%;
             margin: 20px auto;
             color: #fff;
@@ -341,45 +343,45 @@ def create_html_file(data):
             padding: 10px;
             box-sizing: border-box;
             border-radius: 10px;
-        }}
-        .hatayazi {{
+        }
+        .hatayazi {
             color: #fff;
             font-size: 15px;
             text-align: center;
             width: 100%;
             margin: 20px 0px;
-        }}
-        .filmpaneldis {{
+        }
+        .filmpaneldis {
             background: #15161a;
             width: 100%;
             margin: 20px auto;
             overflow: hidden;
             padding: 10px 5px;
             box-sizing: border-box;
-        }}
-        .aramafilmpaneldis {{
+        }
+        .aramafilmpaneldis {
             background: #15161a;
             width: 100%;
             margin: 20px auto;
             overflow: hidden;
             padding: 10px 5px;
             box-sizing: border-box;
-        }}
-        .sliderfilmimdb {{
+        }
+        .sliderfilmimdb {
             display: none;
-        }}
-        .bos {{
+        }
+        .bos {
             width: 100%;
             height: 60px;
             background: #572aa7;
-        }}
-        .baslik {{
+        }
+        .baslik {
             width: 96%;
             color: #fff;
             padding: 15px 10px;
             box-sizing: border-box;
-        }}
-        .filmpanel {{
+        }
+        .filmpanel {
             width: 12%;
             height: 200px;
             background: #15161a;
@@ -394,43 +396,43 @@ def create_html_file(data):
             overflow: hidden;
             transition: border 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
-        }}
-        .filmisimpanel {{
+        }
+        .filmisimpanel {
             width: 100%;
             height: 200px;
             position: relative;
             margin-top: -200px;
             background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-        }}
-        .filmpanel:hover {{
+        }
+        .filmpanel:hover {
             color: #fff;
             border: 3px solid #572aa7;
             box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
-        }}
-        .filmpanel:focus {{
+        }
+        .filmpanel:focus {
             outline: none;
             border: 3px solid #572aa7;
             box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
-        }}
-        .filmresim {{
+        }
+        .filmresim {
             width: 100%;
             height: 100%;
             margin-bottom: 0px;
             overflow: hidden;
             position: relative;
-        }}
-        .filmresim img {{
+        }
+        .filmresim img {
             width: 100%;
             height: 100%;
             transition: transform 0.4s ease;
-        }}
-        .filmpanel:hover .filmresim img {{
+        }
+        .filmpanel:hover .filmresim img {
             transform: scale(1.1);
-        }}
-        .filmpanel:focus .filmresim img {{
+        }
+        .filmpanel:focus .filmresim img {
             transform: none;
-        }}
-        .filmisim {{
+        }
+        .filmisim {
             width: 100%;
             font-size: 14px;
             text-decoration: none;
@@ -442,20 +444,20 @@ def create_html_file(data):
             color: #fff;
             position: absolute;
             bottom: 5px;
-        }}
-        .filmimdb {{
+        }
+        .filmimdb {
             display: none;
-        }}
-        .resimust {{
+        }
+        .resimust {
             display: none;
-        }}
-        .filmyil {{
+        }
+        .filmyil {
             display: none;
-        }}
-        .filmdil {{
+        }
+        .filmdil {
             display: none;
-        }}
-        .aramapanel {{
+        }
+        .aramapanel {
             width: 100%;
             height: 60px;
             background: #15161a;
@@ -465,22 +467,22 @@ def create_html_file(data):
             box-sizing: border-box;
             overflow: hidden;
             z-index: 11111;
-        }}
-        .aramapanelsag {{
+        }
+        .aramapanelsag {
             width: auto;
             height: 40px;
             box-sizing: border-box;
             overflow: hidden;
             float: right;
-        }}
-        .aramapanelsol {{
+        }
+        .aramapanelsol {
             width: 50%;
             height: 40px;
             box-sizing: border-box;
             overflow: hidden;
             float: left;
-        }}
-        .aramapanelyazi {{
+        }
+        .aramapanelyazi {
             height: 40px;
             width: 120px;
             border: 1px solid #ccc;
@@ -489,8 +491,8 @@ def create_html_file(data):
             background: ;
             color: #000;
             margin: 0px 5px;
-        }}
-        .aramapanelbuton {{
+        }
+        .aramapanelbuton {
             height: 40px;
             width: 40px;
             text-align: center;
@@ -501,28 +503,28 @@ def create_html_file(data):
             overflow: hidden;
             float: right;
             transition: .35s;
-        }}
-        .aramapanelbuton:hover {{
+        }
+        .aramapanelbuton:hover {
             background-color: #fff;
             color: #000;
-        }}
-        .logo {{
+        }
+        .logo {
             width: 40px;
             height: 40px;
             float: left;
-        }}
-        .logo img {{
+        }
+        .logo img {
             width: 100%;
-        }}
-        .logoisim {{
+        }
+        .logoisim {
             font-size: 15px;
             width: 70%;
             height: 40px;
             line-height: 40px;
             font-weight: 500;
             color: #fff;
-        }}
-        #dahafazla {{
+        }
+        #dahafazla {
             background: #572aa7;
             color: #fff;
             padding: 10px;
@@ -530,19 +532,19 @@ def create_html_file(data):
             width: 200px;
             text-align: center;
             transition: .35s;
-        }}
-        #dahafazla:hover {{
+        }
+        #dahafazla:hover {
             background: #fff;
             color: #000;
-        }}
-        .hidden {{ display: none; }}
-        .bolum-container {{
+        }
+        .hidden { display: none; }
+        .bolum-container {
             background: #15161a;
             padding: 10px;
             margin-top: 10px;
             border-radius: 5px;
-        }}
-        .geri-btn {{
+        }
+        .geri-btn {
             background: #572aa7;
             color: white;
             padding: 10px;
@@ -553,12 +555,12 @@ def create_html_file(data):
             margin-bottom: 10px;
             display: none;
             width: 100px;
-        }}
-        .geri-btn:hover {{
+        }
+        .geri-btn:hover {
             background: #6b3ec7;
             transition: background 0.3s;
-        }}
-        .playerpanel {{
+        }
+        .playerpanel {
             width: 100%;
             height: 100vh;
             position: fixed;
@@ -569,21 +571,21 @@ def create_html_file(data):
             display: none;
             flex-direction: column;
             overflow: hidden;
-        }}
+        }
         
-        #main-player {{
+        #main-player {
             width: 100%;
             height: 100%; 
             background: #000;
-        }}
+        }
         
-        #bradmax-iframe {{
+        #bradmax-iframe {
             width: 100%;
             height: 100%;
             border: none;
-        }}
+        }
 
-        .player-geri-btn {{
+        .player-geri-btn {
             background: #572aa7;
             color: white;
             padding: 10px;
@@ -596,18 +598,18 @@ def create_html_file(data):
             top: 10px;
             left: 10px;
             z-index: 10000;
-        }}
+        }
         
-        @media(max-width:550px) {{
-            .filmpanel {{
+        @media(max-width:550px) {
+            .filmpanel {
                 width: 31.33%;
                 height: 190px;
                 margin: 1%;
-            }}
-            #main-player {{
+            }
+            #main-player {
                 height: 100%; 
-            }}
-        }}
+            }
+        }
     </style>
 </head>
 <body>
@@ -642,78 +644,78 @@ def create_html_file(data):
         const BRADMAX_BASE_URL = "https://bradmax.com/client/embed-player/d9decbf0d308f4bb91825c3f3a2beb7b0aaee2f6_8493?mediaUrl=";
         const BRADMAX_PARAMS = "&autoplay=true&fs=true"; 
 
-        var diziler = {json_str};
+        var diziler = ''' + json_str + ''';
 
-        document.addEventListener('DOMContentLoaded', function() {{
+        document.addEventListener('DOMContentLoaded', function() {
             var container = document.getElementById("diziListesiContainer");
             
-            Object.keys(diziler).forEach(function(key) {{
+            Object.keys(diziler).forEach(function(key) {
                 var dizi = diziler[key];
                 var item = document.createElement("div");
                 item.className = "filmpanel";
-                item.onclick = function() {{ showBolumler(key); }};
+                item.onclick = function() { showBolumler(key); };
                 item.innerHTML = `
-                    <div class="filmresim"><img src="${{dizi.resim}}"></div>
+                    <div class="filmresim"><img src="${dizi.resim}"></div>
                     <div class="filmisimpanel">
-                        <div class="filmisim">${{key.replace(/-/g, ' ').toUpperCase()}}</div>
+                        <div class="filmisim">${key.replace(/-/g, ' ').toUpperCase()}</div>
                     </div>
                 `;
                 container.appendChild(item);
-            }});
+            });
 
             checkInitialState();
-        }});
+        });
 
         let currentScreen = 'anaSayfa';
 
-        function showBolumler(diziID) {{
+        function showBolumler(diziID) {
             sessionStorage.setItem('currentDiziID', diziID);
             var listContainer = document.getElementById("bolumListesi");
             listContainer.innerHTML = "";
             
-            if (diziler[diziID]) {{
-                diziler[diziID].bolumler.forEach(function(bolum) {{
+            if (diziler[diziID]) {
+                diziler[diziID].bolumler.forEach(function(bolum) {
                     var item = document.createElement("div");
                     item.className = "filmpanel";
                     item.innerHTML = `
-                        <div class="filmresim"><img src="${{diziler[diziID].resim}}"></div>
+                        <div class="filmresim"><img src="${diziler[diziID].resim}"></div>
                         <div class="filmisimpanel">
-                            <div class="filmisim">${{bolum.ad}}</div>
+                            <div class="filmisim">${bolum.ad}</div>
                         </div>
                     `;
-                    item.onclick = function() {{
+                    item.onclick = function() {
                         showPlayer(bolum.link, diziID);
-                    }};
+                    };
                     listContainer.appendChild(item);
-                }});
-            }} else {{
+                });
+            } else {
                 listContainer.innerHTML = "<p>Bu dizi için bölüm bulunamadı.</p>";
-            }}
+            }
             
             document.querySelector("#diziListesiContainer").classList.add("hidden");
             document.getElementById("bolumler").classList.remove("hidden");
             document.getElementById("geriBtn").style.display = "block";
 
             currentScreen = 'bolumler';
-            history.replaceState({{ page: 'bolumler', diziID: diziID }}, '', `#bolumler-${{diziID}}`);
-        }}
+            history.replaceState({ page: 'bolumler', diziID: diziID }, '', '#bolumler-' + diziID);
+        }
 
-        function showPlayer(streamUrl, diziID) {{
+        function showPlayer(streamUrl, diziID) {
             document.getElementById("playerpanel").style.display = "flex"; 
             document.getElementById("bolumler").classList.add("hidden");
 
             currentScreen = 'player';
-            history.pushState({{ page: 'player', diziID: diziID, streamUrl: streamUrl }}, '', `#player-${{diziID}}`);
+            history.pushState({ page: 'player', diziID: diziID, streamUrl: streamUrl }, '', '#player-' + diziID);
 
             document.getElementById("main-player").innerHTML = "";
 
             const fullUrl = BRADMAX_BASE_URL + encodeURIComponent(streamUrl) + BRADMAX_PARAMS;
-            const iframeHtml = `<iframe id="bradmax-iframe" src="${{fullUrl}}" allowfullscreen tabindex="0" autofocus></iframe>`;
+            const iframeHtml = `<iframe id="bradmax-iframe" src="${fullUrl}" allowfullscreen tabindex="0" autofocus></iframe>`;
             
             document.getElementById("main-player").innerHTML = iframeHtml;
-        }}
+        }
 
-        function geriPlayer() {{
+        function geriPlayer() {
             document.getElementById("playerpanel").style.display = "none";
             document.getElementById("bolumler").classList.remove("hidden");
 
@@ -721,28 +723,28 @@ def create_html_file(data):
 
             currentScreen = 'bolumler';
             var currentDiziID = sessionStorage.getItem('currentDiziID');
-            history.replaceState({{ page: 'bolumler', diziID: currentDiziID }}, '', `#bolumler-${{currentDiziID}}`);
-        }}
+            history.replaceState({ page: 'bolumler', diziID: currentDiziID }, '', '#bolumler-' + currentDiziID);
+        }
 
-        function geriDon() {{
+        function geriDon() {
             sessionStorage.removeItem('currentDiziID');
             document.querySelector("#diziListesiContainer").classList.remove("hidden");
             document.getElementById("bolumler").classList.add("hidden");
             document.getElementById("geriBtn").style.display = "none";
             
             currentScreen = 'anaSayfa';
-            history.replaceState({{ page: 'anaSayfa' }}, '', '#anaSayfa');
-        }}
+            history.replaceState({ page: 'anaSayfa' }, '', '#anaSayfa');
+        }
 
-        window.addEventListener('popstate', function(event) {{
+        window.addEventListener('popstate', function(event) {
             var currentDiziID = sessionStorage.getItem('currentDiziID');
             
-            if (event.state && event.state.page === 'player' && event.state.diziID && event.state.streamUrl) {{
+            if (event.state && event.state.page === 'player' && event.state.diziID && event.state.streamUrl) {
                 showBolumler(event.state.diziID);
                 showPlayer(event.state.streamUrl, event.state.diziID);
-            }} else if (event.state && event.state.page === 'bolumler' && event.state.diziID) {{
+            } else if (event.state && event.state.page === 'bolumler' && event.state.diziID) {
                 showBolumler(event.state.diziID);
-            }} else {{
+            } else {
                 sessionStorage.removeItem('currentDiziID');
                 document.querySelector("#diziListesiContainer").classList.remove("hidden");
                 document.getElementById("bolumler").classList.add("hidden");
@@ -750,73 +752,73 @@ def create_html_file(data):
                 document.getElementById("geriBtn").style.display = "none";
                 currentScreen = 'anaSayfa';
             }
-        }});
+        });
 
-        function checkInitialState() {{
+        function checkInitialState() {
             var hash = window.location.hash;
-            if (hash.startsWith('#bolumler-')) {{
+            if (hash.startsWith('#bolumler-')) {
                 var diziID = hash.replace('#bolumler-', '');
                 showBolumler(diziID);
-            }} else if (hash.startsWith('#player-')) {{
+            } else if (hash.startsWith('#player-')) {
                 var parts = hash.split('-');
                 var diziID = parts[1];
                 var streamUrl = sessionStorage.getItem('lastStreamUrl');
-                if (streamUrl) {{
+                if (streamUrl) {
                     showBolumler(diziID);
-                    setTimeout(() => {{ showPlayer(streamUrl, diziID); }}, 100);
-                }}
-            }}
-        }}
+                    setTimeout(() => { showPlayer(streamUrl, diziID); }, 100);
+                }
+            }
+        }
 
-        function searchSeries() {{
+        function searchSeries() {
             var searchTerm = document.getElementById('seriesSearch').value.toLowerCase();
             var container = document.getElementById('diziListesiContainer');
             var panels = container.querySelectorAll('.filmpanel');
             var found = false;
 
-            panels.forEach(function(panel) {{
+            panels.forEach(function(panel) {
                 var seriesName = panel.querySelector('.filmisim').textContent.toLowerCase();
-                if (seriesName.includes(searchTerm)) {{
+                if (seriesName.includes(searchTerm)) {
                     panel.style.display = 'block';
                     found = true;
-                }} else {{
+                } else {
                     panel.style.display = 'none';
-                }}
-            }});
+                }
+            });
 
-            if (!found) {{
+            if (!found) {
                 var noResults = document.createElement('div');
                 noResults.className = 'hataekran';
                 noResults.innerHTML = '<i class="fas fa-search"></i><div class="hatayazi">Sonuç bulunamadı!</div>';
                 container.appendChild(noResults);
-            }}
+            }
 
             return false;
-        }}
+        }
 
-        function resetSeriesSearch() {{
+        function resetSeriesSearch() {
             var container = document.getElementById('diziListesiContainer');
             var panels = container.querySelectorAll('.filmpanel');
-            panels.forEach(function(panel) {{
+            panels.forEach(function(panel) {
                 panel.style.display = 'block';
-            }});
+            });
             var noResults = container.querySelector('.hataekran');
-            if (noResults) {{
+            if (noResults) {
                 noResults.remove();
-            }}
-        }}
+            }
+        }
 
         // Yükleme tamamlandığında hash kontrolü yap
-        window.addEventListener('load', function() {{
+        window.addEventListener('load', function() {
             setTimeout(checkInitialState, 100);
-        }});
+        });
     </script>
 </body>
-</html>"""
-
+</html>'''
+    
     filename = "showtv_diziler.html"
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(html_content)
+        f.write(html_template)
     
     print(f"HTML dosyası '{filename}' oluşturuldu!")
 
