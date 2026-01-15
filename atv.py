@@ -14,33 +14,17 @@ def get_all_series():
             print(f"{page_name} sayfası taranıyor...")
             r = requests.get(f"{base}{page_url}", headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
             
-            # ATV yapısı için pattern
-            if page_url == "/eski-diziler":
-                # category-classic-item yapısı
-                pattern = r'<a href="/([^"]+)"[^>]*?class="[^"]*blankpage[^"]*"[^>]*?>.*?<img[^>]*?src="([^"]+)"[^>]*?alt="([^"]+)"'
-            else:
-                # güncel diziler yapısı
-                pattern = r'<a href="/([^"]+)"[^>]*?class="[^"]*blankpage[^"]*"[^>]*?>([^<]+)</a>\s*<img src="([^"]+)"'
-            
+            # TÜM DİZİLER İÇİN TEK PATTERN
+            # <a href="/(dizi-slug)" class="blankpage"> içindeki her şeyi al
+            pattern = r'<a href="/([^"]+)"[^>]*?class="[^"]*blankpage[^"]*"[^>]*?>.*?<img[^>]*?src="([^"]+)"[^>]*?alt="([^"]+)"'
             matches = re.findall(pattern, r.text, re.DOTALL)
             
-            for match in matches:
-                if page_url == "/eski-diziler":
-                    slug, logo, name = match
-                else:
-                    slug, name, logo = match
-                
+            for slug, logo, name in matches:
                 # canli-yayin, fragman gibi şeyleri atla
                 if any(x in slug.lower() for x in ['canli-yayin', 'fragman', 'programlar', 'haber']):
                     continue
                 
-                # Logo URL'sini temizle
-                if '?u=' in logo:
-                    clean_logo = logo.split('?u=')[1]
-                else:
-                    clean_logo = logo
-                
-                # Eski diziler için farklı group
+                clean_logo = logo.split('?u=')[1] if '?u=' in logo else logo
                 group = "ATV-Güncel-Diziler" if page_url == "/diziler" else "ATV-Eski-Diziler"
                 
                 if slug not in series_dict:
@@ -51,11 +35,8 @@ def get_all_series():
                         'logo': clean_logo,
                         'group': group
                     }
-                elif page_url == "/eski-diziler":
-                    # Eski diziler öncelikli
-                    series_dict[slug]['group'] = "ATV-Eski-Diziler"
             
-            print(f"  {len(matches)} dizi bulundu")
+            print(f"  {len(matches)} dizi bulundu, {len(series_dict)} benzersiz dizi eklendi")
         except Exception as e:
             print(f"  Hata: {e}")
             continue
@@ -63,16 +44,17 @@ def get_all_series():
     return list(series_dict.values())
 
 def get_episodes(series_slug, series_name):
-    """Dizinin tüm bölümlerini al"""
+    """Dizinin TÜM bölümlerini al - KESİN YÖNTEM"""
     episodes = []
     
     try:
-        # Önce /bolumler sayfasını dene
+        # 1. ÖNCE /bolumler sayfasını dene
         bolumler_url = f"https://www.atv.com.tr/{series_slug}/bolumler"
         r = requests.get(bolumler_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
         
-        # Dropdown'dan bölümleri al
-        dropdown_pattern = r'<option[^>]*value="/([^/]+)/(\d+)-bolum/izle"[^>]*>(\d+)\.'
+        # Dropdown'dan bölüm numaralarını al
+        # <option value="/avrupa-yakasi/189-bolum/izle"> şeklinde
+        dropdown_pattern = r'<option[^>]*value="/([^/]+)/(\d+)-bolum/izle"[^>]*>'
         dropdown_matches = re.findall(dropdown_pattern, r.text)
         
         if dropdown_matches:
@@ -80,50 +62,49 @@ def get_episodes(series_slug, series_name):
                 if slug == series_slug:
                     ep_url = f"https://www.atv.com.tr/{slug}/{ep_num_str}-bolum/izle"
                     episodes.append((ep_url, int(ep_num_str)))
-        else:
-            # Alternatif: direk bölüm linklerini ara
-            link_pattern = r'href="/([^/]+)/(\d+)-bolum/izle"'
-            link_matches = re.findall(link_pattern, r.text)
-            
-            for slug, ep_num_str in link_matches:
-                if slug == series_slug:
-                    ep_url = f"https://www.atv.com.tr/{slug}/{ep_num_str}-bolum/izle"
-                    episodes.append((ep_url, int(ep_num_str)))
         
-        # Eğer hala bölüm yoksa, 1'den başlayarak test et
+        # 2. Eğer dropdown yoksa, manuel bölüm sayısı tahmini
         if not episodes:
-            print(f"    ⚠️  Bölüm bulunamadı, test ediliyor...")
+            # Önce kaç bölüm olduğunu tahmin et
+            print(f"    ⚠️  Dropdown bulunamadı, bölüm sayısı tahmin ediliyor...")
             
-            # Diziye göre maksimum bölüm
-            max_episodes_dict = {
-                'karadayi': 115,
-                'kara-para-ask': 100,
+            # Diziye göre tahmini maksimum bölüm
+            max_episodes = {
+                'karadayi': 115,    # Gerçek bölüm sayısı
+                'kara-para-ask': 200,
                 'avrupa-yakasi': 300,
                 'eskiya-dunyaya-hukmdar-olmaz': 200,
                 'sen-anlat-karadeniz': 200,
+                'hercai': 200,
+                'kurulus-osman': 300,
+                'kardeslerim': 200,
                 'abi': 20,
                 'kurulus-orhan': 20,
                 'ayni-yagmur-altinda': 20
             }
             
-            max_to_check = max_episodes_dict.get(series_slug, 100)
-            found_count = 0
+            # Varsayılan değer
+            max_to_check = max_episodes.get(series_slug, 100)
             
+            # Her bölümü test et
+            found_count = 0
             for i in range(1, max_to_check + 1):
                 test_url = f"https://www.atv.com.tr/{series_slug}/{i}-bolum/izle"
                 try:
-                    test_r = requests.head(test_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=2, allow_redirects=True)
-                    if test_r.status_code < 400:
+                    test_r = requests.head(test_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=3, allow_redirects=True)
+                    if test_r.status_code < 400:  # Başarılı
                         episodes.append((test_url, i))
                         found_count += 1
+                        if found_count % 20 == 0:
+                            print(f"      {found_count} bölüm bulundu...")
                 except:
                     pass
                 
-                if i % 20 == 0:
+                # Çok uzun sürmesin
+                if i % 50 == 0:
                     time.sleep(0.1)
             
-            if found_count > 0:
-                print(f"    ✅ {found_count} bölüm bulundu")
+            print(f"    ✅ {found_count} bölüm bulundu")
         
         # Sırala ve döndür
         if episodes:
@@ -136,7 +117,7 @@ def get_episodes(series_slug, series_name):
     return []
 
 def extract_video_url(episode_url):
-    """Video URL'sini çıkar"""
+    """Video URL'sini çıkar - MP4 veya M3U8 farketmez"""
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -145,21 +126,22 @@ def extract_video_url(episode_url):
         
         r = requests.get(episode_url, headers=headers, timeout=15)
         
-        # contentUrl ara
+        # 1. Önce contentUrl ara
         pattern = r'"contentUrl"\s*:\s*"([^"]+)"'
         matches = re.findall(pattern, r.text)
         
         if matches:
             for url in matches:
-                # MP4 veya M3U8 farketmez
+                # MP4 veya M3U8 farketmez, direk döndür
                 if any(x in url.lower() for x in ['.mp4', '.m3u8', '//']):
                     return url
         
-        # Alternatif arama
+        # 2. Video dosyalarını ara
         video_patterns = [
             r'(https?://[^\s"\']+\.mp4[^\s"\']*)',
             r'(https?://[^\s"\']+\.m3u8[^\s"\']*)',
             r'src="(https?://[^"]+\.(?:mp4|m3u8)[^"]*)"',
+            r'video-src="([^"]+)"'
         ]
         
         for pattern in video_patterns:
@@ -167,6 +149,20 @@ def extract_video_url(episode_url):
             for url in video_matches:
                 if 'fragman' not in url.lower():
                     return url
+        
+        # 3. atv-vod.ercdn.net domain'ini ara (eski diziler için)
+        if 'atv-vod.ercdn.net' in r.text:
+            ercdn_pattern = r'(https?://atv-vod\.ercdn\.net/[^\s"\']+\.mp4[^\s"\']*)'
+            ercdn_matches = re.findall(ercdn_pattern, r.text)
+            if ercdn_matches:
+                return ercdn_matches[0]
+        
+        # 4. Son çare: Sayfadaki tüm URL'leri ara
+        url_pattern = r'(https?://[^\s"\']+/[^\s"\']+\.(?:mp4|m3u8)[^\s"\']*)'
+        all_urls = re.findall(url_pattern, r.text)
+        for url in all_urls:
+            if 'fragman' not in url.lower():
+                return url
                 
     except Exception as e:
         print(f"      Video URL hatası: {e}")
@@ -182,29 +178,6 @@ def slugify(text):
     text = re.sub(r'-+', '-', text)
     return text.strip('-')
 
-def extract_episode_number(name, episode_url):
-    """
-    Bölüm numarasını çıkar.
-    Önce URL'den, sonra isimden dener.
-    """
-    # URL'den bölüm numarasını al
-    match = re.search(r'/(\d+)-bolum', episode_url)
-    if match:
-        ep_num = match.group(1)
-        return f"{ep_num}. Bölüm"
-    
-    # İsimden bölüm numarasını al
-    match = re.search(r'(\d+)\.?\s*Bölüm', name, re.IGNORECASE)
-    if match:
-        return f"{match.group(1)}. Bölüm"
-    
-    match = re.search(r'Bölüm\s*(\d+)', name, re.IGNORECASE)
-    if match:
-        return f"{match.group(1)}. Bölüm"
-    
-    # Hiçbir şey bulunamazsa
-    return "Bölüm"
-
 def clean_image_url(url):
     """Resim URL'sini temizle"""
     if not url:
@@ -216,92 +189,81 @@ def clean_image_url(url):
     return url.strip()
 
 def main():
-    print("ATV Dizileri HTML Oluşturucu")
+    print("ATV TÜM DİZİLER HTML OLUŞTURUCU")
     print("=" * 60)
     
     # Tüm dizileri al
     all_series = get_all_series()
     
-    if not all_series:
-        print("Hiç dizi bulunamadı!")
-        return
-    
-    print(f"\nToplam {len(all_series)} dizi bulundu")
+    print(f"\nTOPLAM {len(all_series)} DİZİ BULUNDU")
     print("-" * 40)
     
-    # Dizi verilerini topla
+    # Dizi verilerini topla (HTML için)
     diziler_data = {}
-    processed_count = 0
+    successful_series = 0
     
     for idx, series in enumerate(all_series, 1):
-        try:
-            series_name = series["name"]
-            series_id = slugify(series_name)
-            group_icon = "🆕" if series['group'] == "ATV-Güncel-Diziler" else "📼"
-            
-            print(f"\n[{idx}/{len(all_series)}] {group_icon} {series_name}")
-            print(f"  Slug: {series['slug']}")
-            
-            # Bölümleri al
-            episodes = get_episodes(series['slug'], series_name)
-            
-            if not episodes:
-                print(f"  ⚠️  Bölüm bulunamadı")
-                continue
-            
-            print(f"  📺 {len(episodes)} bölüm bulundu")
-            
-            # Bölüm verilerini işle
-            bolum_list = []
-            added_count = 0
-            
-            for ep_url in episodes:
-                # Bölüm numarasını al
-                ep_num_display = "Bölüm"
-                match = re.search(r'/(\d+)-bolum', ep_url)
-                if match:
-                    ep_num_display = f"{match.group(1)}. Bölüm"
-                
-                # Video URL'sini al
-                video_url = extract_video_url(ep_url)
-                
-                if video_url:
-                    bolum_list.append({
-                        "ad": ep_num_display,  # Sadece "1. Bölüm", "2. Bölüm" şeklinde
-                        "link": video_url
-                    })
-                    added_count += 1
-                
-                time.sleep(0.05)  # Sunucu yükü için
-            
-            if added_count > 0:
-                # Resim URL'sini temizle
-                poster_url = clean_image_url(series['logo'])
-                if not poster_url:
-                    poster_url = f"https://via.placeholder.com/300x450/15161a/ffffff?text={series_name.replace(' ', '+')}"
-                
-                # Dizi verisini kaydet
-                diziler_data[series_id] = {
-                    "resim": poster_url,
-                    "bolumler": bolum_list
-                }
-                
-                processed_count += 1
-                print(f"  ✅ {added_count} bölüm eklendi")
-            else:
-                print(f"  ⚠️  Video bulunamadı")
-                
-        except Exception as e:
-            print(f"  Hata: {e}")
+        group_icon = "🆕" if series['group'] == "ATV-Güncel-Diziler" else "📼"
+        print(f"\n[{idx}/{len(all_series)}] {group_icon} {series['name']} ({series['group']})")
+        
+        episodes = get_episodes(series['slug'], series['name'])
+        
+        if not episodes:
+            print(f"  ⚠️  Bölüm bulunamadı")
             continue
+            
+        print(f"  📺 {len(episodes)} bölüm bulundu")
+        successful_series += 1
+        
+        # Bölüm verilerini işle
+        bolum_list = []
+        added_count = 0
+        
+        for ep_url in episodes:
+            ep_num = "?"
+            match = re.search(r'/(\d+)-bolum', ep_url)
+            if match:
+                ep_num = match.group(1)
+            
+            video_url = extract_video_url(ep_url)
+            
+            if video_url:
+                # HTML formatında sadece "1. Bölüm", "2. Bölüm" şeklinde kaydet
+                bolum_list.append({
+                    "ad": f"{ep_num}. Bölüm",
+                    "link": video_url
+                })
+                added_count += 1
+                print(f"    ✓ Bölüm {ep_num}")
+            else:
+                print(f"    ✗ Bölüm {ep_num} (video bulunamadı)")
+            
+            time.sleep(0.1)  # Sunucu yükü için
+        
+        if added_count > 0:
+            # Dizi ID'sini oluştur
+            dizi_id = slugify(series['name'])
+            
+            # Resim URL'sini temizle
+            poster_url = clean_image_url(series['logo'])
+            if not poster_url:
+                poster_url = f"https://via.placeholder.com/300x450/15161a/ffffff?text={series['name'].replace(' ', '+')}"
+            
+            # Dizi verisini kaydet
+            diziler_data[dizi_id] = {
+                "resim": poster_url,
+                "bolumler": bolum_list
+            }
+            
+            print(f"  ✅ {added_count} bölüm HTML'ye eklendi")
     
-    print(f"\n" + "=" * 60)
-    print(f"Toplam {processed_count} dizi başarıyla işlendi!")
-    print("=" * 60)
-    
-    create_html_file(diziler_data)
+    # HTML dosyasını oluştur
+    if diziler_data:
+        create_html_file(diziler_data, successful_series, len(all_series))
+    else:
+        print("\n❌ Hiç video bulunamadı!")
 
-def create_html_file(data):
+def create_html_file(data, processed_count, total_count):
     """HTML dosyasını oluştur"""
     json_str = json.dumps(data, ensure_ascii=False)
     
@@ -338,56 +300,6 @@ def create_html_file(data):
             -webkit-text-decoration: none;
             overflow-x: hidden;
         }}
-        .slider-slide {{
-            background: #15161a;
-            box-sizing: border-box;
-        }}  
-        .slidefilmpanel {{
-            transition: .35s;
-            box-sizing: border-box;
-            background: #15161a;
-            overflow: hidden;
-        }}
-        .slidefilmpanel:hover {{
-            background-color: #ff0000;
-        }}
-        .slidefilmpanel:hover .filmresim img {{
-            transform: scale(1.2);
-        }}
-        .slider {{
-            position: relative;
-            padding-bottom: 0px;
-            width: 100%;
-            overflow: hidden;
-            --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
-            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-        }}
-        .slider-container {{
-            display: flex;
-            width: 100%;
-            scroll-snap-type: x var(--tw-scroll-snap-strictness);
-            --tw-scroll-snap-strictness: mandatory;
-            align-items: center;
-            overflow: auto;
-            scroll-behavior: smooth;
-        }}
-        .slider-container .slider-slide {{
-            aspect-ratio: 9/13.5;
-            display: flex;
-            flex-shrink: 0;
-            flex-basis: 14.14%;
-            scroll-snap-align: start;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: center;
-        }}
-        .slider-container::-webkit-scrollbar {{
-            width: 0px;
-        }}
-        .clear {{
-            clear: both;
-        }}
         .hataekran i {{
             color: #ff0000;
             font-size: 80px;
@@ -418,22 +330,6 @@ def create_html_file(data):
             overflow: hidden;
             padding: 10px 5px;
             box-sizing: border-box;
-        }}
-        .aramafilmpaneldis {{
-            background: #15161a;
-            width: 100%;
-            margin: 20px auto;
-            overflow: hidden;
-            padding: 10px 5px;
-            box-sizing: border-box;
-        }}
-        .sliderfilmimdb {{
-            display: none;
-        }}
-        .bos {{
-            width: 100%;
-            height: 60px;
-            background: #ff0000;
         }}
         .baslik {{
             width: 96%;
@@ -510,18 +406,6 @@ def create_html_file(data):
             text-align: center;
             font-weight: bold;
         }}
-        .filmimdb {{
-            display: none;
-        }}
-        .resimust {{
-            display: none;
-        }}
-        .filmyil {{
-            display: none;
-        }}
-        .filmdil {{
-            display: none;
-        }}
         .aramapanel {{
             width: 100%;
             height: 60px;
@@ -588,19 +472,6 @@ def create_html_file(data):
             line-height: 40px;
             font-weight: 500;
             color: #fff;
-        }}
-        #dahafazla {{
-            background: #ff0000;
-            color: #fff;
-            padding: 10px;
-            margin: 20px auto;
-            width: 200px;
-            text-align: center;
-            transition: .35s;
-        }}
-        #dahafazla:hover {{
-            background: #fff;
-            color: #000;
         }}
         .hidden {{ display: none; }}
         .bolum-container {{
@@ -881,11 +752,18 @@ def create_html_file(data):
 </body>
 </html>'''
     
-    filename = "atv_diziler.html"
+    filename = "atv.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_template)
     
-    print(f"HTML dosyası '{filename}' oluşturuldu!")
+    print(f"\n" + "=" * 60)
+    print("✅ HTML OLUŞTURULDU!")
+    print("=" * 60)
+    print(f"📊 İSTATİSTİKLER:")
+    print(f"   • Toplam Dizi: {total_count}")
+    print(f"   • İşlenen Dizi: {processed_count}")
+    print(f"   • HTML Dosyası: '{filename}'")
+    print("=" * 60)
 
 if __name__ == "__main__":
     main()
