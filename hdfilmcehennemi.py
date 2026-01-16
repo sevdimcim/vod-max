@@ -32,12 +32,9 @@ def slugify(text):
     text = re.sub(r'[^a-z0-9]', '', text)
     return text
 
-def process_film(film_link, film_adi, poster_url, filmler_data):
-    """Tek bir filmi işler (thread için)"""
+def process_film(film_link, film_adi, poster_url):
+    """Tek bir filmi işler ve veriyi döndürür"""
     try:
-        # Film ID oluştur
-        film_id = slugify(film_adi)
-        
         target_url = BASE_URL + film_link if not film_link.startswith('http') else film_link
         
         # Film detay sayfasını çek
@@ -58,23 +55,32 @@ def process_film(film_link, film_adi, poster_url, filmler_data):
             else:
                 player_url = raw_iframe_url
             
-        # Veriyi kaydet
-        with data_lock:
-            filmler_data[film_id] = {
-                "resim": poster_url,
-                "film_adi": film_adi,
-                "player_url": player_url
-            }
+        # EĞER PLAYER_URL YOKSA, BOŞ DÖNDÜR - EKLEME!
+        if not player_url:
+            with print_lock:
+                print(f"❌ ATLANDI: {film_adi[:50]}... (Link yok)")
+            return None
+        
+        # Film ID oluştur
+        film_id = slugify(film_adi)
         
         with print_lock:
             print(f"✅ {film_adi[:50]}...")
+        
+        return {
+            "film_id": film_id,
+            "resim": poster_url,
+            "film_adi": film_adi,
+            "player_url": player_url
+        }
             
     except Exception as e:
         with print_lock:
-            print(f"❌ Hata: {film_adi[:30]}... - {str(e)[:50]}")
+            print(f"❌ HATA: {film_adi[:30]}... - {str(e)[:50]}")
+        return None
 
-def process_page(sayfa, filmler_data):
-    """Tek bir sayfayı işler"""
+def process_page(sayfa):
+    """Tek bir sayfayı işler ve film listesi döndürür"""
     try:
         api_page_url = f"{BASE_URL}/load/page/{sayfa}/categories/film-izle-2/"
         
@@ -92,7 +98,7 @@ def process_page(sayfa, filmler_data):
             film_kutulari = soup.find_all('a', class_='poster')
             
             if not film_kutulari:
-                return
+                return []
             
             film_tasks = []
             
@@ -108,52 +114,69 @@ def process_page(sayfa, filmler_data):
                     # Thread ile film işleme
                     film_tasks.append((film_link, film_adi, poster_url))
             
-            # Thread pool ile paralel işleme (20 thread)
-            with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+            page_films = []
+            
+            # Thread pool ile paralel işleme (15 thread)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
                 futures = []
                 for film_link, film_adi, poster_url in film_tasks:
-                    future = executor.submit(process_film, film_link, film_adi, poster_url, filmler_data)
+                    future = executor.submit(process_film, film_link, film_adi, poster_url)
                     futures.append(future)
                 
-                # Tüm filmler bitene kadar bekle
-                concurrent.futures.wait(futures)
+                # Sonuçları topla
+                for future in concurrent.futures.as_completed(futures):
+                    result = future.result()
+                    if result:  # Sadece linki olan filmleri ekle
+                        page_films.append(result)
                 
             with print_lock:
-                print(f"✅ SAYFA {sayfa} TAMAMLANDI - {len(film_tasks)} film")
+                print(f"✅ SAYFA {sayfa} TAMAMLANDI - {len(page_films)} film eklendi")
+            return page_films
                 
         else:
             with print_lock:
                 print(f"⚠️ Sayfa {sayfa} hata: {response.status_code}")
+            return []
                 
     except Exception as e:
         with print_lock:
             print(f"💥 Sayfa {sayfa} hatası: {str(e)[:50]}")
+        return []
 
 def main():
     print("🚀 ULTRA HIZLI BOT BAŞLATILDI!")
-    print("⚡ Paralel çekim aktif (20 thread)")
-    print("⏱️ Tahmini süre: 5-10 dakika (790 sayfa için 1-2 saat)\n")
+    print("⚡ Paralel çekim aktif (10 sayfa x 15 film thread)")
+    print("📊 Sadece player linki olan filmler eklenecek!")
+    print("⏱️ Tahmini süre: 790 sayfa için ~1-2 saat\n")
     
     filmler_data = {}
+    tum_filmler = []
     
     # Kaç sayfa çekilecek
     TOPLAM_SAYFA = 790
+    sayfa_listesi = list(range(1, TOPLAM_SAYFA + 1))
     
     # Tüm sayfaları paralel işle
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as page_executor:
-        futures = []
+        futures = {page_executor.submit(process_page, sayfa): sayfa for sayfa in sayfa_listesi}
         
-        for sayfa in range(1, TOPLAM_SAYFA + 1):
-            # Sayfa başına 1 saniye delay (çok agresif olmamak için)
-            time.sleep(0.1)
-            future = page_executor.submit(process_page, sayfa, filmler_data)
-            futures.append(future)
-        
-        # Tüm sayfalar bitene kadar bekle
         completed = 0
         for future in concurrent.futures.as_completed(futures):
+            sayfa = futures[future]
+            try:
+                page_films = future.result()
+                for film in page_films:
+                    filmler_data[film["film_id"]] = {
+                        "resim": film["resim"],
+                        "film_adi": film["film_adi"],
+                        "player_url": film["player_url"]
+                    }
+                tum_filmler.extend(page_films)
+            except Exception as e:
+                print(f"Sayfa {sayfa} işlenirken hata: {e}")
+            
             completed += 1
-            print(f"📊 İlerleme: {completed}/{TOPLAM_SAYFA} sayfa tamamlandı")
+            print(f"📊 İlerleme: {completed}/{TOPLAM_SAYFA} sayfa - Toplam {len(filmler_data)} film")
     
     print(f"\n🎉 TAMAMLANDI! Toplam {len(filmler_data)} film çekildi!")
     
@@ -381,10 +404,11 @@ def create_html_file(data):
     total_films = len(data)
     html_template = html_template.replace("{TOTAL_FILMS}", str(total_films))
     
-    # Film panellerini ekle
+    # Film panellerini ekle (SADECE PLAYER_URL OLANLAR)
+    film_counter = 0
     for film_id, film_info in data.items():
-        if film_info["player_url"]:  # Sadece player linki olanları ekle
-            html_template += f'''
+        film_counter += 1
+        html_template += f'''
     <a href="{film_info['player_url']}" target="_blank">
         <div class="filmpanel">
             <div class="filmresim"><img src="{film_info['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
@@ -394,18 +418,10 @@ def create_html_file(data):
         </div>
     </a>
 '''
-        else:
-            # Player linki yoksa boş panel
-            html_template += f'''
-    <a href="#">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="{film_info['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">{film_info['film_adi']} (Link Yok)</div>
-            </div>
-        </div>
-    </a>
-'''
+        
+        # Her 100 filmde bir progress göster
+        if film_counter % 100 == 0:
+            print(f"📝 HTML'e {film_counter}/{total_films} film eklendi...")
 
     html_template += '''
 </div>
@@ -464,11 +480,13 @@ function resetFilmSearch() {
 </body>
 </html>'''
     
-    filename = "hdfilmcehennemi.html"
+    filename = "hdfilmcehennemi_ULTRA.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_template)
     
-    print(f"✅ HTML dosyası '{filename}' oluşturuldu! ({len(data)} film)")
+    print(f"\n✅ HTML dosyası '{filename}' oluşturuldu!")
+    print(f"🎬 Toplam {len(data)} film eklendi (sadece player linki olanlar)")
+    print(f"💾 Dosya boyutu: {len(html_template) // 1024} KB")
 
 if __name__ == "__main__":
     main()
