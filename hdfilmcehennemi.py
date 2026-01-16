@@ -9,9 +9,9 @@ import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Komut satırı argümanları
-PAGES_TO_SCRAPE = int(sys.argv[1]) if len(sys.argv) > 1 else 790  # TÜM SAYFALAR!
+PAGES_TO_SCRAPE = int(sys.argv[1]) if len(sys.argv) > 1 else 790
 TURBO_MODE = True if len(sys.argv) > 2 and sys.argv[2].lower() == 'turbo' else False
-WORKERS = 50 if TURBO_MODE else 10  # Turbo modda 50 thread!
+WORKERS = 50 if TURBO_MODE else 10
 
 BASE_URL = "https://www.hdfilmcehennemi.nl"
 
@@ -26,29 +26,26 @@ HEADERS_FILM = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
-# Turbo mod için timeout ayarları
 TIMEOUT = 10 if TURBO_MODE else 20
 MAX_RETRIES = 2 if TURBO_MODE else 3
 
 def get_json_response_turbo(url, session, retry_count=0):
-    """Turbo mod için optimized JSON getter"""
     try:
         response = session.get(url, timeout=TIMEOUT)
         response.raise_for_status()
         return response.json()
-    except:
+    except Exception as e:
         if retry_count < MAX_RETRIES:
             time.sleep(0.5)
             return get_json_response_turbo(url, session, retry_count + 1)
         return None
 
 def get_soup_turbo(url, session, retry_count=0):
-    """Turbo mod için optimized soup getter"""
     try:
         response = session.get(url, timeout=TIMEOUT)
         response.raise_for_status()
         return BeautifulSoup(response.content, "html.parser")
-    except:
+    except Exception as e:
         if retry_count < MAX_RETRIES:
             time.sleep(0.5)
             return get_soup_turbo(url, session, retry_count + 1)
@@ -62,7 +59,6 @@ def slugify(text):
     return text
 
 def process_film(a_etiketi, session):
-    """Bir filmi işler (thread için)"""
     try:
         film_link = a_etiketi.get('href')
         film_adi = a_etiketi.get('title') or a_etiketi.text.strip()
@@ -72,7 +68,6 @@ def process_film(a_etiketi, session):
         
         film_id = slugify(film_adi)
         
-        # POSTER
         poster_img = a_etiketi.find('img')
         poster_url = ""
         
@@ -84,7 +79,6 @@ def process_film(a_etiketi, session):
             if poster_url and "?" in poster_url:
                 poster_url = poster_url.split("?")[0]
         
-        # VIDEO LINK
         video_url = ""
         if film_link:
             try:
@@ -102,7 +96,7 @@ def process_film(a_etiketi, session):
                             video_url = f"https://www.hdfilmcehennemi.com/rplayer/{rapid_id}"
                         else:
                             video_url = raw_iframe_url
-            except:
+            except Exception as e:
                 pass
         
         return {
@@ -117,7 +111,6 @@ def process_film(a_etiketi, session):
         return None
 
 def process_page(page_num, session):
-    """Bir sayfayı işler (thread için)"""
     try:
         api_page_url = f"{BASE_URL}/load/page/{page_num}/categories/film-izle-2/"
         data = get_json_response_turbo(api_page_url, session)
@@ -132,7 +125,6 @@ def process_page(page_num, session):
         if not film_kutulari:
             return []
         
-        # Sayfadaki filmleri paralel işle
         page_films = []
         with ThreadPoolExecutor(max_workers=WORKERS) as executor:
             futures = [executor.submit(process_film, film, session) for film in film_kutulari]
@@ -161,14 +153,11 @@ def main():
     total_films = 0
     start_time = time.time()
     
-    # Session oluştur (connection pooling için)
     session = requests.Session()
     session.headers.update(HEADERS_PAGE)
     
     try:
-        # TÜM SAYFALARI PARALEL İŞLE!
         with ThreadPoolExecutor(max_workers=20) as page_executor:
-            # Tüm sayfaları işlemek için future'lar oluştur
             page_futures = {
                 page_executor.submit(process_page, page_num, session): page_num 
                 for page_num in range(1, PAGES_TO_SCRAPE + 1)
@@ -181,13 +170,12 @@ def main():
                     page_results = future.result()
                     
                     for film in page_results:
-                        if film['id'] not in filmler_data:  # Duplicate kontrol
+                        if film['id'] not in filmler_data:
                             filmler_data[film['id']] = film['data']
                             total_films += 1
                     
                     completed_pages += 1
                     
-                    # İlerleme durumu
                     if completed_pages % 10 == 0:
                         elapsed = time.time() - start_time
                         remaining_pages = PAGES_TO_SCRAPE - completed_pages
@@ -218,39 +206,42 @@ def main():
     finally:
         session.close()
     
-    # Dosyaları oluştur
+    # HEM JSON HEM HTML OLUŞTUR
     create_files(filmler_data)
 
 def create_files(data):
-    # 1. JSON dosyasını oluştur
+    # 1. JSON DOSYASI (TÜM FİLMLER)
     json_filename = "hdfilmcehennemi.json"
     
-    # JSON'u optimize et (daha küçük boyut için)
-    optimized_data = {}
-    for film_id, film_info in data.items():
-        optimized_data[film_id] = [
-            film_info["isim"][:100],  # İsim (kısaltılmış)
-            film_info["resim"] if film_info["resim"] else "",
-            film_info["link"] if film_info["link"] else ""
-        ]
-    
     with open(json_filename, "w", encoding="utf-8") as f:
-        json.dump(optimized_data, f, ensure_ascii=False, separators=(',', ':'))
+        json.dump(data, f, ensure_ascii=False, indent=2)
     
-    file_size = os.path.getsize(json_filename) / 1024 / 1024
-    print(f"✅ JSON dosyası '{json_filename}' oluşturuldu!")
-    print(f"📁 JSON boyutu: {file_size:.2f} MB")
-    print(f"🔗 JSON Linki: https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/hdfilmcehennemi.json")
+    file_size_kb = os.path.getsize(json_filename) / 1024
     
-    # 2. HTML dosyasını oluştur
+    print(f"\n📁 JSON DOSYASI OLUŞTURULDU:")
+    print(f"✅ Dosya Adı: {json_filename}")
+    print(f"📊 Toplam Film: {len(data)}")
+    print(f"💾 Boyut: {file_size_kb:.1f} KB")
+    print(f"🔗 GitHub RAW Linki: https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/hdfilmcehennemi.json")
+    
+    # 2. HTML DOSYASI (SADECE İLK 99 FİLM)
     create_html_file(data)
 
-def create_html_file(data):
-    # JSON'u base64 encode et (daha hızlı yüklenmesi için)
-    import base64
-    json_str = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
+def create_html_file(all_data):
+    # İlk 99 filmi seç
+    first_99_films = {}
+    count = 0
+    for film_id, film_info in all_data.items():
+        if count >= 99:
+            break
+        first_99_films[film_id] = film_info
+        count += 1
     
-    html_template = f'''<!DOCTYPE html>
+    # JSON linki
+    json_url = "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/hdfilmcehennemi.json"
+    
+    # HTML içeriği - SADECE 99 FİLM + ARAMA (JSON'dan getir)
+    html_content = f'''<!DOCTYPE html>
 <html lang="tr">
 <head>
     <title>TITAN TV FİLM VOD</title>
@@ -441,33 +432,11 @@ def create_html_file(data):
             width: 100%;
             margin: 20px 0px;
         }}
-        .loading {{
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #00040d;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            color: white;
-            font-size: 20px;
-            flex-direction: column;
-        }}
-        .spinner {{
-            width: 50px;
-            height: 50px;
-            border: 5px solid #572aa7;
-            border-top: 5px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }}
-        @keyframes spin {{
-            0% {{ transform: rotate(0deg); }}
-            100% {{ transform: rotate(360deg); }}
+        .search-results {{
+            background: #15161a;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
         }}
         
         @media(max-width:550px) {{
@@ -480,18 +449,13 @@ def create_html_file(data):
     </style>
 </head>
 <body>
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <div id="loadingText">Filmler yükleniyor...</div>
-    </div>
-    
     <div class="aramapanel">
         <div class="aramapanelsol">
             <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
             <div class="logoisim">TITAN TV</div>
         </div>
         <div class="aramapanelsag">
-            <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
+            <form action="" name="ara" method="GET" onsubmit="return searchFilms(event)">
                 <input type="text" id="filmSearch" placeholder="Film Ara..!" class="aramapanelyazi" oninput="resetFilmSearch()">
                 <input type="submit" value="ARA" class="aramapanelbuton">
             </form>
@@ -499,31 +463,38 @@ def create_html_file(data):
     </div>
 
     <div class="filmpaneldis" id="filmListesiContainer">
-        <div class="baslik">HDFİLMCEHENNEMİ FİLM ARŞİVİ</div>
+        <div class="baslik">HDFİLMCEHENNEMİ - İLK 99 FİLM</div>
+        <div id="filmListesi"></div>
+    </div>
+
+    <div id="searchResultsContainer" class="search-results" style="display: none;">
+        <div class="baslik">ARAMA SONUÇLARI</div>
+        <div id="searchResults"></div>
     </div>
 
     <script>
-        // JSON verisi inline (daha hızlı)
-        const filmler = {json_str};
+        // HTML'deki 99 film
+        const htmlFilms = {json.dumps(first_99_films, ensure_ascii=False)};
         
-        // Yükleme tamamlandığında
-        window.onload = function() {{
-            console.log(`🎬 Toplam ${{Object.keys(filmler).length}} film yüklendi`);
-            renderFilms();
-            
-            // Loading'i kaldır
-            setTimeout(() => {{
-                document.getElementById('loading').style.display = 'none';
-            }}, 500);
-        }};
+        // Tüm filmlerin JSON linki
+        const ALL_FILMS_JSON_URL = "{json_url}";
+        
+        // Tüm filmler (başta boş, arama yapınca yüklenecek)
+        let allFilms = {{}};
+        
+        // Sayfa yüklendiğinde HTML'deki 99 filmi göster
+        document.addEventListener('DOMContentLoaded', function() {{
+            renderFilms(htmlFilms, 'filmListesi');
+            document.querySelector('.baslik').textContent += ` (${{Object.keys(htmlFilms).length}} Film)`;
+        }});
         
         // Filmleri ekrana bas
-        function renderFilms() {{
-            var container = document.getElementById("filmListesiContainer");
-            var filmCount = 0;
+        function renderFilms(films, containerId) {{
+            var container = document.getElementById(containerId);
+            container.innerHTML = '';
             
-            Object.keys(filmler).forEach(function(key) {{
-                var film = filmler[key];
+            Object.keys(films).forEach(function(key) {{
+                var film = films[key];
                 var item = document.createElement("div");
                 item.className = "filmpanel";
                 
@@ -544,80 +515,123 @@ def create_html_file(data):
                     </div>
                 `;
                 container.appendChild(item);
-                filmCount++;
-                
-                // Her 100 filmde bir loading text'ini güncelle
-                if (filmCount % 100 === 0) {{
-                    document.getElementById('loadingText').textContent = 
-                        `Filmler yükleniyor... (${{filmCount}}/${{Object.keys(filmler).length}})`;
-                }}
             }});
-            
-            // TOPLAM FİLM SAYISINI GÖSTER
-            var baslik = document.querySelector('.baslik');
-            baslik.textContent += ` (${{Object.keys(filmler).length}} Film)`;
-            
-            console.log(`✅ ${{filmCount}} film render edildi`);
         }}
         
         // ARAMA FONKSİYONU
-        function searchFilms() {{
-            var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
-            var container = document.getElementById('filmListesiContainer');
-            var panels = container.querySelectorAll('.filmpanel');
-            var found = false;
+        async function searchFilms(event) {{
+            event.preventDefault();
             
-            panels.forEach(function(panel) {{
-                if (panel.classList.contains('baslik')) return;
-                
-                var filmName = "";
-                var filmIsimDiv = panel.querySelector('.filmisim');
-                if (filmIsimDiv) {{
-                    filmName = filmIsimDiv.textContent.toLowerCase();
-                }}
-                
-                if (filmName.includes(searchTerm)) {{
-                    panel.style.display = 'block';
-                    found = true;
-                }} else {{
-                    panel.style.display = 'none';
+            var searchTerm = document.getElementById('filmSearch').value.toLowerCase().trim();
+            
+            if (!searchTerm) {{
+                resetFilmSearch();
+                return false;
+            }}
+            
+            // 1. Önce HTML'deki 99 filmde ara
+            var foundInHtml = {{}};
+            Object.keys(htmlFilms).forEach(function(key) {{
+                if (htmlFilms[key].isim.toLowerCase().includes(searchTerm)) {{
+                    foundInHtml[key] = htmlFilms[key];
                 }}
             }});
             
-            if (!found && searchTerm) {{
-                var noResults = document.createElement('div');
-                noResults.className = 'hataekran';
-                noResults.innerHTML = '<i class="fas fa-search"></i><div class="hatayazi">"${{searchTerm}}" için film bulunamadı!</div>';
-                container.appendChild(noResults);
+            if (Object.keys(foundInHtml).length > 0) {{
+                // HTML'de bulundu, göster
+                document.getElementById('filmListesiContainer').style.display = 'none';
+                document.getElementById('searchResultsContainer').style.display = 'block';
+                renderFilms(foundInHtml, 'searchResults');
+                document.querySelector('#searchResultsContainer .baslik').textContent = 
+                    `ARAMA SONUÇLARI (HTML'de bulundu: ${{Object.keys(foundInHtml).length}} film)`;
+                return false;
+            }}
+            
+            // 2. HTML'de yoksa JSON'dan yükle ve ara
+            try {{
+                if (Object.keys(allFilms).length === 0) {{
+                    // JSON henüz yüklenmemiş, yükle
+                    document.getElementById('searchResults').innerHTML = 
+                        '<div class="hataekran"><i class="fas fa-spinner fa-spin"></i><div class="hatayazi">Tüm filmler yükleniyor...</div></div>';
+                    
+                    const response = await fetch(ALL_FILMS_JSON_URL);
+                    allFilms = await response.json();
+                    console.log(`✅ Tüm filmler yüklendi: ${{Object.keys(allFilms).length}} film`);
+                }}
+                
+                // JSON'da ara
+                var foundInJson = {{}};
+                Object.keys(allFilms).forEach(function(key) {{
+                    if (allFilms[key].isim.toLowerCase().includes(searchTerm)) {{
+                        foundInJson[key] = allFilms[key];
+                    }}
+                }});
+                
+                if (Object.keys(foundInJson).length > 0) {{
+                    // JSON'da bulundu, göster
+                    document.getElementById('filmListesiContainer').style.display = 'none';
+                    document.getElementById('searchResultsContainer').style.display = 'block';
+                    renderFilms(foundInJson, 'searchResults');
+                    document.querySelector('#searchResultsContainer .baslik').textContent = 
+                        `ARAMA SONUÇLARI (JSON'da bulundu: ${{Object.keys(foundInJson).length}} film)`;
+                }} else {{
+                    // Hiçbir yerde bulunamadı
+                    document.getElementById('filmListesiContainer').style.display = 'none';
+                    document.getElementById('searchResultsContainer').style.display = 'block';
+                    document.getElementById('searchResults').innerHTML = `
+                        <div class="hataekran">
+                            <i class="fas fa-search"></i>
+                            <div class="hatayazi">"${{searchTerm}}" için film bulunamadı!<br>
+                            Toplam ${{Object.keys(allFilms).length}} film arasından</div>
+                        </div>`;
+                }}
+                
+            }} catch (error) {{
+                console.error("JSON yüklenemedi:", error);
+                document.getElementById('searchResults').innerHTML = `
+                    <div class="hataekran">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div class="hatayazi">Filmler yüklenemedi!<br>${{error.message}}</div>
+                    </div>`;
             }}
             
             return false;
         }}
         
         function resetFilmSearch() {{
-            var container = document.getElementById('filmListesiContainer');
-            var panels = container.querySelectorAll('.filmpanel');
-            panels.forEach(function(panel) {{
-                panel.style.display = 'block';
-            }});
-            var noResults = container.querySelector('.hataekran');
-            if (noResults) {{
-                noResults.remove();
-            }}
+            document.getElementById('filmSearch').value = '';
+            document.getElementById('filmListesiContainer').style.display = 'block';
+            document.getElementById('searchResultsContainer').style.display = 'none';
+            renderFilms(htmlFilms, 'filmListesi');
         }}
+        
+        // ESC tuşu ile aramayı resetle
+        document.addEventListener('keydown', function(e) {{
+            if (e.key === 'Escape') {{
+                resetFilmSearch();
+            }}
+        }});
     </script>
 </body>
 </html>'''
     
     html_filename = "hdfilmcehennemi.html"
     with open(html_filename, "w", encoding="utf-8") as f:
-        f.write(html_template)
+        f.write(html_content)
     
-    html_size = os.path.getsize(html_filename) / 1024 / 1024
-    print(f"✅ HTML dosyası '{html_filename}' oluşturuldu!")
-    print(f"📁 HTML boyutu: {html_size:.2f} MB")
-    print(f"🎬 Film sayısı: {len(data)}")
-    print(f"🔗 Live Preview: https://sevdimcim.github.io/vod-max/hdfilmcehennemi.html")
+    html_size_kb = os.path.getsize(html_filename) / 1024
+    
+    print(f"\n🌐 HTML DOSYASI OLUŞTURULDU:")
+    print(f"✅ Dosya Adı: {html_filename}")
+    print(f"🎬 HTML'deki film sayısı: {len(first_99_films)}")
+    print(f"💾 Boyut: {html_size_kb:.1f} KB")
+    print(f"\n🎉 SİSTEM HAZIR!")
+    print(f"   ✅ HTML'de: İlk 99 film")
+    print(f"   ✅ JSON'da: Tüm {len(all_data)} film")
+    print(f"   ✅ Arama: Önce HTML'de, yoksa JSON'dan getir")
+    print(f"   ✅ Bradmax: YOK")
+    print(f"   ✅ Geri tuşu: YOK")
+    print(f"   ✅ Player panel: YOK")
 
 if __name__ == "__main__":
     main()
