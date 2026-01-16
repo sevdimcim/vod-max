@@ -1,6 +1,5 @@
 import time
 import json
-import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -9,6 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
+# --- CONFIG AYARLARI ---
 EMAIL = "sonhan3087@gmail.com"
 SIFRE = "996633Eko."
 VIDEO_URL = "https://www.tabii.com/tr/watch/565323?trackId=566764"
@@ -18,8 +18,8 @@ def botu_baslat():
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--window-size=1920,1080")
-    # Dil hatasını önlemek için Türkçe tarayıcı gibi davranıyoruz
+    # Config'deki eski UA yerine güncel bir tane kullanıyoruz
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
     chrome_options.add_argument("--lang=tr-TR")
     chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
@@ -27,45 +27,41 @@ def botu_baslat():
     wait = WebDriverWait(driver, 30)
 
     try:
-        print("[*] Tabii ana sayfasına gidiliyor...")
-        driver.get("https://www.tabii.com/tr")
-        time.sleep(5)
-        
-        # Eğer çerez onay butonu varsa tıkla (Genelde formu kapatır)
-        try:
-            cookie_btn = driver.find_element(By.XPATH, "//button[contains(text(), 'Kabul') or contains(text(), 'Accept')]")
-            cookie_btn.click()
-            print("[+] Çerezler kabul edildi.")
-        except:
-            pass
-
-        print("[*] Giriş sayfasına yönleniliyor...")
+        # 1. Giriş Sayfasına Git
+        print("[*] Tabii Giriş Sayfası Yükleniyor...")
         driver.get("https://www.tabii.com/tr/login")
         
-        # Formun yüklenmesi için bekle
-        print("[*] Form aranıyor...")
-        # Hem ID hem name hem tip olarak her şeyi deniyoruz
-        email_field = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='email'], input[type='email']")))
+        # Sayfanın bot korumasına takılıp takılmadığını anlamak için başlığı kontrol et
+        print(f"[*] Sayfa Başlığı: {driver.title}")
         
+        # vE1 hatasını önlemek için formu bulmadan önce kısa bir bekleme (insan taklidi)
+        time.sleep(5)
+        
+        # Email kutusunu config'deki mantıkla ama Selenium seçicisiyle bul
+        email_field = wait.until(EC.element_to_be_clickable((By.NAME, "email")))
         email_field.send_keys(EMAIL)
-        driver.find_element(By.CSS_SELECTOR, "input[name='password']").send_keys(SIFRE)
         
-        print("[+] Bilgiler girildi, giriş yapılıyor...")
-        driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        pass_field = driver.find_element(By.NAME, "password")
+        pass_field.send_keys(SIFRE)
         
-        time.sleep(10) # Giriş sonrası bekleme
+        print("[+] Bilgiler girildi. Giriş butonuna basılıyor...")
+        submit_btn = driver.find_element(By.XPATH, "//button[@type='submit']")
+        submit_btn.click()
         
-        print(f"[*] Hedef videoya gidiliyor: {VIDEO_URL}")
+        # Giriş sonrası trafiği izlemek için video sayfasına geç
+        time.sleep(10)
         driver.get(VIDEO_URL)
-        time.sleep(20) # Trafiği yakalamak için bekle
+        print("[*] Video trafiği koklanıyor...")
+        time.sleep(20)
 
         logs = driver.get_log("performance")
-        found_url = "Bulunamadı"
+        found_url = "LİNK BULUNAMADI (vE1 veya Bölge Engeli)"
         
         for entry in logs:
             log = json.loads(entry["message"])["message"]
             if "Network.requestWillBeSent" in log["method"]:
                 url = log["params"]["request"]["url"]
+                # Config'deki mp4/m3u8 yapılarını yakala
                 if any(x in url for x in ["cms-tabii", "video_", ".m3u8", ".mp4"]):
                     found_url = url
                     break
