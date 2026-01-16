@@ -216,7 +216,7 @@ def main_scraper():
     init_database()
     
     total_saved = 0
-    TOTAL_PAGES = 10
+    TOTAL_PAGES = 790
     
     mevcut_filmler = get_total_film_count()
     print(f"📊 Başlangıç: {mevcut_filmler} film")
