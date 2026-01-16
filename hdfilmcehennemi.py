@@ -5,13 +5,10 @@ import time
 import re
 import os
 import sys
-import concurrent.futures
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Komut satırı argümanları
-PAGES_TO_SCRAPE = int(sys.argv[1]) if len(sys.argv) > 1 else 790
-TURBO_MODE = True if len(sys.argv) > 2 and sys.argv[2].lower() == 'turbo' else False
-WORKERS = 50 if TURBO_MODE else 10
+PAGES_TO_SCRAPE = int(sys.argv[1]) if len(sys.argv) > 1 else 5  # Test için 5 sayfa
+DELAY_BETWEEN_FILMS = float(sys.argv[2]) if len(sys.argv) > 2 else 0.5
 
 BASE_URL = "https://www.hdfilmcehennemi.nl"
 
@@ -23,32 +20,29 @@ HEADERS_PAGE = {
 }
 
 HEADERS_FILM = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive"
 }
 
-TIMEOUT = 15
-MAX_RETRIES = 3
-
-def get_json_response_turbo(url, session, retry_count=0):
+def get_json_response(url):
     try:
-        response = session.get(url, timeout=TIMEOUT)
+        response = requests.get(url, headers=HEADERS_PAGE, timeout=20)
         response.raise_for_status()
         return response.json()
     except Exception as e:
-        if retry_count < MAX_RETRIES:
-            time.sleep(1)
-            return get_json_response_turbo(url, session, retry_count + 1)
+        print(f"❌ JSON alınamadı: {e}")
         return None
 
-def get_soup_turbo(url, session, retry_count=0):
+def get_soup(url):
     try:
-        response = session.get(url, headers=HEADERS_FILM, timeout=TIMEOUT)
+        response = requests.get(url, headers=HEADERS_FILM, timeout=20)
         response.raise_for_status()
         return BeautifulSoup(response.content, "html.parser")
     except Exception as e:
-        if retry_count < MAX_RETRIES:
-            time.sleep(1)
-            return get_soup_turbo(url, session, retry_count + 1)
+        print(f"❌ Sayfa alınamadı: {e}")
         return None
 
 def slugify(text):
@@ -58,159 +52,183 @@ def slugify(text):
     text = re.sub(r'-+', '-', text).strip('-')
     return text
 
-def process_film(a_etiketi, session):
+def extract_video_link(soup):
+    """Film sayfasından video linkini çıkar - EN BASİT VE ETKİLİ YÖNTEM"""
     try:
-        film_link = a_etiketi.get('href')
-        film_adi = a_etiketi.get('title') or a_etiketi.text.strip()
-        
-        if not film_adi:
-            return None
-        
-        film_id = slugify(film_adi)
-        
-        # POSTER
-        poster_img = a_etiketi.find('img')
-        poster_url = ""
-        
-        if poster_img:
-            poster_url = poster_img.get('data-src', '')
-            if not poster_url:
-                poster_url = poster_img.get('src', '')
-            
-            if poster_url and "?" in poster_url:
-                poster_url = poster_url.split("?")[0]
-        
-        # VIDEO LINK - BU KISIM DOĞRU ÇALIŞIYOR
-        video_url = ""
-        if film_link:
-            try:
-                target_url = BASE_URL + film_link if not film_link.startswith('http') else film_link
-                film_soup = get_soup_turbo(target_url, session)
+        # 1. EN GARANTİ YOL: iframe'de data-src'yi ara
+        iframe = soup.find('iframe', {'class': 'close'})
+        if iframe:
+            data_src = iframe.get('data-src', '')
+            if data_src:
+                print(f"   🔍 data-src bulundu: {data_src[:50]}...")
                 
-                if film_soup:
-                    iframe = film_soup.find('iframe', {'class': 'close'})
-                    
-                    if iframe and iframe.get('data-src'):
-                        raw_iframe_url = iframe.get('data-src')
-                        
-                        if "rapidrame_id=" in raw_iframe_url:
-                            rapid_id = raw_iframe_url.split("rapidrame_id=")[1]
-                            video_url = f"https://www.hdfilmcehennemi.com/rplayer/{rapid_id}"
-                        else:
-                            video_url = raw_iframe_url
-            except Exception as e:
-                pass
+                # RPlayer dönüşümü
+                if "rapidrame_id=" in data_src:
+                    rapid_id = data_src.split("rapidrame_id=")[1]
+                    # & işaretinden önceki kısmı al
+                    if '&' in rapid_id:
+                        rapid_id = rapid_id.split('&')[0]
+                    video_url = f"https://www.hdfilmcehennemi.com/rplayer/{rapid_id}"
+                    print(f"   ✅ RPlayer linki oluşturuldu")
+                    return video_url
+                else:
+                    print(f"   ✅ Direkt link kullanılıyor")
+                    return data_src
         
-        return {
-            'id': film_id,
-            'data': {
-                "isim": film_adi,
-                "resim": poster_url if poster_url else "https://via.placeholder.com/300x450/15161a/ffffff?text=No+Image",
-                "link": video_url
-            }
-        }
-    except Exception as e:
-        return None
-
-def process_page(page_num, session):
-    try:
-        api_page_url = f"{BASE_URL}/load/page/{page_num}/categories/film-izle-2/"
-        data = get_json_response_turbo(api_page_url, session)
+        # 2. ALTERNATİF: iframe src'si
+        if iframe and iframe.get('src'):
+            src = iframe.get('src')
+            print(f"   🔍 iframe src bulundu: {src[:50]}...")
+            return src
         
-        if not data:
-            return []
+        # 3. SCRIPT TAG'LERİNDE ARA
+        scripts = soup.find_all('script')
+        for script in scripts:
+            if script.string and 'rapidrame' in script.string:
+                content = script.string
+                # rapidrame_id ara
+                if 'rapidrame_id' in content:
+                    import re
+                    match = re.search(r'rapidrame_id["\']?\s*[:=]\s*["\']?([^"\'\s&]+)', content)
+                    if match:
+                        rapid_id = match.group(1)
+                        video_url = f"https://www.hdfilmcehennemi.com/rplayer/{rapid_id}"
+                        print(f"   ✅ Script'ten RPlayer linki bulundu")
+                        return video_url
         
-        html_chunk = data.get('html', '')
-        soup = BeautifulSoup(html_chunk, 'html.parser')
-        film_kutulari = soup.find_all('a', class_='poster')
-        
-        if not film_kutulari:
-            return []
-        
-        page_films = []
-        with ThreadPoolExecutor(max_workers=WORKERS) as executor:
-            futures = [executor.submit(process_film, film, session) for film in film_kutulari]
-            
-            for future in as_completed(futures):
-                result = future.result()
-                if result:
-                    page_films.append(result)
-        
-        print(f"✓ Sayfa {page_num} tamamlandı ({len(page_films)} film)")
-        return page_films
+        print("   ⚠️ Video linki bulunamadı")
+        return ""
         
     except Exception as e:
-        print(f"✗ Sayfa {page_num} hatası: {e}")
-        return []
+        print(f"   ❌ Link çıkarılırken hata: {e}")
+        return ""
 
 def main():
     print("="*60)
     print("🚀 HDFİLMCEHENNEMİ SCRAPER BAŞLATILDI!")
     print(f"📊 Çekilecek Sayfa Sayısı: {PAGES_TO_SCRAPE}")
-    print(f"⚡ Turbo Mod: {'AKTİF 🚀' if TURBO_MODE else 'Kapalı'}")
+    print(f"⏱️  Filmler arası bekleme: {DELAY_BETWEEN_FILMS} saniye")
     print("="*60)
     
     filmler_data = {}
     total_films = 0
     start_time = time.time()
     
-    session = requests.Session()
-    session.headers.update(HEADERS_PAGE)
-    
     try:
-        with ThreadPoolExecutor(max_workers=20) as page_executor:
-            page_futures = {
-                page_executor.submit(process_page, page_num, session): page_num 
-                for page_num in range(1, PAGES_TO_SCRAPE + 1)
-            }
+        for sayfa in range(1, PAGES_TO_SCRAPE + 1):
+            api_page_url = f"{BASE_URL}/load/page/{sayfa}/categories/film-izle-2/"
             
-            completed_pages = 0
-            for future in as_completed(page_futures):
-                page_num = page_futures[future]
-                try:
-                    page_results = future.result()
-                    
-                    for film in page_results:
-                        if film['id'] not in filmler_data:
-                            filmler_data[film['id']] = film['data']
-                            total_films += 1
-                    
-                    completed_pages += 1
-                    
-                    if completed_pages % 10 == 0:
-                        elapsed = time.time() - start_time
-                        remaining_pages = PAGES_TO_SCRAPE - completed_pages
-                        pages_per_second = completed_pages / elapsed if elapsed > 0 else 0
-                        estimated_time = remaining_pages / pages_per_second if pages_per_second > 0 else 0
+            print(f"\n📄 SAYFA {sayfa}/{PAGES_TO_SCRAPE} İŞLENİYOR...")
+            
+            data = get_json_response(api_page_url)
+            
+            if data:
+                html_chunk = data.get('html', '')
+                soup = BeautifulSoup(html_chunk, 'html.parser')
+                film_kutulari = soup.find_all('a', class_='poster')
+                
+                if not film_kutulari:
+                    print(f"    ⚠️ Sayfa {sayfa}'da film bulunamadı.")
+                    continue
+                
+                print(f"    📊 Sayfada {len(film_kutulari)} film bulundu")
+                
+                for a_etiketi in film_kutulari:
+                    try:
+                        film_link = a_etiketi.get('href')
+                        film_adi = a_etiketi.get('title') or a_etiketi.text.strip()
                         
-                        print(f"\n📈 İLERLEME: {completed_pages}/{PAGES_TO_SCRAPE} sayfa")
-                        print(f"🎬 Toplam Film: {total_films}")
-                        print(f"⏱️  Geçen Süre: {elapsed:.1f}s")
-                        print(f"🚀 Hız: {pages_per_second:.1f} sayfa/saniye")
-                        print(f"⏳ Tahmini Kalan Süre: {estimated_time:.1f}s")
+                        if not film_adi:
+                            continue
                         
-                except Exception as e:
-                    print(f"❌ Sayfa {page_num} işlenirken hata: {e}")
-        
-        elapsed_time = time.time() - start_time
-        
-        # Link istatistikleri
-        links_found = sum(1 for film in filmler_data.values() if film['link'])
-        
-        print("\n" + "="*60)
-        print(f"✅ İŞLEM TAMAMLANDI!")
-        print(f"📊 Toplam Sayfa: {PAGES_TO_SCRAPE}")
-        print(f"🎬 Toplam Film: {len(filmler_data)}")
-        print(f"🔗 Link Bulunan: {links_found} film")
-        print(f"📈 Başarı Oranı: {links_found/len(filmler_data)*100:.1f}%")
-        print(f"⏱️  Toplam Süre: {elapsed_time:.1f} saniye")
-        print("="*60)
-        
+                        film_id = slugify(film_adi)
+                        
+                        # POSTER
+                        poster_img = a_etiketi.find('img')
+                        poster_url = ""
+                        
+                        if poster_img:
+                            poster_url = poster_img.get('data-src', '')
+                            if not poster_url:
+                                poster_url = poster_img.get('src', '')
+                            
+                            if poster_url and "?" in poster_url:
+                                poster_url = poster_url.split("?")[0]
+                        
+                        print(f"\n🎬 İşleniyor: {film_adi}")
+                        print(f"   📍 Poster: {poster_url[:50]}..." if poster_url else "   📍 Poster: Yok")
+                        
+                        # VIDEO LINK - EN ÖNEMLİ KISIM!
+                        video_url = ""
+                        if film_link:
+                            try:
+                                target_url = BASE_URL + film_link if not film_link.startswith('http') else film_link
+                                print(f"   🔗 Film sayfasına gidiliyor...")
+                                
+                                film_soup = get_soup(target_url)
+                                
+                                if film_soup:
+                                    video_url = extract_video_link(film_soup)
+                                    
+                                    if video_url:
+                                        print(f"   ✅ Link: {video_url[:80]}...")
+                                    else:
+                                        print(f"   ❌ Link bulunamadı!")
+                                else:
+                                    print(f"   ❌ Film sayfası yüklenemedi")
+                                    
+                            except Exception as e:
+                                print(f"   ❌ Hata: {str(e)[:100]}")
+                        
+                        # Veriyi kaydet
+                        filmler_data[film_id] = {
+                            "isim": film_adi,
+                            "resim": poster_url if poster_url else "https://via.placeholder.com/300x450/15161a/ffffff?text=No+Image",
+                            "link": video_url
+                        }
+                        
+                        total_films += 1
+                        print(f"   ✓ Kaydedildi ({total_films}. film)")
+                        
+                        time.sleep(DELAY_BETWEEN_FILMS)
+                        
+                    except Exception as e:
+                        print(f"   ❌ Film işlenirken hata: {e}")
+                        continue
+                
+                print(f"\n📊 Sayfa {sayfa} tamamlandı. Toplam film: {total_films}")
+                time.sleep(1)
+                
+            else:
+                print(f"❌ Sayfa {sayfa} yüklenemedi.")
+    
     except Exception as e:
         print(f"💥 Ana hata oluştu: {e}")
-    finally:
-        session.close()
     
+    elapsed_time = time.time() - start_time
+    
+    # İstatistikler
+    links_found = sum(1 for film in filmler_data.values() if film['link'])
+    
+    print("\n" + "="*60)
+    print(f"✅ İŞLEM TAMAMLANDI!")
+    print(f"📊 Toplam Sayfa: {PAGES_TO_SCRAPE}")
+    print(f"🎬 Toplam Film: {len(filmler_data)}")
+    print(f"🔗 Link Bulunan: {links_found} film")
+    print(f"⚠️  Link Yok: {len(filmler_data) - links_found} film")
+    print(f"📈 Başarı Oranı: {links_found/len(filmler_data)*100:.1f}%" if filmler_data else "0%")
+    print(f"⏱️  Toplam Süre: {elapsed_time:.1f} saniye")
+    print("="*60)
+    
+    # Örnek filmleri göster
+    print("\n🎬 İLK 5 FİLM ÖRNEĞİ:")
+    for i, (film_id, film_info) in enumerate(list(filmler_data.items())[:5]):
+        print(f"   {i+1}. {film_info['isim'][:50]}...")
+        print(f"      Link: {'✅ VAR' if film_info['link'] else '❌ YOK'}")
+        if film_info['link']:
+            print(f"      URL: {film_info['link'][:80]}...")
+    
+    # Dosyaları oluştur
     create_files(filmler_data)
 
 def create_files(data):
@@ -230,7 +248,7 @@ def create_files(data):
     print(f"💾 Boyut: {file_size_kb:.1f} KB")
     print(f"🔗 GitHub RAW Linki: https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/hdfilmcehennemi.json")
     
-    # 2. HTML DOSYASI (SADECE İLK 99 FİLM) - İSTEDİĞİN SİSTEM
+    # 2. HTML DOSYASI (SADECE İLK 99 FİLM)
     create_html_file(data)
 
 def create_html_file(all_data):
@@ -243,10 +261,13 @@ def create_html_file(all_data):
         first_99_films[film_id] = film_info
         count += 1
     
+    # Link istatistiği
+    links_in_html = sum(1 for film in first_99_films.values() if film['link'])
+    
     # JSON linki
     json_url = "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/hdfilmcehennemi.json"
     
-    # HTML içeriği - SADECE 99 FİLM + ARAMA (JSON'dan getir)
+    # HTML içeriği
     html_content = f'''<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -469,7 +490,7 @@ def create_html_file(all_data):
     </div>
 
     <div class="filmpaneldis" id="filmListesiContainer">
-        <div class="baslik">HDFİLMCEHENNEMİ - İLK 99 FİLM</div>
+        <div class="baslik">HDFİLMCEHENNEMİ - İLK 99 FİLM ({links_in_html} filmde link var)</div>
         <div id="filmListesi"></div>
     </div>
 
@@ -491,7 +512,6 @@ def create_html_file(all_data):
         // Sayfa yüklendiğinde HTML'deki 99 filmi göster
         document.addEventListener('DOMContentLoaded', function() {{
             renderFilms(htmlFilms, 'filmListesi');
-            document.querySelector('.baslik').textContent += ` (${{Object.keys(htmlFilms).length}} Film)`;
         }});
         
         // Filmleri ekrana bas
@@ -630,14 +650,13 @@ def create_html_file(all_data):
     print(f"\n🌐 HTML DOSYASI OLUŞTURULDU:")
     print(f"✅ Dosya Adı: {html_filename}")
     print(f"🎬 HTML'deki film sayısı: {len(first_99_films)}")
+    print(f"🔗 HTML'de link olan filmler: {links_in_html}")
     print(f"💾 Boyut: {html_size_kb:.1f} KB")
     print(f"\n🎉 SİSTEM HAZIR!")
+    print(f"   ✅ Link Çekme: ÇALIŞIYOR")
     print(f"   ✅ HTML'de: İlk 99 film")
     print(f"   ✅ JSON'da: Tüm {len(all_data)} film")
     print(f"   ✅ Arama: Önce HTML'de, yoksa JSON'dan getir")
-    print(f"   ✅ Link Çekme: ÇALIŞIYOR (eski kodun mantığı)")
-    print(f"   ✅ Bradmax: YOK")
-    print(f"   ✅ Geri tuşu: YOK")
 
 if __name__ == "__main__":
     main()
