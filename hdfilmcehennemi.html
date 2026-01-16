@@ -3,145 +3,192 @@
 <head>
 <title>TITAN TV VOD</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
+<link href="https://fonts.googleapis.com/css?family=PT+Sans:700i" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://kit.fontawesome.com/bbe955c5ed.js" crossorigin="anonymous"></script>
 <style>
-    * {
+    body {
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-    }
-    
-    body {
-        background: #000;
-        font-family: Arial, sans-serif;
-        color: white;
+        background: #00040d;
+        font-family: sans-serif;
+        font-size: 15px;
+        -webkit-tap-highlight-color: transparent;
+        font-style: italic;
+        line-height: 20px;
+        -webkit-text-size-adjust: 100%;
+        text-decoration: none;
+        -webkit-text-decoration: none;
         overflow-x: hidden;
     }
-    
-    /* HEADER */
-    .header {
+    .filmpaneldis {
         background: #15161a;
-        padding: 10px 15px;
-        border-bottom: 1px solid #333;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-    
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .logo img {
-        width: 40px;
-        height: 40px;
-        border-radius: 5px;
-    }
-    
-    .logo-text {
-        font-size: 18px;
-        font-weight: bold;
-        color: #fff;
-    }
-    
-    .search-box {
-        display: flex;
-        gap: 5px;
-    }
-    
-    .search-box input {
-        padding: 8px 12px;
-        border: 1px solid #572aa7;
-        border-radius: 5px;
-        background: #222;
-        color: white;
-        width: 200px;
-    }
-    
-    .search-box button {
-        padding: 8px 15px;
-        background: #572aa7;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    
-    /* FILM CONTAINER */
-    .container {
-        padding: 15px;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-    
-    .section-title {
-        font-size: 22px;
-        margin: 20px 0 15px 0;
-        color: #fff;
-        border-left: 4px solid #572aa7;
-        padding-left: 10px;
-    }
-    
-    .movies-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-    
-    /* FILM CARD */
-    .movie-card {
-        background: #15161a;
-        border-radius: 10px;
+        width: 100%;
+        margin: 20px auto;
         overflow: hidden;
+        padding: 10px 5px;
+        box-sizing: border-box;
+    }
+    .baslik {
+        width: 96%;
+        color: #fff;
+        padding: 15px 10px;
+        box-sizing: border-box;
+    }
+    .filmpanel {
+        width: 12%;
+        height: 200px;
+        background: #15161a;
+        float: left;
+        margin: 1.14%;
+        color: #fff;
+        border-radius: 15px;
+        box-sizing: border-box;
+        box-shadow: 1px 5px 10px rgba(0,0,0,0.1);
+        border: 1px solid #323442;
+        padding: 0px;
+        overflow: hidden;
+        transition: border 0.3s ease, box-shadow 0.3s ease;
         cursor: pointer;
-        transition: transform 0.3s, box-shadow 0.3s;
-        border: 1px solid #333;
     }
-    
-    .movie-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(87, 42, 167, 0.3);
-        border-color: #572aa7;
-    }
-    
-    .movie-poster {
+    .filmisimpanel {
         width: 100%;
         height: 200px;
-        overflow: hidden;
+        position: relative;
+        margin-top: -200px;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
     }
-    
-    .movie-poster img {
+    .filmpanel:hover {
+        color: #fff;
+        border: 3px solid #572aa7;
+        box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
+    }
+    .filmpanel:focus {
+        outline: none;
+        border: 3px solid #572aa7;
+        box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
+    }
+    .filmresim {
         width: 100%;
         height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s;
+        margin-bottom: 0px;
+        overflow: hidden;
+        position: relative;
     }
-    
-    .movie-card:hover .movie-poster img {
-        transform: scale(1.05);
+    .filmresim img {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.4s ease;
     }
-    
-    .movie-info {
-        padding: 10px;
+    .filmpanel:hover .filmresim img {
+        transform: scale(1.1);
     }
-    
-    .movie-title {
+    .filmisim {
+        width: 100%;
         font-size: 14px;
-        color: white;
+        text-decoration: none;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        padding: 0px 5px;
+        box-sizing: border-box;
+        color: #fff;
+        position: absolute;
+        bottom: 5px;
+    }
+    .aramapanel {
+        width: 100%;
+        height: 60px;
+        background: #15161a;
+        border-bottom: 1px solid #323442;
+        margin: 0px auto;
+        padding: 10px;
+        box-sizing: border-box;
+        overflow: hidden;
+        z-index: 11111;
+    }
+    .aramapanelsag {
+        width: auto;
+        height: 40px;
+        box-sizing: border-box;
+        overflow: hidden;
+        float: right;
+    }
+    .aramapanelsol {
+        width: 50%;
+        height: 40px;
+        box-sizing: border-box;
+        overflow: hidden;
+        float: left;
+    }
+    .aramapanelyazi {
+        height: 40px;
+        width: 120px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        padding: 0px 10px;
+        color: #000;
+        margin: 0px 5px;
+    }
+    .aramapanelbuton {
+        height: 40px;
+        width: 40px;
+        text-align: center;
+        background-color: #572aa7;
+        border: none;
+        color: #fff;
+        box-sizing: border-box;
+        overflow: hidden;
+        float: right;
+        transition: .35s;
+    }
+    .aramapanelbuton:hover {
+        background-color: #fff;
+        color: #000;
+    }
+    .logo {
+        width: 40px;
+        height: 40px;
+        float: left;
+    }
+    .logo img {
+        width: 100%;
+    }
+    .logoisim {
+        font-size: 15px;
+        width: 70%;
+        height: 40px;
+        line-height: 40px;
         font-weight: 500;
+        color: #fff;
+    }
+    .hataekran i {
+        color: #572aa7;
+        font-size: 80px;
+        text-align: center;
+        width: 100%;
+    }
+    .hataekran {
+        width: 80%;
+        margin: 20px auto;
+        color: #fff;
+        background: #15161a;
+        border: 1px solid #323442;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+    }
+    .hatayazi {
+        color: #fff;
+        font-size: 15px;
+        text-align: center;
+        width: 100%;
+        margin: 20px 0px;
     }
     
-    /* PLAYER OVERLAY */
+    /* PLAYER OVERLAY - KAPATMA BUTONU YOK */
     .player-overlay {
         position: fixed;
         top: 0;
@@ -149,188 +196,1089 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.95);
-        z-index: 1000;
+        z-index: 9999;
         display: none;
+        cursor: pointer;
     }
     
-    .player-container {
-        width: 100%;
-        height: 100%;
-        position: relative;
-    }
-    
-    .player-frame {
+    .player-iframe {
         width: 100%;
         height: 100%;
         border: none;
     }
     
-    /* KAPATMA - SADECE OVERLAY'E TIKLAYINCA */
-    .player-overlay {
-        cursor: pointer;
-    }
-    
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-        .movies-grid {
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-        }
-        
-        .movie-poster {
-            height: 160px;
-        }
-        
-        .header {
-            flex-direction: column;
-            gap: 10px;
-            padding: 15px;
-        }
-        
-        .search-box input {
-            width: 100%;
-        }
-        
-        .search-box {
-            width: 100%;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .movies-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-        
-        .movie-poster {
-            height: 140px;
+    @media(max-width:550px) {
+        .filmpanel {
+            width: 31.33%;
+            height: 190px;
+            margin: 1%;
         }
     }
 </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <div class="header">
-        <div class="logo">
-            <img src="https://i.hizliresim.com/t75soiq.png" alt="Logo">
-            <div class="logo-text">TITAN TV (0 Film)</div>
-        </div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Film ara...">
-            <button onclick="searchMovies()">ARA</button>
+<div class="aramapanel">
+<div class="aramapanelsol">
+<div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
+<div class="logoisim">TITAN TV VOD (137 Film)</div>
+</div>
+<div class="aramapanelsag">
+<form action="" name="ara" method="GET" onsubmit="return searchFilms()">
+    <input type="text" id="filmSearch" placeholder="Film Adını Giriniz..!" class="aramapanelyazi" oninput="resetFilmSearch()">
+    <input type="submit" value="ARA" class="aramapanelbuton">
+</form>
+</div>
+</div>
+
+<!-- PLAYER OVERLAY - KAPATMA BUTONU YOK -->
+<div class="player-overlay" id="playerOverlay" onclick="closePlayer()">
+    <iframe class="player-iframe" id="playerFrame" allowfullscreen referrerpolicy="no-referrer"></iframe>
+</div>
+
+<div class="filmpaneldis" id="filmListesiContainer">
+    <div class="baslik">HDFİLMCEHENNEMİ VOD - Tüm Filmler</div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/xadumjhi3d7w')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Crazy Old Lady</div>
         </div>
     </div>
 
-    <!-- PLAYER OVERLAY -->
-    <div class="player-overlay" id="playerOverlay" onclick="closePlayer()">
-        <div class="player-container">
-            <iframe class="player-frame" id="playerFrame" allowfullscreen></iframe>
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/sz7nwn95vzb3')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-rip.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Rip</div>
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="container">
-        <div class="section-title">HDFİLMCEHENNEMİ VOD</div>
-        
-        <div class="movies-grid" id="moviesGrid">
-
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/3548xjcpkhju')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Birlikte</div>
         </div>
     </div>
 
-    <script>
-    // PLAYER FONKSİYONLARI
-    function openPlayer(url) {
-        console.log("Film açılıyor:", url);
-        
-        // Iframe'i ayarla - REFERRER POLICY EKLE
-        const iframe = document.getElementById('playerFrame');
-        iframe.src = url;
-        
-        // Overlay'i göster
-        document.getElementById('playerOverlay').style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        
-        // ESC tuşu ile kapatma
-        document.addEventListener('keydown', function escClose(e) {
-            if (e.key === 'Escape') {
-                closePlayer();
-                document.removeEventListener('keydown', escClose);
-            }
-        });
-    }
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/tfews38ploqv')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/five-nights-at-freddy-s-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Freddynin Pizza Dükkanında Beş Gece 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/jkjty2a8rgkh')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-best-you-can.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Elinden Gelenin En İyisi</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/xvxxn5gninrd')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Yarışçılar: Büyük Hesaplaşma</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ldbokaczm6sb')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-getback.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Getback</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/1smfk8ksulbw')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-shepherd.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Bad Shepherd</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/tyho4nst7006')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Hood</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/50ajrrtywc6i')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/dust-bunny.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Toz Yumağı - Dust Bunny</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/9ra28jn6w2cl')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sijjin-8.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Siccîn 8</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/yq1oqap4xpxt')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/play-dead.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Play Dead</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/z93a2wc7c8qx')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sore-a-wife-from-the-future.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sore: Gelecekten Gelen Eş</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/gjncguyl9fzu')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-internship.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Internship</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/8jpf5fzq1d81')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sihirbazlar Çetesi Daha Bir Şey Görmediniz</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/k38zdbn05v2l')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sleepwalker.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sleepwalker</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/jmu0h6mbz27u')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-inheritance.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Inheritance</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/5hh2yxf5aex1')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/vermiglio.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Vermiglio</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ne1ppxfpu4uq')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/we-bury-the-dead.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">We Bury the Dead</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/2k32ubksynb8')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Beraber</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/r8skt5zj3jef')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/oscar-shaw.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Oscar Shaw</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/7t12yh5p5eut')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-roses.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Güller</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/gwrepkqazzw5')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-travellers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Kısa Ziyaret Uzun Hikaye</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/44n0gr94dmx3')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/not-without-hope.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Not Without Hope</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/b9v2r49x82k5')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/bugonia.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Bugonia</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/thqr66kp352b')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/1-people-you-may-know-izle.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">People You May Know</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/3eff9wikzbj6')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/cheetahs-up-close-with-bertie-gregory.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Cheetahs Up Close with Bertie Gregory</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/mlxixw8h374x')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/trap-house-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Trap House</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/qxzerkvvjgv0')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-tiger.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Tiger</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/rkel0po4vgyx')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Follow My Voice</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/5y4r02pr3l7p')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-war-between.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The War Between</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/csqx7cun8jxu')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-rembrandt-syndrome.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Rembrandt</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/kc4ubiuegjbl')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-last-viking.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Last Viking</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ztm5yarrjmtg')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/eddington.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Eddington</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/mx161ypovsfr')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/under-fire-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Under Fire</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/quk82dk9zunp')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/pets-on-a-train.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Evcil Hayvanlar Yolda</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/yzwefi787uo0')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/blucher.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Blücher - Battle on Oslo</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/jeaufof0c9zk')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-ruse.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Ruse</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/auecj800i1t1')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/chainsaw-man-the-movie-reze-arc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Chainsaw Man - The Movie: Reze Arc</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/x3cyq29wmohm')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/see-you-on-venus.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Venüs&#39;te Görüşürüz</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/8hrh4yextjvr')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sisu-road-to-revenge.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sisu 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ohg4rbsybjgu')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-running-man-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Ölüme Koşan Adam</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/dmktkmp86d0b')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/all-the-devils-are-here.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Bütün Şeytanlar Burada</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/xfd8z8jz7491')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-independence.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Detective Knight Independence</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/zfdchf9i3sow')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/zootopia-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Zootropolis 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/hc75oz87z20d')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/wicked-for-good.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Wicked İyilik Uğruna</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/yg3ln7v22dax')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/suddenly-hdfc-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Suddenly</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/4cpi9mc2dscy')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/people-we-meet-on-vacation.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Tatilde Tanıştığımız İnsanlar</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/fr1oe7m50azt')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sauvages</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/kpdhpvqzqofr')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-redemption.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Detective Knight Redemption</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/rpc8mrtwng3t')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hear-no-evil.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Tehlikeli İşaret</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/1hemixssp86u')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gatao-big-brothers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">GATAO: Big Brothers</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/pv6d9tysa3z2')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gatao-like-father-like-son.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">GATAO: Like Father Like Son</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/lluxu3qpqlym')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/dogulu.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Doğulu</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/chfbkkwhsvx4')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-aslan.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Bay & Bayan Aslan</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/1uz2busngwpu')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/fierce-town.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Fierce Town - Zloy gorod</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/vqux2tzxp7on')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/100-nights-of-hero.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">100 Nights of Hero</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ad53ofnjb8to')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/eternity.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sonsuza Dek</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/4t119jwn7itc')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/on-falling.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">On Falling</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/03kmlgppi4jb')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/arcadian.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Arcadian</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/wio0psyxi6dg')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/goodbye-june.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Elveda June</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/hyl0takfor73')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/avatar-fire-and-ash.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Avatar Ateş ve Kül</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/mrktqne344x0')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/fackham-hall.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Fackham Hall</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/xwdwdoprvpon')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/four-letters-of-love.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Four Letters of Love</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/t7y5kpq5ahzb')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-gazinosu.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Ata Demirer Gazinosu</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/qo2sdgnxgw31')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hazel-s-heart.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Hazel&#39;s Heart</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/5asym5xp76i0')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/worldbreaker.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Worldbreaker</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ssq7q0l1e7ob')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/a-time-for-bravery.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Cesurluk Zamanı - A Time For Bravery</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/wuclyvtl4dck')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-great-flood.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Tufan - The Great Flood</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/l8w92jsw1d2v')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-rogue.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Detective Knight Rogue</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/0ey79zj95ypd')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-best-mother-in-the-world.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Best Mother in the World</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/seo5buk7lej7')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ali-cevlik.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Ali Çevlik</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/bkhppqrsdng3')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/preparation-for-the-next-life.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Preparation for the Next Life</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/qnafxjgiwmhx')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/it-ends.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">It Ends</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/vhuhc13oplge')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/black-phone-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Siyah Telefon 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/xc08hgx83kl4')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/only-on-earth.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Only on Earth</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/d72fuvew0osf')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/lone-samurai.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Lone Samurai</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/1me2wqrros8q')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-thing-with-feathers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Thing with Feathers</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/52nw6yqw2w0e')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/silent-night-deadly-night.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sessiz Gece Kanlı Gece</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/7x0eoyntox18')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/last-seen-alive.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Last Seen Alive</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/r778f4xx7zmx')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/influencers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Influencers</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/9fh8yb5brwc2')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/soul-on-fire.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Yaşama Ateşi</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/q3nwe7z8suvr')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/turbulence-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Turbulence</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/x91zbesz3zb0')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/truth-treason.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Truth & Treason</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/2idhr0tc9gv7')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/wake-up-dead-man-a-knives-out-mystery.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Bıçaklar Çekildi Ölü Adamın Uyanışı</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/5n8sx2wnh4hc')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/tell-me-softly.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Yavaşça Söyle - Tell Me Softly</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/qoeskid9go8c')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/waiting-to-exhale.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Bir Oh Desem</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/iizh6s9dveaf')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/we-re-no-angels.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Biz Melek Değiliz</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/44l5fiktbqhj')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/rabbit-trap.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Rabbit Trap</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ctd0xhacpix9')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/koln-75.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Köln 75</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/0p3zcf7d33vg')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/keeper.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Keeper</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/5ubukqts4iyy')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/christy.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Christy</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/662i64gkpxco')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-carpenter-s-son.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Oğul - The Carpenter&#39;s Son</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/teokfazzkepr')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/kombucha.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Kombucha</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/bbk1bufzod4l')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/i-swear.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">I Swear</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/sigilg4v32sk')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/eo.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Ai - Eo</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/87inldipnvss')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-prosecutor.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Prosecutor</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/pf51f72fxsvv')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/nobody-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Önemsiz Biri 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://hdfilmcehennemi.mobi/video/embed/i00JdGVpwzy/')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/run-begihdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Run - Begi</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/hyhio65mqyvf')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/you-drive-me-crazy.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Delirtiyorsun</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/twpubfubn7p2')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/jay-kelly.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Jay Kelly</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/khwj0ajswv6o')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-shadow-s-edge.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Shadow&#39;s Edge</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/fb4eilcpy9u7')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/pose.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Pose</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/zvxj6esmh3re')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/love-and-wine.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Aşk ve Şarap - Love and Wine</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/98tz49195gb7')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-night-my-dad-saved-christmas-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Babam Noel&#39;i Kurtarıyor 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/qqd22qnovca7')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-family-mcmullen.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Family McMullen</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ii1pps1mlw31')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/safe-house.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Safe House</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/aaktqas1ejb1')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-riot.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sulis 1907</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/y13fwhvhpdpl')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/i-wish-you-had-told-me.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Keşke Bana Söyleseydin</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/2fh5brtld8gp')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/best-served-cold.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Best Served Cold</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/6v7tbdxav1fr')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Ata Demirer: Tek Kişilik Dev Kadro 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/bi8iv8d3u6kh')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/grey-skies.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Gri Gökyüzü</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/mmaymcszhbcf')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/re-born.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">RE:BORN - Re Born</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/nht1qhh0w85m')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/my-secret-santa.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Noel Annem - My Secret Santa</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/0e7pa7zn4jat')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/oh-what-fun.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Ne Eğlence Ama!</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/aoe27kj6uabz')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-legend-of-nigger-charley.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Legend of Nigger Charley</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ibfu3dhzi1a9')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/loveable.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Sevimli</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/he4zb424248h')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/tron-ares.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">TRON Ares</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/obuuttr29fzy')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gatao-2-rise-of-the-king.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Gatao 2 : Yeni Kral</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/y2oob0sgjq9o')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/shanks.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Shanks</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/lltaikubgto3')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gatao.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Gatao</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/d3m4e6elnssy')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/carol-of-the-bells.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Carol of the Bells</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://hdfilmcehennemi.mobi/video/embed/NOwl1QUzSHD/')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-sadness.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">The Sadness</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/su2sf9hx4aci')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/daddy-or-mommy.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Bu Nasıl Boşanma</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/ks3ljhrhwg8r')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/efendiler.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Efendiler</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/s1vp6x6h4749')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/trattoria.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Trattoria</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/4kp1z1a74zfg')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/troll-2-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Esrarengiz Canavar 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/9lgahzrrpmso')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/troll.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Troll - Esrarengiz Canavar</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/kh2se6cf9ynt')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mass-jathara.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Mass Jathara</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/kh9nkwxd7puv')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Ata Demirer: Tek Kişilik Dev Kadro</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/kcrzofgz8yo0')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/time-for-them-to-come-home-for-christmas.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Time for Them to Come Home for Christmas</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/uigo3k58c9um')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/toying-with-the-holidays.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Toying with the Holidays</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/vf9eu8dn6w57')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/grey-owl.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Gri Baykuş</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/mfv8hk5tf8jz')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/revolver-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Revolver</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/5vsatnmsptjf')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-guys-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Kim Demiş Kötüyüz Diye? 2</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/r50sfqhryaqk')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/no-chains-no-masters.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">No Chains No Masters</div>
+        </div>
+    </div>
+
+    <div class="filmpanel" onclick="openPlayer('https://www.hdfilmcehennemi.com/rplayer/subaqdntliq7')">
+        <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/wildcat-2025-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">Wildcat</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// PLAYER FONKSİYONLARI
+function openPlayer(url) {
+    // Iframe'i ayarla
+    const iframe = document.getElementById('playerFrame');
+    iframe.src = url;
     
-    function closePlayer() {
-        // Iframe'i temizle
-        const iframe = document.getElementById('playerFrame');
-        iframe.src = '';
-        
-        // Overlay'i gizle
-        document.getElementById('playerOverlay').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
+    // Overlay'i göster
+    document.getElementById('playerOverlay').style.display = 'block';
+    document.body.style.overflow = 'hidden';
     
-    // ARAMA FONKSİYONU
-    function searchMovies() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const movieCards = document.querySelectorAll('.movie-card');
-        let found = false;
-        
-        movieCards.forEach(card => {
-            const title = card.querySelector('.movie-title').textContent.toLowerCase();
-            if (title.includes(searchTerm)) {
-                card.style.display = 'block';
-                found = true;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-        
-        // Arama sonucu yoksa mesaj göster
-        const existingMessage = document.querySelector('.no-results');
-        if (!found) {
-            if (!existingMessage) {
-                const message = document.createElement('div');
-                message.className = 'no-results';
-                message.style.cssText = `
-                    grid-column: 1 / -1;
-                    text-align: center;
-                    padding: 40px;
-                    color: #888;
-                    font-size: 18px;
-                `;
-                message.textContent = 'Film bulunamadı!';
-                document.getElementById('moviesGrid').appendChild(message);
-            }
+    // ESC tuşu ile kapatma
+    document.addEventListener('keydown', function escClose(e) {
+        if (e.key === 'Escape') {
+            closePlayer();
+            document.removeEventListener('keydown', escClose);
+        }
+    });
+}
+
+function closePlayer() {
+    // Iframe'i temizle
+    const iframe = document.getElementById('playerFrame');
+    iframe.src = '';
+    
+    // Overlay'i gizle
+    document.getElementById('playerOverlay').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// ARAMA FONKSİYONLARI
+function searchFilms() {
+    var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
+    var container = document.getElementById('filmListesiContainer');
+    var panels = container.querySelectorAll('.filmpanel');
+    var found = false;
+
+    panels.forEach(function(panel) {
+        var filmName = panel.querySelector('.filmisim').textContent.toLowerCase();
+        if (filmName.includes(searchTerm)) {
+            panel.style.display = 'block';
+            found = true;
         } else {
-            if (existingMessage) {
-                existingMessage.remove();
-            }
+            panel.style.display = 'none';
+        }
+    });
+
+    if (!found) {
+        var existingNoResults = container.querySelector('.hataekran');
+        if (!existingNoResults) {
+            var noResults = document.createElement('div');
+            noResults.className = 'hataekran';
+            noResults.innerHTML = '<i class="fas fa-search"></i><div class="hatayazi">Film bulunamadı!</div>';
+            container.appendChild(noResults);
+        }
+    } else {
+        var noResults = container.querySelector('.hataekran');
+        if (noResults) {
+            noResults.remove();
         }
     }
-    
-    // ENTER TUŞU İLE ARAMA
-    document.getElementById('searchInput').addEventListener('keyup', function(e) {
-        if (e.key === 'Enter') {
-            searchMovies();
-        }
+
+    return false;
+}
+
+function resetFilmSearch() {
+    var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
+    if (searchTerm === "") {
+        var container = document.getElementById('filmListesiContainer');
+        var panels = container.querySelectorAll('.filmpanel');
+        panels.forEach(function(panel) {
+            panel.style.display = 'block';
+        });
         
-        // Input temizlenince tüm filmleri göster
-        if (this.value === '') {
-            const movieCards = document.querySelectorAll('.movie-card');
-            movieCards.forEach(card => {
-                card.style.display = 'block';
-            });
-            
-            const existingMessage = document.querySelector('.no-results');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
+        var noResults = container.querySelector('.hataekran');
+        if (noResults) {
+            noResults.remove();
         }
-    });
-    
-    // SAYFA YÜKLENDİĞİNDE
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('VOD Sayfası hazır!');
-    });
-    </script>
+    }
+}
+</script>
 </body>
 </html>
