@@ -27,7 +27,7 @@ jobs:
 
     - name: Scraper çalıştır
       run: |
-        python scraper.py
+        python hdfilmcehennemi.py
 
     - name: Değişiklik kontrolü ve commit
       run: |
