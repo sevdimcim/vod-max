@@ -5,6 +5,9 @@ import json
 import re
 import concurrent.futures
 from threading import Lock
+import sqlite3
+import os
+from datetime import datetime
 
 # --- AYARLAR ---
 BASE_URL = "https://www.hdfilmcehennemi.nl"
@@ -22,9 +25,122 @@ HEADERS_FILM = {
 
 # Thread-safe lock
 print_lock = Lock()
+DB_FILE = "filmler.db"
 
-def process_film(film_link, film_adi, poster_url):
-    """Tek bir filmi işler ve veriyi döndürür"""
+def init_database():
+    """Veritabanını başlat"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    
+    # Filmler tablosu
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS filmler (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        film_adi TEXT NOT NULL,
+        poster_url TEXT,
+        player_url TEXT NOT NULL,
+        sayfa_no INTEGER,
+        eklenme_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(film_adi, player_url)
+    )
+    ''')
+    
+    # Arama indeksi
+    cursor.execute('''
+    CREATE VIRTUAL TABLE IF NOT EXISTS film_search 
+    USING fts5(film_adi, content='filmler', content_rowid='id')
+    ''')
+    
+    conn.commit()
+    conn.close()
+    print("📁 Veritabanı hazır!")
+
+def save_film_to_db(film_adi, poster_url, player_url, sayfa_no):
+    """Filmi veritabanına kaydet"""
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        
+        # Film adını temizle
+        clean_film_adi = film_adi.strip()
+        
+        # Zaten var mı kontrol et
+        cursor.execute("SELECT id FROM filmler WHERE film_adi = ? AND player_url = ?", 
+                      (clean_film_adi, player_url))
+        
+        if cursor.fetchone() is None:
+            # Yeni film ekle
+            cursor.execute('''
+            INSERT INTO filmler (film_adi, poster_url, player_url, sayfa_no)
+            VALUES (?, ?, ?, ?)
+            ''', (clean_film_adi, poster_url, player_url, sayfa_no))
+            
+            film_id = cursor.lastrowid
+            
+            # Arama indeksine ekle
+            cursor.execute('''
+            INSERT INTO film_search (rowid, film_adi)
+            VALUES (?, ?)
+            ''', (film_id, clean_film_adi))
+            
+            conn.commit()
+            return True
+        return False
+        
+    except sqlite3.IntegrityError:
+        return False
+    except Exception as e:
+        print(f"Veritabanı hatası: {e}")
+        return False
+    finally:
+        conn.close()
+
+def get_total_film_count():
+    """Toplam film sayısını getir"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM filmler")
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count
+
+def get_random_films(limit=99):
+    """Rastgele filmleri getir"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute('''
+    SELECT film_adi, poster_url, player_url 
+    FROM filmler 
+    ORDER BY RANDOM() 
+    LIMIT ?
+    ''', (limit,))
+    
+    films = cursor.fetchall()
+    conn.close()
+    
+    return [{"film_adi": f[0], "poster_url": f[1], "player_url": f[2]} for f in films]
+
+def search_films(query, limit=100):
+    """Filmleri ara"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+    SELECT f.film_adi, f.poster_url, f.player_url 
+    FROM filmler f
+    JOIN film_search fs ON f.id = fs.rowid
+    WHERE film_adi MATCH ?
+    ORDER BY rank
+    LIMIT ?
+    ''', (f'*{query}*', limit))
+    
+    films = cursor.fetchall()
+    conn.close()
+    
+    return [{"film_adi": f[0], "poster_url": f[1], "player_url": f[2]} for f in films]
+
+def process_film(film_link, film_adi, poster_url, sayfa_no):
+    """Tek bir filmi işler"""
     try:
         target_url = BASE_URL + film_link if not film_link.startswith('http') else film_link
         
@@ -39,41 +155,39 @@ def process_film(film_link, film_adi, poster_url):
         if iframe and iframe.get('data-src'):
             raw_iframe_url = iframe.get('data-src')
             
-            # .nl DOMAIN KULLAN (SENİN HTML'DEKİ GİBİ)
-            # Direkt raw_iframe_url'i kullan, .com'a çevirme!
+            # .nl DOMAIN KULLAN
             player_url = raw_iframe_url
             
-            # Eğer rplayer linkiyse .nl domain ile
             if "/rplayer/" in raw_iframe_url:
-                # zaten .nl domain'i olmalı
                 player_url = raw_iframe_url
             elif "rapidrame_id=" in raw_iframe_url:
                 rapid_id = raw_iframe_url.split("rapidrame_id=")[1]
-                # .nl DOMAIN KULLAN!
                 player_url = f"https://www.hdfilmcehennemi.nl/rplayer/{rapid_id}"
         
-        # EĞER PLAYER_URL YOKSA, BOŞ DÖNDÜR
+        # EĞER PLAYER_URL YOKSA, ATLA
         if not player_url:
             with print_lock:
                 print(f"❌ ATLANDI: {film_adi[:50]}... (Link yok)")
             return None
         
-        with print_lock:
-            print(f"✅ {film_adi[:50]}...")
+        # Veritabanına kaydet
+        saved = save_film_to_db(film_adi, poster_url, player_url, sayfa_no)
         
-        return {
-            "resim": poster_url,
-            "film_adi": film_adi,
-            "player_url": player_url
-        }
-            
+        with print_lock:
+            if saved:
+                print(f"✅ {film_adi[:50]}...")
+            else:
+                print(f"🔁 ZATEN VAR: {film_adi[:50]}...")
+        
+        return saved
+        
     except Exception as e:
         with print_lock:
             print(f"❌ HATA: {film_adi[:30]}... - {str(e)[:50]}")
         return None
 
 def process_page(sayfa):
-    """Tek bir sayfayı işler ve film listesi döndürür"""
+    """Tek bir sayfayı işler"""
     try:
         api_page_url = f"{BASE_URL}/load/page/{sayfa}/categories/film-izle-2/"
         
@@ -90,7 +204,7 @@ def process_page(sayfa):
             film_kutulari = soup.find_all('a', class_='poster')
             
             if not film_kutulari:
-                return []
+                return 0
             
             film_tasks = []
             
@@ -104,67 +218,128 @@ def process_page(sayfa):
                 if film_link:
                     film_tasks.append((film_link, film_adi, poster_url))
             
-            page_films = []
+            saved_count = 0
             
             # Thread pool ile paralel işleme
             with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
                 futures = []
                 for film_link, film_adi, poster_url in film_tasks:
-                    future = executor.submit(process_film, film_link, film_adi, poster_url)
+                    future = executor.submit(process_film, film_link, film_adi, poster_url, sayfa)
                     futures.append(future)
                 
                 for future in concurrent.futures.as_completed(futures):
                     result = future.result()
                     if result:
-                        page_films.append(result)
+                        saved_count += 1
                 
             with print_lock:
-                print(f"✅ SAYFA {sayfa} TAMAMLANDI - {len(page_films)} film eklendi")
-            return page_films
+                print(f"✅ SAYFA {sayfa} TAMAMLANDI - {saved_count} yeni film eklendi")
+            return saved_count
                 
         else:
             with print_lock:
                 print(f"⚠️ Sayfa {sayfa} hata: {response.status_code}")
-            return []
+            return 0
                 
     except Exception as e:
         with print_lock:
             print(f"💥 Sayfa {sayfa} hatası: {str(e)[:50]}")
-        return []
+        return 0
 
-def main():
-    print("🚀 BOT BAŞLATILDI!")
-    print("⚡ 6 Sayfa çekilecek...")
-    print("🎬 Filmler .nl domain ile açılacak (senin HTML'deki gibi)")
-    print("⏱️ Tahmini süre: 2-3 dakika\n")
+def main_scraper():
+    """Ana scrapper fonksiyonu"""
+    print("🚀 MEGA BOT BAŞLATILDI!")
+    print("⚡ TÜM 790 SAYFA ÇEKİLECEK!")
+    print("💾 Veritabanına kaydedilecek")
+    print("🎲 Ekranda 99 rastgele film gösterilecek")
+    print("🔍 Geri kalanı arama ile bulunacak")
+    print("⏱️ Tahmini süre: 3-4 saat\n")
     
-    filmler = []
+    # Veritabanını başlat
+    init_database()
     
-    # 6 sayfa çek
-    TOPLAM_SAYFA = 6
+    total_saved = 0
+    TOTAL_PAGES = 790
     
-    # Sayfaları sırayla işle
-    for sayfa in range(1, TOPLAM_SAYFA + 1):
+    # Önce mevcut film sayısını kontrol et
+    mevcut_filmler = get_total_film_count()
+    print(f"📊 Veritabanında {mevcut_filmler} film bulunuyor.")
+    
+    # Kullanıcıya seçenek sun
+    print("\n1. Tüm sayfaları çek (790 sayfa)")
+    print("2. Sadece eksik sayfaları çek")
+    print("3. Belirli sayfa aralığı çek")
+    
+    secim = input("\nSeçiminiz (1/2/3): ").strip()
+    
+    if secim == "1":
+        # Tüm sayfalar
+        baslangic = 1
+        bitis = TOTAL_PAGES
+    elif secim == "2":
+        # Eksik sayfaları bul
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        cursor.execute("SELECT DISTINCT sayfa_no FROM filmler")
+        mevcut_sayfalar = {row[0] for row in cursor.fetchall()}
+        conn.close()
+        
+        tum_sayfalar = set(range(1, TOTAL_PAGES + 1))
+        eksik_sayfalar = tum_sayfalar - mevcut_sayfalar
+        
+        if not eksik_sayfalar:
+            print("✅ Tüm sayfalar zaten çekilmiş!")
+            return
+        
+        baslangic = min(eksik_sayfalar)
+        bitis = max(eksik_sayfalar)
+        print(f"📊 {len(eksik_sayfalar)} eksik sayfa çekilecek: {baslangic}-{bitis}")
+    elif secim == "3":
+        baslangic = int(input("Başlangıç sayfası: "))
+        bitis = int(input("Bitiş sayfası: "))
+    else:
+        print("❌ Geçersiz seçim!")
+        return
+    
+    # Sayfaları işle
+    completed = 0
+    toplam_sayfa = bitis - baslangic + 1
+    
+    for sayfa in range(baslangic, bitis + 1):
         try:
-            page_films = process_page(sayfa)
-            filmler.extend(page_films)
+            saved = process_page(sayfa)
+            total_saved += saved
             
-            print(f"📊 İlerleme: {sayfa}/{TOPLAM_SAYFA} sayfa - Toplam {len(filmler)} film")
+            completed += 1
+            print(f"📊 İlerleme: {completed}/{toplam_sayfa} sayfa - Toplam {get_total_film_count()} film")
             
-            # Sayfalar arası biraz bekle
-            if sayfa < TOPLAM_SAYFA:
-                time.sleep(1)
+            # Her 10 sayfada bir istatistik göster
+            if completed % 10 == 0:
+                print(f"\n📈 İstatistik: {total_saved} yeni film eklendi")
+                print(f"💾 Toplam: {get_total_film_count()} film")
+            
+            # Sayfalar arası bekle
+            if sayfa < bitis:
+                time.sleep(0.5)
                 
         except Exception as e:
             print(f"Sayfa {sayfa} işlenirken hata: {e}")
     
-    print(f"\n🎉 TAMAMLANDI! Toplam {len(filmler)} film çekildi!")
+    # İstatistikleri göster
+    print(f"\n🎉 TAMAMLANDI!")
+    print(f"📈 {total_saved} yeni film eklendi")
+    print(f"💾 Toplam: {get_total_film_count()} film")
     
-    # HTML oluştur (SENİN HTML YAPINDA)
-    create_html_file(filmler)
+    # HTML oluştur
+    create_html_file()
 
-def create_html_file(filmler):
-    # HTML içeriği - SENİN VERDİĞİN HTML YAPISINDA
+def create_html_file():
+    """HTML dosyasını oluştur"""
+    # Rastgele 99 film al
+    random_films = get_random_films(99)
+    total_films = get_total_film_count()
+    
+    # HTML içeriği
     html_content = '''<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -286,16 +461,17 @@ def create_html_file(filmler):
     }
     .aramapanelyazi {
         height: 40px;
-        width: 120px;
+        width: 200px;
         border: 1px solid #ccc;
         box-sizing: border-box;
         padding: 0px 10px;
         color: #000;
         margin: 0px 5px;
+        font-size: 14px;
     }
     .aramapanelbuton {
         height: 40px;
-        width: 40px;
+        width: 60px;
         text-align: center;
         background-color: #572aa7;
         border: none;
@@ -304,6 +480,7 @@ def create_html_file(filmler):
         overflow: hidden;
         float: right;
         transition: .35s;
+        cursor: pointer;
     }
     .aramapanelbuton:hover {
         background-color: #fff;
@@ -324,6 +501,15 @@ def create_html_file(filmler):
         line-height: 40px;
         font-weight: 500;
         color: #fff;
+    }
+    .info-bar {
+        background: #572aa7;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        font-size: 14px;
+        margin: 10px 0;
+        border-radius: 5px;
     }
     .hataekran i {
         color: #572aa7;
@@ -355,6 +541,9 @@ def create_html_file(filmler):
             height: 190px;
             margin: 1%;
         }
+        .aramapanelyazi {
+            width: 150px;
+        }
     }
 </style>
 </head>
@@ -362,29 +551,29 @@ def create_html_file(filmler):
 <div class="aramapanel">
 <div class="aramapanelsol">
 <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
-<div class="logoisim">TITAN TV VOD (''' + str(len(filmler)) + ''' Film)</div>
+<div class="logoisim">TITAN TV VOD (''' + str(total_films) + ''' Film)</div>
 </div>
 <div class="aramapanelsag">
+<div class="info-bar">🎲 Ekranda 99 rastgele film gösteriliyor. Arama yaparak tüm ''' + str(total_films) + ''' filmi bulabilirsiniz.</div>
 <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
-    <input type="text" id="filmSearch" placeholder="Film Adını Giriniz..!" class="aramapanelyazi" oninput="resetFilmSearch()">
+    <input type="text" id="filmSearch" placeholder="Film ara (tüm ''' + str(total_films) + ''' filmde ara)" class="aramapanelyazi" oninput="handleSearchInput()">
     <input type="submit" value="ARA" class="aramapanelbuton">
 </form>
 </div>
 </div>
 
 <div class="filmpaneldis" id="filmListesiContainer">
-    <div class="baslik">HDFİLMCEHENNEMİ VOD - Tüm Filmler</div>
+    <div class="baslik">HDFİLMCEHENNEMİ VOD - Rastgele 99 Film</div>
 '''
 
-    # Film panellerini ekle (SENİN HTML YAPINDA)
-    for film in filmler:
-        # Film adını temizle
+    # Rastgele filmleri ekle
+    for film in random_films:
         film_adi_clean = film['film_adi'].replace('"', '&quot;').replace("'", "&#39;")
         
         html_content += f'''
     <a href="{film['player_url']}">
         <div class="filmpanel">
-            <div class="filmresim"><img src="{film['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmresim"><img src="{film['poster_url']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
             <div class="filmisimpanel">
                 <div class="filmisim">{film_adi_clean}</div>
             </div>
@@ -396,56 +585,123 @@ def create_html_file(filmler):
 </div>
 
 <script>
+let allFilms = [];
+
+// Tüm filmleri yükle (arama için)
+function loadAllFilms() {
+    // Burada tüm filmler veritabanından yüklenebilir
+    // Şimdilik boş bırakıyoruz, arama yapıldığında yüklenecek
+    console.log("Tüm filmler yüklenecek...");
+}
+
+// AJAX ile film ara
 function searchFilms() {
-    var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
-    var container = document.getElementById('filmListesiContainer');
-    var panels = container.querySelectorAll('.filmpanel');
-    var found = false;
-
-    panels.forEach(function(panel) {
-        var filmName = panel.querySelector('.filmisim').textContent.toLowerCase();
-        if (filmName.includes(searchTerm)) {
-            panel.parentElement.style.display = 'block';
-            found = true;
-        } else {
-            panel.parentElement.style.display = 'none';
-        }
-    });
-
-    if (!found) {
-        var existingNoResults = container.querySelector('.hataekran');
-        if (!existingNoResults) {
-            var noResults = document.createElement('div');
-            noResults.className = 'hataekran';
-            noResults.innerHTML = '<i class="fas fa-search"></i><div class="hatayazi">Film bulunamadı!</div>';
-            container.appendChild(noResults);
-        }
-    } else {
-        var noResults = container.querySelector('.hataekran');
-        if (noResults) {
-            noResults.remove();
-        }
+    const searchTerm = document.getElementById('filmSearch').value.trim().toLowerCase();
+    
+    if (searchTerm.length < 2) {
+        alert("Lütfen en az 2 karakter girin!");
+        return false;
     }
-
+    
+    // Loading göster
+    const container = document.getElementById('filmListesiContainer');
+    container.innerHTML = '<div class="hataekran"><i class="fas fa-spinner fa-spin"></i><div class="hatayazi">Aranıyor...</div></div>';
+    
+    // AJAX isteği (gerçek uygulamada backend'den veri çekmeli)
+    setTimeout(() => {
+        // Bu kısım gerçek uygulamada AJAX ile veritabanından arama yapacak
+        // Şimdilik demo amaçlı
+        showSearchResults(searchTerm);
+    }, 500);
+    
     return false;
 }
 
-function resetFilmSearch() {
-    var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
-    if (searchTerm === "") {
-        var container = document.getElementById('filmListesiContainer');
-        var panels = container.querySelectorAll('.filmpanel');
-        panels.forEach(function(panel) {
-            panel.parentElement.style.display = 'block';
+// Arama sonuçlarını göster (demo)
+function showSearchResults(searchTerm) {
+    const container = document.getElementById('filmListesiContainer');
+    
+    // AJAX ile arama sonuçlarını getir
+    fetch('/api/search?q=' + encodeURIComponent(searchTerm))
+        .then(response => response.json())
+        .then(films => {
+            if (films.length === 0) {
+                container.innerHTML = \'''
+                <div class="baslik">Arama Sonuçları: "\''' + searchTerm + \'''"</div>
+                <div class="hataekran">
+                    <i class="fas fa-search"></i>
+                    <div class="hatayazi">Film bulunamadı!</div>
+                </div>\''';
+                return;
+            }
+            
+            let html = \'''<div class="baslik">Arama Sonuçları: "\''' + searchTerm + \'''" (''' + films.length + \''' film)</div>\''';
+            
+            films.forEach(film => {
+                const filmAdiClean = film.film_adi.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                html += \'''
+                <a href="\''' + film.player_url + \'''">
+                    <div class="filmpanel">
+                        <div class="filmresim"><img src="\''' + film.poster_url + \'''" onerror="this.src=\'https://via.placeholder.com/300x450?text=Resim+Yok\'"></div>
+                        <div class="filmisimpanel">
+                            <div class="filmisim">\''' + filmAdiClean + \'''</div>
+                        </div>
+                    </div>
+                </a>\''';
+            });
+            
+            container.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Arama hatası:', error);
+            container.innerHTML = \'''
+            <div class="hataekran">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="hatayazi">Arama sırasında hata oluştu!</div>
+            </div>\''';
         });
-        
-        var noResults = container.querySelector('.hataekran');
-        if (noResults) {
-            noResults.remove();
-        }
+}
+
+// Arama input'u değiştiğinde
+function handleSearchInput() {
+    const searchTerm = document.getElementById('filmSearch').value.trim();
+    
+    if (searchTerm === '') {
+        // Arama kutusu boşsa rastgele filmleri göster
+        location.reload();
     }
 }
+
+// Sayfa yüklendiğinde
+document.addEventListener('DOMContentLoaded', function() {
+    loadAllFilms();
+});
+
+// Enter tuşu ile arama
+document.getElementById('filmSearch').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchFilms();
+    }
+});
 </script>
+
+<!-- Basit API endpoint simülasyonu için -->
+<script>
+// Demo amaçlı API endpoint
+window.API = {
+    search: function(query) {
+        // Gerçek uygulamada bu endpoint backend'de olmalı
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Demo filmler
+                const demoFilms = [];
+                resolve(demoFilms);
+            }, 300);
+        });
+    }
+};
+</script>
+
 </body>
 </html>'''
 
@@ -454,11 +710,40 @@ function resetFilmSearch() {
         f.write(html_content)
     
     print(f"\n✅ HTML dosyası '{filename}' oluşturuldu!")
-    print(f"🎬 Toplam {len(filmler)} film eklendi")
-    print(f"🔗 Tüm linkler .nl domain ile (senin HTML'deki gibi)")
-    print(f"🔍 Arama özelliği aktif")
-    print(f"📱 Mobil uyumlu")
-    print(f"💾 Dosya boyutu: {len(html_content) // 1024} KB")
+    print(f"🎲 Ekranda 99 rastgele film gösteriliyor")
+    print(f"📊 Toplam {total_films} film veritabanında")
+    print(f"🔍 Arama ile tüm filmler bulunabilir")
+    print(f"💾 HTML boyutu: {len(html_content) // 1024} KB")
+    print(f"\n⚠️ NOT: Gerçek arama için backend API gerekiyor.")
+    print(f"     Şu an demo modunda çalışıyor.")
+
+def show_statistics():
+    """İstatistikleri göster"""
+    total = get_total_film_count()
+    print(f"\n📊 İSTATİSTİKLER:")
+    print(f"   Toplam Film: {total}")
+    print(f"   Veritabanı: {DB_FILE}")
+    print(f"   HTML Dosyası: hdfilmcehennemi.html")
 
 if __name__ == "__main__":
-    main()
+    print("=" * 50)
+    print("🎬 HDFİLMCEHENNEMİ MEGA BOT")
+    print("=" * 50)
+    
+    print("\n1. Filmleri Çek (Scraper)")
+    print("2. HTML Oluştur")
+    print("3. İstatistikleri Göster")
+    print("4. Çıkış")
+    
+    secim = input("\nSeçiminiz (1/2/3/4): ").strip()
+    
+    if secim == "1":
+        main_scraper()
+    elif secim == "2":
+        create_html_file()
+    elif secim == "3":
+        show_statistics()
+    elif secim == "4":
+        print("👋 Çıkılıyor...")
+    else:
+        print("❌ Geçersiz seçim!")
