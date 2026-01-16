@@ -137,7 +137,7 @@ def process_page(sayfa):
 def main():
     print("🚀 BOT BAŞLATILDI!")
     print("⚡ 6 Sayfa çekilecek...")
-    print("🎬 Filmler sayfa içinde açılacak")
+    print("🎬 Filmler YENİ SEKMEDE açılacak (iframe engeli nedeniyle)")
     print("⏱️ Tahmini süre: 2-3 dakika\n")
     
     filmler_data = {}
@@ -174,10 +174,9 @@ def main():
     create_html_file(filmler_data)
 
 def create_html_file(data):
-    # Film adlarını temizle (tek tırnak sorunu için)
+    # Film adlarını temizle
     cleaned_data = {}
     for film_id, film_info in data.items():
-        # HTML için temizle
         cleaned_film_adi = film_info['film_adi'].replace("'", "&#39;").replace('"', "&quot;")
         cleaned_data[film_id] = {
             "resim": film_info["resim"],
@@ -185,14 +184,13 @@ def create_html_file(data):
             "player_url": film_info["player_url"]
         }
     
-    # HTML içeriği - ORJİNAL TASARIM KORUNDU
+    # HTML içeriği - YENİ SEKMEDE AÇILACAK (iframe engeli nedeniyle)
     html_template = '''<!DOCTYPE html>
 <html lang="tr">
 <head>
 <title>TITAN TV VOD</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-<meta name="referrer" content="no-referrer">
 <link href="https://fonts.googleapis.com/css?family=PT+Sans:700i" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://kit.fontawesome.com/bbe955c5ed.js" crossorigin="anonymous"></script>
@@ -376,25 +374,6 @@ def create_html_file(data):
         margin: 20px 0px;
     }
     
-    /* PLAYER OVERLAY - KAPATMA BUTONU YOK */
-    .player-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.95);
-        z-index: 9999;
-        display: none;
-        cursor: pointer;
-    }
-    
-    .player-iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-    }
-    
     @media(max-width:550px) {
         .filmpanel {
             width: 31.33%;
@@ -418,11 +397,6 @@ def create_html_file(data):
 </div>
 </div>
 
-<!-- PLAYER OVERLAY - KAPATMA BUTONU YOK -->
-<div class="player-overlay" id="playerOverlay" onclick="closePlayer()">
-    <iframe class="player-iframe" id="playerFrame" allowfullscreen referrerpolicy="no-referrer"></iframe>
-</div>
-
 <div class="filmpaneldis" id="filmListesiContainer">
     <div class="baslik">HDFİLMCEHENNEMİ VOD - Tüm Filmler</div>
 '''
@@ -431,16 +405,13 @@ def create_html_file(data):
     total_films = len(cleaned_data)
     html_template = html_template.replace("__TOTAL_FILMS__", str(total_films))
     
-    # Film panellerini ekle - SAYFA İÇİNDE AÇILACAK
+    # Film panellerini ekle - YENİ SEKMEDE AÇILACAK
     film_counter = 0
     for film_id, film_info in cleaned_data.items():
         film_counter += 1
         
-        # JavaScript için güvenli string (tek tırnakları kaldır)
-        safe_film_adi = film_info['film_adi'].replace("'", "").replace('"', '')
-        
         html_template += f'''
-    <div class="filmpanel" onclick="openPlayer('{film_info['player_url']}')">
+    <div class="filmpanel" onclick="window.open('{film_info['player_url']}', '_blank', 'noopener,noreferrer')">
         <div class="filmresim"><img src="{film_info['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
         <div class="filmisimpanel">
             <div class="filmisim">{film_info['film_adi']}</div>
@@ -455,35 +426,6 @@ def create_html_file(data):
 </div>
 
 <script>
-// PLAYER FONKSİYONLARI
-function openPlayer(url) {
-    // Iframe'i ayarla
-    const iframe = document.getElementById('playerFrame');
-    iframe.src = url;
-    
-    // Overlay'i göster
-    document.getElementById('playerOverlay').style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    
-    // ESC tuşu ile kapatma
-    document.addEventListener('keydown', function escClose(e) {
-        if (e.key === 'Escape') {
-            closePlayer();
-            document.removeEventListener('keydown', escClose);
-        }
-    });
-}
-
-function closePlayer() {
-    // Iframe'i temizle
-    const iframe = document.getElementById('playerFrame');
-    iframe.src = '';
-    
-    // Overlay'i gizle
-    document.getElementById('playerOverlay').style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
 // ARAMA FONKSİYONLARI
 function searchFilms() {
     var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
@@ -534,6 +476,11 @@ function resetFilmSearch() {
         }
     }
 }
+
+// YENİ PENCERE AÇMA (iframe engeli nedeniyle)
+function openInNewWindow(url) {
+    window.open(url, '_blank', 'width=1200,height=700,scrollbars=yes,resizable=yes');
+}
 </script>
 </body>
 </html>'''
@@ -544,10 +491,12 @@ function resetFilmSearch() {
     
     print(f"\n✅ HTML dosyası '{filename}' oluşturuldu!")
     print(f"🎬 Toplam {len(cleaned_data)} film eklendi")
-    print(f"🎥 Filmler SAYFA İÇİNDE açılacak (Overlay'e tıkla kapat)")
+    print(f"🎥 Filmler YENİ SEKMEDE açılacak (iframe engeli nedeniyle)")
     print(f"🔍 Arama özelliği aktif")
     print(f"📱 Mobil uyumlu tasarım")
     print(f"💾 Dosya boyutu: {len(html_template) // 1024} KB")
+    print(f"\n⚠️ NOT: HDFilmCehennemi iframe embedding'i engellediği için")
+    print(f"     filmler yeni sekmede açılacak. Bu sitenin güvenlik politikasıdır.")
 
 if __name__ == "__main__":
     main()
