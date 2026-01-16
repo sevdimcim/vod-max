@@ -2,8 +2,8 @@ name: Film Scraper
 
 on:
   schedule:
-    - cron: "0 */6 * * *"   # 6 saatte bir çalışır
-  workflow_dispatch:        # Manuel çalıştırma butonu
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -14,12 +14,12 @@ jobs:
 
     steps:
     - name: Repo'yu klonla
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Python kur
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: 3.10
+        python-version: "3.11"
 
     - name: Gerekli kütüphaneleri kur
       run: |
@@ -27,18 +27,15 @@ jobs:
 
     - name: Scraper çalıştır
       run: |
-        echo ">>> Scraper çalışıyor..."
-        python3 scraper.py
+        python scraper.py
 
-    - name: Değişiklik var mı kontrol et
+    - name: Değişiklik kontrolü ve commit
       run: |
-        if [ -z "$(git status --porcelain)" ]; then
-          echo ">>> Değişiklik yok, commit yapılmayacak."
+        if git diff --quiet; then
+          echo "Degisiklik yok."
         else
-          echo ">>> Değişiklik var, commit atılıyor..."
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-
           git add filmler.html
           git commit -m "Otomatik güncelleme - $(date '+%Y-%m-%d %H:%M:%S')"
           git push
