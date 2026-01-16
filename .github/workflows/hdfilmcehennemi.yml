@@ -1,0 +1,82 @@
+name: HDFilmCehennemi Film Scraper
+
+on:
+  schedule:
+    # Her gün 08:00 UTC'de çalıştır (Türkiye saatiyle 11:00)
+    - cron: '0 8 * * *'
+    
+  # Manuel tetikleme için
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: 'Kaç sayfa taranacak?'
+        required: false
+        default: '5'
+        type: string
+      delay:
+        description: 'Filmler arası bekleme (saniye)'
+        required: false
+        default: '0.5'
+        type: string
+
+jobs:
+  scrape-films:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4
+        
+    - name: Run Film Scraper
+      env:
+        PAGES: ${{ inputs.pages || '5' }}
+        DELAY: ${{ inputs.delay || '0.5' }}
+      run: |
+        echo "📅 Scraping started at: $(date)"
+        echo "📊 Pages to scrape: $PAGES"
+        echo "⏱️ Delay between films: $DELAY seconds"
+        python hdfilmcehennemi.py $PAGES $DELAY
+        
+    - name: Commit and Push Changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # HTML dosyası değişti mi kontrol et
+        if git diff --name-only | grep -q "hdfilmcehennemi.html"; then
+          echo "🔄 HTML file updated, committing changes..."
+          git add hdfilmcehennemi.html
+          git commit -m "🤖 Auto-update: Film data refreshed [$(date +'%Y-%m-%d %H:%M:%S')]"
+          git push origin main
+          echo "✅ Changes pushed to repository"
+        else
+          echo "⚠️ No changes in HTML file, skipping commit"
+        fi
+        
+    - name: Create Summary
+      if: always()
+      run: |
+        echo "## 🎬 HDFilmCehennemi Scraping Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Scraping Time:** $(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
+        echo "- **Pages Scraped:** ${{ inputs.pages || '5' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Delay Between Films:** ${{ inputs.delay || '0.5' }} seconds" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "hdfilmcehennemi.html" ]; then
+          FILESIZE=$(stat -c%s "hdfilmcehennemi.html")
+          FILESIZE_KB=$((FILESIZE / 1024))
+          echo "- **HTML File Size:** ${FILESIZE_KB} KB" >> $GITHUB_STEP_SUMMARY
+        fi
