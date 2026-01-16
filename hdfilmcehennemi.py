@@ -7,13 +7,11 @@ import os
 import sys
 
 # Komut satırı argümanları
-PAGES_TO_SCRAPE = int(sys.argv[1]) if len(sys.argv) > 1 else 10  # 10 sayfa test için
+PAGES_TO_SCRAPE = int(sys.argv[1]) if len(sys.argv) > 1 else 10
 DELAY_BETWEEN_FILMS = float(sys.argv[2]) if len(sys.argv) > 2 else 0.3
 
-# Web sitesi kök adresi
 BASE_URL = "https://www.hdfilmcehennemi.nl"
 
-# --- HEADERS AYARLARI ---
 HEADERS_PAGE = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Referer": f"{BASE_URL}/",
@@ -25,7 +23,6 @@ HEADERS_FILM = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
-# Yeniden deneme ayarları
 MAX_RETRIES = 3
 RETRY_DELAY = 2
 
@@ -116,7 +113,6 @@ def main():
                         
                         film_id = slugify(film_adi)
                         
-                        # --- POSTER ÇEKME ---
                         poster_img = a_etiketi.find('img')
                         poster_url = ""
                         
@@ -130,7 +126,6 @@ def main():
                         
                         print(f"🎬 İşleniyor: {film_adi}")
                         
-                        # --- FİLM DETAY SAYFASINA GİT ve LİNK ÇEK ---
                         video_url = ""
                         if film_link:
                             try:
@@ -158,7 +153,6 @@ def main():
                             except Exception as e:
                                 print(f"    ⚠ Hata (Film Sayfası): {e}")
                         
-                        # Veriyi kaydet
                         filmler_data[film_id] = {
                             "isim": film_adi,
                             "resim": poster_url if poster_url else "https://via.placeholder.com/300x450/15161a/ffffff?text=No+Image",
@@ -191,7 +185,7 @@ def main():
     create_files(filmler_data)
 
 def create_files(data):
-    # 1. JSON dosyasını oluştur
+    # JSON dosyasını oluştur
     json_filename = "hdfilmcehennemi.json"
     with open(json_filename, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
@@ -199,14 +193,12 @@ def create_files(data):
     print(f"✅ JSON dosyası '{json_filename}' oluşturuldu!")
     print(f"📁 JSON boyutu: {os.path.getsize(json_filename) / 1024:.2f} KB")
     
-    # 2. HTML dosyasını oluştur (ESKİ TASARIM AYNI KALSIN)
+    # HTML dosyasını oluştur
     create_html_file(data)
 
 def create_html_file(data):
-    # JSON verisini string'e çevir
     json_str = json.dumps(data, ensure_ascii=False)
     
-    # HTML içeriği - TAMAMEN ESKİSİ GİBİ (SADECE JSON KISMI DEĞİŞECEK)
     html_template = f'''<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -216,7 +208,6 @@ def create_html_file(data):
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:700i" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://kit.fontawesome.com/bbe955c5ed.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
     <style>
         *:not(input):not(textarea) {{
             -moz-user-select: -moz-none;
@@ -240,79 +231,6 @@ def create_html_file(data):
             -webkit-text-decoration: none;
             overflow-x: hidden;
         }}
-        .slider-slide {{
-            background: #15161a;
-            box-sizing: border-box;
-        }}  
-        .slidefilmpanel {{
-            transition: .35s;
-            box-sizing: border-box;
-            background: #15161a;
-            overflow: hidden;
-        }}
-        .slidefilmpanel:hover {{
-            background-color: #572aa7;
-        }}
-        .slidefilmpanel:hover .filmresim img {{
-            transform: scale(1.2);
-        }}
-        .slider {{
-            position: relative;
-            padding-bottom: 0px;
-            width: 100%;
-            overflow: hidden;
-            --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
-            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-        }}
-        .slider-container {{
-            display: flex;
-            width: 100%;
-            scroll-snap-type: x var(--tw-scroll-snap-strictness);
-            --tw-scroll-snap-strictness: mandatory;
-            align-items: center;
-            overflow: auto;
-            scroll-behavior: smooth;
-        }}
-        .slider-container .slider-slide {{
-            aspect-ratio: 9/13.5;
-            display: flex;
-            flex-shrink: 0;
-            flex-basis: 14.14%;
-            scroll-snap-align: start;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: center;
-        }}
-        .slider-container::-webkit-scrollbar {{
-            width: 0px;
-        }}
-        .clear {{
-            clear: both;
-        }}
-        .hataekran i {{
-            color: #572aa7;
-            font-size: 80px;
-            text-align: center;
-            width: 100%;
-        }}
-        .hataekran {{
-            width: 80%;
-            margin: 20px auto;
-            color: #fff;
-            background: #15161a;
-            border: 1px solid #323442;
-            padding: 10px;
-            box-sizing: border-box;
-            border-radius: 10px;
-        }}
-        .hatayazi {{
-            color: #fff;
-            font-size: 15px;
-            text-align: center;
-            width: 100%;
-            margin: 20px 0px;
-        }}
         .filmpaneldis {{
             background: #15161a;
             width: 100%;
@@ -320,22 +238,6 @@ def create_html_file(data):
             overflow: hidden;
             padding: 10px 5px;
             box-sizing: border-box;
-        }}
-        .aramafilmpaneldis {{
-            background: #15161a;
-            width: 100%;
-            margin: 20px auto;
-            overflow: hidden;
-            padding: 10px 5px;
-            box-sizing: border-box;
-        }}
-        .sliderfilmimdb {{
-            display: none;
-        }}
-        .bos {{
-            width: 100%;
-            height: 60px;
-            background: #572aa7;
         }}
         .baslik {{
             width: 96%;
@@ -371,11 +273,6 @@ def create_html_file(data):
             border: 3px solid #572aa7;
             box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
         }}
-        .filmpanel:focus {{
-            outline: none;
-            border: 3px solid #572aa7;
-            box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
-        }}
         .filmresim {{
             width: 100%;
             height: 100%;
@@ -391,9 +288,6 @@ def create_html_file(data):
         .filmpanel:hover .filmresim img {{
             transform: scale(1.1);
         }}
-        .filmpanel:focus .filmresim img {{
-            transform: none;
-        }}
         .filmisim {{
             width: 100%;
             font-size: 14px;
@@ -406,18 +300,6 @@ def create_html_file(data):
             color: #fff;
             position: absolute;
             bottom: 5px;
-        }}
-        .filmimdb {{
-            display: none;
-        }}
-        .resimust {{
-            display: none;
-        }}
-        .filmyil {{
-            display: none;
-        }}
-        .filmdil {{
-            display: none;
         }}
         .aramapanel {{
             width: 100%;
@@ -450,7 +332,6 @@ def create_html_file(data):
             border: 1px solid #ccc;
             box-sizing: border-box;
             padding: 0px 10px;
-            background: ;
             color: #000;
             margin: 0px 5px;
         }}
@@ -486,80 +367,28 @@ def create_html_file(data):
             font-weight: 500;
             color: #fff;
         }}
-        #dahafazla {{
-            background: #572aa7;
-            color: #fff;
-            padding: 10px;
+        .hataekran i {{
+            color: #572aa7;
+            font-size: 80px;
+            text-align: center;
+            width: 100%;
+        }}
+        .hataekran {{
+            width: 80%;
             margin: 20px auto;
-            width: 200px;
-            text-align: center;
-            transition: .35s;
-        }}
-        #dahafazla:hover {{
-            background: #fff;
-            color: #000;
-        }}
-        .hidden {{ display: none; }}
-        .bolum-container {{
+            color: #fff;
             background: #15161a;
+            border: 1px solid #323442;
             padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
+            box-sizing: border-box;
+            border-radius: 10px;
         }}
-        .geri-btn {{
-            background: #572aa7;
-            color: white;
-            padding: 10px;
+        .hatayazi {{
+            color: #fff;
+            font-size: 15px;
             text-align: center;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            display: none;
-            width: 100px;
-        }}
-        .geri-btn:hover {{
-            background: #6b3ec7;
-            transition: background 0.3s;
-        }}
-        .playerpanel {{
             width: 100%;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #0a0e17;
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-        }}
-        
-        #main-player {{
-            width: 100%;
-            height: 100%; 
-            background: #000;
-        }}
-        
-        #bradmax-iframe {{
-            width: 100%;
-            height: 100%;
-            border: none;
-        }}
-
-        .player-geri-btn {{
-            background: #572aa7;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px;
-            width: 100px;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 10000;
+            margin: 20px 0px;
         }}
         
         @media(max-width:550px) {{
@@ -567,9 +396,6 @@ def create_html_file(data):
                 width: 31.33%;
                 height: 190px;
                 margin: 1%;
-            }}
-            #main-player {{
-                height: 100%; 
             }}
         }}
     </style>
@@ -592,18 +418,13 @@ def create_html_file(data):
         <div class="baslik">HDFİLMCEHENNEMİ FİLM ARŞİVİ</div>
     </div>
 
-    <div id="playerpanel" class="playerpanel">
-        <div class="player-geri-btn" onclick="geriPlayer()">Geri</div>
-        <div id="main-player"></div>
-    </div>
-
     <script>
-        const BRADMAX_BASE_URL = "https://bradmax.com/client/embed-player/d9decbf0d308f4bb91825c3f3a2beb7b0aaee2f6_8493?mediaUrl=";
-        const BRADMAX_PARAMS = "&autoplay=true&fs=true"; 
+        // JSON linki - SENİN REPON
         const JSON_URL = "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/hdfilmcehennemi.json";
-
+        
         var filmler = {{}};
 
+        // JSON'u yükle
         async function loadFilms() {{
             try {{
                 const response = await fetch(JSON_URL);
@@ -615,8 +436,8 @@ def create_html_file(data):
                 filmler = await response.json();
                 console.log(`✅ ${{Object.keys(filmler).length}} film yüklendi`);
                 
-                // Filmleri yükle
-                initApp();
+                // Filmleri göster
+                renderFilms();
             }} catch (error) {{
                 console.error("❌ JSON yüklenemedi:", error);
                 document.getElementById('filmListesiContainer').innerHTML = `
@@ -628,20 +449,25 @@ def create_html_file(data):
             }}
         }}
 
-        function initApp() {{
+        // Filmleri ekrana bas
+        function renderFilms() {{
             var container = document.getElementById("filmListesiContainer");
             
             Object.keys(filmler).forEach(function(key) {{
                 var film = filmler[key];
                 var item = document.createElement("div");
                 item.className = "filmpanel";
+                
+                // FİLME TIKLAYINCA DİREKT IFRAME AÇ
                 item.onclick = function() {{ 
                     if (film.link) {{
-                        showPlayer(film.link, key);
+                        // Yeni sekmede iframe aç
+                        window.open(film.link, '_blank');
                     }} else {{
                         alert("Bu film için video linki bulunamadı.");
                     }}
                 }};
+                
                 item.innerHTML = `
                     <div class="filmresim"><img src="${{film.resim}}" onerror="this.src='https://via.placeholder.com/300x450/15161a/ffffff?text=No+Image'"></div>
                     <div class="filmisimpanel">
@@ -656,35 +482,7 @@ def create_html_file(data):
             baslik.textContent += ` (${{Object.keys(filmler).length}} Film)`;
         }}
 
-        function showPlayer(streamUrl, filmID) {{
-            document.getElementById("playerpanel").style.display = "flex"; 
-
-            // Player'ı hazırla
-            document.getElementById("main-player").innerHTML = "";
-
-            const fullUrl = BRADMAX_BASE_URL + encodeURIComponent(streamUrl) + BRADMAX_PARAMS;
-            const iframeHtml = `<iframe id="bradmax-iframe" src="${{fullUrl}}" allowfullscreen tabindex="0" autofocus></iframe>`;
-            
-            document.getElementById("main-player").innerHTML = iframeHtml;
-
-            history.pushState({{ page: 'player', filmID: filmID, streamUrl: streamUrl }}, '', '#player-' + filmID);
-        }}
-
-        function geriPlayer() {{
-            document.getElementById("playerpanel").style.display = "none";
-            document.getElementById("main-player").innerHTML = "";
-
-            history.replaceState({{ page: 'anaSayfa' }}, '', '#anaSayfa');
-        }}
-
-        window.addEventListener('popstate', function(event) {{
-            if (event.state && event.state.page === 'player' && event.state.filmID && event.state.streamUrl) {{
-                showPlayer(event.state.streamUrl, event.state.filmID);
-            }} else {{
-                geriPlayer();
-            }}
-        }});
-
+        // ARAMA FONKSİYONU
         function searchFilms() {{
             var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
             var container = document.getElementById('filmListesiContainer');
@@ -730,21 +528,8 @@ def create_html_file(data):
             }}
         }}
 
-        // Sayfa yüklendiğinde filmleri çek
-        window.addEventListener('load', function() {{
-            loadFilms();
-            
-            // URL'de player hash'i varsa
-            var hash = window.location.hash;
-            if (hash.startsWith('#player-')) {{
-                var filmID = hash.replace('#player-', '');
-                if (filmler[filmID] && filmler[filmID].link) {{
-                    setTimeout(() => {{
-                        showPlayer(filmler[filmID].link, filmID);
-                    }}, 500);
-                }}
-            }}
-        }});
+        // SAYFA YÜKLENİNCE ÇALIŞTIR
+        window.onload = loadFilms;
     </script>
 </body>
 </html>'''
