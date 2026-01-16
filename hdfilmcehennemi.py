@@ -210,14 +210,13 @@ def main_scraper():
     print("🚀 BOT BAŞLATILDI!")
     print("⚡ 10 SAYFA ÇEKİLECEK")
     print("💾 Veritabanına kaydedilecek")
-    print("🎲 Ekranda 99 rastgele film gösterilecek")
-    print("🔍 TÜM filmlerde arama yapılabilecek")
+    print("🔍 Tüm filmlerde arama yapılabilecek")
     print("⏱️ Tahmini süre: 3-5 dakika\n")
     
     init_database()
     
     total_saved = 0
-    TOTAL_PAGES = 10  # 10 sayfa çek
+    TOTAL_PAGES = 10
     
     mevcut_filmler = get_total_film_count()
     print(f"📊 Başlangıç: {mevcut_filmler} film")
@@ -258,14 +257,11 @@ def create_html_file():
 // Tüm film verileri
 const allFilms = {films_json};
 
-// Ekrandaki filmler (99 rastgele)
-let displayedFilms = {json.dumps(random_films, ensure_ascii=False)};
-
 function searchFilms() {{
     const searchTerm = document.getElementById('filmSearch').value.trim().toLowerCase();
     
     if (searchTerm.length < 2) {{
-        alert("Lütfen en az 2 karakter girin!");
+        alert("En az 2 karakter girin!");
         return false;
     }}
     
@@ -282,30 +278,15 @@ function displaySearchResults(films, searchTerm) {{
     const container = document.getElementById('filmListesiContainer');
     
     if (films.length === 0) {{
-        container.innerHTML = `
-            <div class="baslik">Arama Sonuçları: "${{searchTerm}}"</div>
-            <div class="hataekran">
-                <i class="fas fa-search"></i>
-                <div class="hatayazi">Film bulunamadı!</div>
-            </div>
-        `;
+        container.innerHTML = '<div class="baslik">"${{searchTerm}}" için sonuç yok</div><div class="hataekran"><i class="fas fa-search"></i><div class="hatayazi">Film bulunamadı!</div></div>';
         return;
     }}
     
-    let html = `<div class="baslik">Arama Sonuçları: "${{searchTerm}}" (${{films.length}} film)</div>`;
+    let html = '<div class="baslik">"${{searchTerm}}" için ${{films.length}} film</div>';
     
     films.forEach(film => {{
         const filmAdiClean = film.film_adi.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        html += `
-        <a href="${{film.player_url}}">
-            <div class="filmpanel">
-                <div class="filmresim"><img src="${{film.poster_url}}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-                <div class="filmisimpanel">
-                    <div class="filmisim">${{filmAdiClean}}</div>
-                </div>
-            </div>
-        </a>
-        `;
+        html += '<a href="'+film.player_url+'"><div class="filmpanel"><div class="filmresim"><img src="'+film.poster_url+'" onerror="this.src=\\'https://via.placeholder.com/300x450?text=Resim+Yok\\'"></div><div class="filmisimpanel"><div class="filmisim">'+filmAdiClean+'</div></div></div></a>';
     }});
     
     container.innerHTML = html;
@@ -315,29 +296,8 @@ function resetFilmSearch() {{
     const searchTerm = document.getElementById('filmSearch').value.toLowerCase();
     if (searchTerm === "") {{
         // Arama kutusu boşsa rastgele filmleri göster
-        displayRandomFilms();
+        location.reload();
     }}
-}}
-
-function displayRandomFilms() {{
-    const container = document.getElementById('filmListesiContainer');
-    let html = `<div class="baslik">HDFİLMCEHENNEMİ VOD - Rastgele 99 Film</div>`;
-    
-    displayedFilms.forEach(film => {{
-        const filmAdiClean = film.film_adi.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        html += `
-        <a href="${{film.player_url}}">
-            <div class="filmpanel">
-                <div class="filmresim"><img src="${{film.poster_url}}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-                <div class="filmisimpanel">
-                    <div class="filmisim">${{filmAdiClean}}</div>
-                </div>
-            </div>
-        </a>
-        `;
-    }});
-    
-    container.innerHTML = html;
 }}
 
 // Enter tuşu ile arama
@@ -346,14 +306,9 @@ document.getElementById('filmSearch').addEventListener('keypress', function(e) {
         searchFilms();
     }}
 }});
-
-// Sayfa yüklendiğinde
-document.addEventListener('DOMContentLoaded', function() {{
-    console.log("Toplam film:", allFilms.length);
-}});
 </script>'''
 
-    # HTML içeriği
+    # HTML içeriği - ORJİNAL TASARIM
     html_content = f'''<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -391,8 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {{
         color: #fff;
         padding: 15px 10px;
         box-sizing: border-box;
-        font-size: 18px;
-        font-weight: bold;
     }}
     .filmpanel {{
         width: 12%;
@@ -452,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {{
     }}
     .aramapanel {{
         width: 100%;
-        height: 70px;
+        height: 60px;
         background: #15161a;
         border-bottom: 1px solid #323442;
         margin: 0px auto;
@@ -460,72 +413,61 @@ document.addEventListener('DOMContentLoaded', function() {{
         box-sizing: border-box;
         overflow: hidden;
         z-index: 11111;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
     }}
     .aramapanelsag {{
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        width: auto;
+        height: 40px;
+        box-sizing: border-box;
+        overflow: hidden;
+        float: right;
     }}
     .aramapanelsol {{
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        width: 50%;
+        height: 40px;
+        box-sizing: border-box;
+        overflow: hidden;
+        float: left;
     }}
     .aramapanelyazi {{
         height: 40px;
-        width: 250px;
-        border: 1px solid #572aa7;
+        width: 120px;
+        border: 1px solid #ccc;
         box-sizing: border-box;
-        padding: 0px 15px;
+        padding: 0px 10px;
         color: #000;
-        font-size: 14px;
-        border-radius: 5px;
-        background: #fff;
+        margin: 0px 5px;
     }}
     .aramapanelbuton {{
         height: 40px;
-        width: 80px;
+        width: 40px;
         text-align: center;
         background-color: #572aa7;
         border: none;
         color: #fff;
         box-sizing: border-box;
-        border-radius: 5px;
+        overflow: hidden;
+        float: right;
         transition: .35s;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
     }}
     .aramapanelbuton:hover {{
         background-color: #fff;
-        color: #572aa7;
-        border: 1px solid #572aa7;
+        color: #000;
     }}
     .logo {{
         width: 40px;
         height: 40px;
+        float: left;
     }}
     .logo img {{
         width: 100%;
-        border-radius: 5px;
     }}
     .logoisim {{
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 15px;
+        width: 70%;
+        height: 40px;
+        line-height: 40px;
+        font-weight: 500;
         color: #fff;
-    }}
-    .info-bar {{
-        background: #572aa7;
-        color: white;
-        padding: 8px 15px;
-        text-align: center;
-        font-size: 13px;
-        margin: 5px 0;
-        border-radius: 5px;
-        font-weight: bold;
     }}
     .hataekran i {{
         color: #572aa7;
@@ -539,10 +481,9 @@ document.addEventListener('DOMContentLoaded', function() {{
         color: #fff;
         background: #15161a;
         border: 1px solid #323442;
-        padding: 20px;
+        padding: 10px;
         box-sizing: border-box;
         border-radius: 10px;
-        text-align: center;
     }}
     .hatayazi {{
         color: #fff;
@@ -558,23 +499,6 @@ document.addEventListener('DOMContentLoaded', function() {{
             height: 190px;
             margin: 1%;
         }}
-        .aramapanelyazi {{
-            width: 180px;
-        }}
-        .aramapanel {{
-            flex-direction: column;
-            height: auto;
-            padding: 15px;
-        }}
-        .aramapanelsol, .aramapanelsag {{
-            width: 100%;
-            justify-content: center;
-            margin: 5px 0;
-        }}
-        .info-bar {{
-            font-size: 12px;
-            padding: 6px 10px;
-        }}
     }}
 </style>
 </head>
@@ -582,22 +506,21 @@ document.addEventListener('DOMContentLoaded', function() {{
 <div class="aramapanel">
 <div class="aramapanelsol">
 <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
-<div class="logoisim">TITAN TV VOD ({total_films} Film)</div>
+<div class="logoisim">TITAN TV ({total_films} Film)</div>
 </div>
 <div class="aramapanelsag">
-<div class="info-bar">🎲 Ekranda 99 film | 🔍 Tüm {total_films} filmde arama yapabilirsiniz</div>
 <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
-    <input type="text" id="filmSearch" placeholder="Film adı yazın..." class="aramapanelyazi" oninput="resetFilmSearch()">
+    <input type="text" id="filmSearch" placeholder="Film ara..." class="aramapanelyazi" oninput="resetFilmSearch()">
     <input type="submit" value="ARA" class="aramapanelbuton">
 </form>
 </div>
 </div>
 
 <div class="filmpaneldis" id="filmListesiContainer">
-    <div class="baslik">HDFİLMCEHENNEMİ VOD - Rastgele 99 Film</div>
+    <div class="baslik">HDFİLMCEHENNEMİ VOD</div>
 '''
 
-    # Başlangıç filmlerini ekle (99 rastgele)
+    # Rastgele filmleri ekle
     for film in random_films:
         film_adi_clean = film['film_adi'].replace('"', '&quot;').replace("'", "&#39;")
         
@@ -623,9 +546,8 @@ document.addEventListener('DOMContentLoaded', function() {{
         f.write(html_content)
     
     print(f"\n✅ HTML dosyası '{filename}' oluşturuldu!")
-    print(f"🎲 Ekranda 99 rastgele film gösteriliyor")
-    print(f"📊 Toplam {total_films} film")
-    print(f"🔍 ARAMA ÖZELLİĞİ AKTİF - Tüm {total_films} filmde arama yapabilirsiniz!")
+    print(f"🎬 Toplam {total_films} film")
+    print(f"🔍 Arama özelliği aktif - Tüm {total_films} filmde arama yapabilirsiniz")
     print(f"💾 HTML boyutu: {len(html_content) // 1024} KB")
 
 def show_statistics():
@@ -638,23 +560,21 @@ def show_statistics():
 
 if __name__ == "__main__":
     print("=" * 50)
-    print("🎬 HDFİLMCEHENNEMİ BOT - TAM ARAMA ÖZELLİKLİ")
+    print("🎬 HDFİLMCEHENNEMİ BOT")
     print("=" * 50)
     
     print("\n⏳ Otomatik başlatılıyor...")
-    print("📌 10 sayfa çekilecek")
     
     try:
         main_scraper()
     except Exception as e:
-        print(f"❌ Scraper hatası: {e}")
-        print("\n📋 Alternatif: HTML oluşturuluyor...")
+        print(f"❌ Hata: {e}")
+        print("\n📋 HTML oluşturuluyor...")
         try:
-            # Veritabanı varsa HTML oluştur
             init_database()
             if get_total_film_count() > 0:
                 create_html_file()
             else:
                 print("❌ Veritabanında film yok!")
         except Exception as e2:
-            print(f"❌ HTML oluşturma hatası: {e2}")
+            print(f"❌ HTML hatası: {e2}")
