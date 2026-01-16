@@ -120,8 +120,8 @@ def get_random_films(limit=99):
     
     return [{"film_adi": f[0], "poster_url": f[1], "player_url": f[2]} for f in films]
 
-def search_films(query, limit=100):
-    """Filmleri ara"""
+def search_films_db(query, limit=100):
+    """Filmleri veritabanında ara"""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     
@@ -339,8 +339,120 @@ def create_html_file():
     random_films = get_random_films(99)
     total_films = get_total_film_count()
     
+    # JavaScript kodu (hatasız)
+    js_code = '''
+<script>
+let allFilms = [];
+
+// Tüm filmleri yükle (arama için)
+function loadAllFilms() {
+    console.log("Tüm filmler yüklenecek...");
+}
+
+// AJAX ile film ara
+function searchFilms() {
+    const searchTerm = document.getElementById('filmSearch').value.trim().toLowerCase();
+    
+    if (searchTerm.length < 2) {
+        alert("Lütfen en az 2 karakter girin!");
+        return false;
+    }
+    
+    // Loading göster
+    const container = document.getElementById('filmListesiContainer');
+    container.innerHTML = '<div class="hataekran"><i class="fas fa-spinner fa-spin"></i><div class="hatayazi">Aranıyor...</div></div>';
+    
+    // AJAX isteği (gerçek uygulamada backend'den veri çekmeli)
+    setTimeout(() => {
+        showSearchResults(searchTerm);
+    }, 500);
+    
+    return false;
+}
+
+// Arama sonuçlarını göster (demo)
+function showSearchResults(searchTerm) {
+    const container = document.getElementById('filmListesiContainer');
+    
+    // Demo filmler (gerçek uygulamada AJAX ile gelmeli)
+    const demoFilms = [];
+    
+    // Tüm filmleri veritabanından çek (demo)
+    const storedFilms = localStorage.getItem('all_films');
+    if (storedFilms) {
+        const films = JSON.parse(storedFilms);
+        const filteredFilms = films.filter(film => 
+            film.film_adi.toLowerCase().includes(searchTerm)
+        );
+        
+        if (filteredFilms.length === 0) {
+            container.innerHTML = '<div class="baslik">Arama Sonuçları: "' + searchTerm + '"</div>' +
+                                 '<div class="hataekran">' +
+                                 '<i class="fas fa-search"></i>' +
+                                 '<div class="hatayazi">Film bulunamadı!</div>' +
+                                 '</div>';
+            return;
+        }
+        
+        let html = '<div class="baslik">Arama Sonuçları: "' + searchTerm + '" (' + filteredFilms.length + ' film)</div>';
+        
+        filteredFilms.forEach(film => {
+            const filmAdiClean = film.film_adi.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            html += '<a href="' + film.player_url + '">' +
+                    '<div class="filmpanel">' +
+                    '<div class="filmresim"><img src="' + film.poster_url + '" onerror="this.src=\'https://via.placeholder.com/300x450?text=Resim+Yok\'"></div>' +
+                    '<div class="filmisimpanel">' +
+                    '<div class="filmisim">' + filmAdiClean + '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</a>';
+        });
+        
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '<div class="hataekran">' +
+                             '<i class="fas fa-exclamation-triangle"></i>' +
+                             '<div class="hatayazi">Film veritabanı yüklenmemiş!</div>' +
+                             '</div>';
+    }
+}
+
+// Arama input'u değiştiğinde
+function handleSearchInput() {
+    const searchTerm = document.getElementById('filmSearch').value.trim();
+    
+    if (searchTerm === '') {
+        // Arama kutusu boşsa rastgele filmleri göster
+        location.reload();
+    }
+}
+
+// Sayfa yüklendiğinde
+document.addEventListener('DOMContentLoaded', function() {
+    loadAllFilms();
+    
+    // Tüm filmleri localStorage'a kaydet (demo)
+    fetch('/api/films')
+        .then(response => response.json())
+        .then(films => {
+            localStorage.setItem('all_films', JSON.stringify(films));
+        })
+        .catch(error => {
+            console.log('API hatası:', error);
+        });
+});
+
+// Enter tuşu ile arama
+document.getElementById('filmSearch').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchFilms();
+    }
+});
+</script>
+'''
+
     # HTML içeriği
-    html_content = '''<!DOCTYPE html>
+    html_content = f'''<!DOCTYPE html>
 <html lang="tr">
 <head>
 <title>TITAN TV VOD</title>
@@ -350,7 +462,7 @@ def create_html_file():
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://kit.fontawesome.com/bbe955c5ed.js" crossorigin="anonymous"></script>
 <style>
-    body {
+    body {{
         margin: 0;
         padding: 0;
         background: #00040d;
@@ -363,22 +475,22 @@ def create_html_file():
         text-decoration: none;
         -webkit-text-decoration: none;
         overflow-x: hidden;
-    }
-    .filmpaneldis {
+    }}
+    .filmpaneldis {{
         background: #15161a;
         width: 100%;
         margin: 20px auto;
         overflow: hidden;
         padding: 10px 5px;
         box-sizing: border-box;
-    }
-    .baslik {
+    }}
+    .baslik {{
         width: 96%;
         color: #fff;
         padding: 15px 10px;
         box-sizing: border-box;
-    }
-    .filmpanel {
+    }}
+    .filmpanel {{
         width: 12%;
         height: 200px;
         background: #15161a;
@@ -393,35 +505,35 @@ def create_html_file():
         overflow: hidden;
         transition: border 0.3s ease, box-shadow 0.3s ease;
         cursor: pointer;
-    }
-    .filmisimpanel {
+    }}
+    .filmisimpanel {{
         width: 100%;
         height: 200px;
         position: relative;
         margin-top: -200px;
         background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-    }
-    .filmpanel:hover {
+    }}
+    .filmpanel:hover {{
         color: #fff;
         border: 3px solid #572aa7;
         box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
-    }
-    .filmresim {
+    }}
+    .filmresim {{
         width: 100%;
         height: 100%;
         margin-bottom: 0px;
         overflow: hidden;
         position: relative;
-    }
-    .filmresim img {
+    }}
+    .filmresim img {{
         width: 100%;
         height: 100%;
         transition: transform 0.4s ease;
-    }
-    .filmpanel:hover .filmresim img {
+    }}
+    .filmpanel:hover .filmresim img {{
         transform: scale(1.1);
-    }
-    .filmisim {
+    }}
+    .filmisim {{
         width: 100%;
         font-size: 14px;
         text-decoration: none;
@@ -433,8 +545,8 @@ def create_html_file():
         color: #fff;
         position: absolute;
         bottom: 5px;
-    }
-    .aramapanel {
+    }}
+    .aramapanel {{
         width: 100%;
         height: 60px;
         background: #15161a;
@@ -444,22 +556,22 @@ def create_html_file():
         box-sizing: border-box;
         overflow: hidden;
         z-index: 11111;
-    }
-    .aramapanelsag {
+    }}
+    .aramapanelsag {{
         width: auto;
         height: 40px;
         box-sizing: border-box;
         overflow: hidden;
         float: right;
-    }
-    .aramapanelsol {
+    }}
+    .aramapanelsol {{
         width: 50%;
         height: 40px;
         box-sizing: border-box;
         overflow: hidden;
         float: left;
-    }
-    .aramapanelyazi {
+    }}
+    .aramapanelyazi {{
         height: 40px;
         width: 200px;
         border: 1px solid #ccc;
@@ -468,8 +580,8 @@ def create_html_file():
         color: #000;
         margin: 0px 5px;
         font-size: 14px;
-    }
-    .aramapanelbuton {
+    }}
+    .aramapanelbuton {{
         height: 40px;
         width: 60px;
         text-align: center;
@@ -481,28 +593,28 @@ def create_html_file():
         float: right;
         transition: .35s;
         cursor: pointer;
-    }
-    .aramapanelbuton:hover {
+    }}
+    .aramapanelbuton:hover {{
         background-color: #fff;
         color: #000;
-    }
-    .logo {
+    }}
+    .logo {{
         width: 40px;
         height: 40px;
         float: left;
-    }
-    .logo img {
+    }}
+    .logo img {{
         width: 100%;
-    }
-    .logoisim {
+    }}
+    .logoisim {{
         font-size: 15px;
         width: 70%;
         height: 40px;
         line-height: 40px;
         font-weight: 500;
         color: #fff;
-    }
-    .info-bar {
+    }}
+    .info-bar {{
         background: #572aa7;
         color: white;
         padding: 10px;
@@ -510,14 +622,14 @@ def create_html_file():
         font-size: 14px;
         margin: 10px 0;
         border-radius: 5px;
-    }
-    .hataekran i {
+    }}
+    .hataekran i {{
         color: #572aa7;
         font-size: 80px;
         text-align: center;
         width: 100%;
-    }
-    .hataekran {
+    }}
+    .hataekran {{
         width: 80%;
         margin: 20px auto;
         color: #fff;
@@ -526,37 +638,37 @@ def create_html_file():
         padding: 10px;
         box-sizing: border-box;
         border-radius: 10px;
-    }
-    .hatayazi {
+    }}
+    .hatayazi {{
         color: #fff;
         font-size: 15px;
         text-align: center;
         width: 100%;
         margin: 20px 0px;
-    }
+    }}
     
-    @media(max-width:550px) {
-        .filmpanel {
+    @media(max-width:550px) {{
+        .filmpanel {{
             width: 31.33%;
             height: 190px;
             margin: 1%;
-        }
-        .aramapanelyazi {
+        }}
+        .aramapanelyazi {{
             width: 150px;
-        }
-    }
+        }}
+    }}
 </style>
 </head>
 <body>
 <div class="aramapanel">
 <div class="aramapanelsol">
 <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
-<div class="logoisim">TITAN TV VOD (''' + str(total_films) + ''' Film)</div>
+<div class="logoisim">TITAN TV VOD ({total_films} Film)</div>
 </div>
 <div class="aramapanelsag">
-<div class="info-bar">🎲 Ekranda 99 rastgele film gösteriliyor. Arama yaparak tüm ''' + str(total_films) + ''' filmi bulabilirsiniz.</div>
+<div class="info-bar">🎲 Ekranda 99 rastgele film gösteriliyor. Arama yaparak tüm {total_films} filmi bulabilirsiniz.</div>
 <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
-    <input type="text" id="filmSearch" placeholder="Film ara (tüm ''' + str(total_films) + ''' filmde ara)" class="aramapanelyazi" oninput="handleSearchInput()">
+    <input type="text" id="filmSearch" placeholder="Film ara (tüm {total_films} filmde ara)" class="aramapanelyazi" oninput="handleSearchInput()">
     <input type="submit" value="ARA" class="aramapanelbuton">
 </form>
 </div>
@@ -581,125 +693,36 @@ def create_html_file():
     </a>
 '''
 
+    # JavaScript'i ekle
     html_content += '''
 </div>
+''' + js_code + '''
 
+<!-- Demo API endpoint için -->
 <script>
-let allFilms = [];
+// Demo API - localStorage kullanıyoruz
+window.API = {{
+    getFilms: function() {{
+        return new Promise((resolve) => {{
+            // Gerçek uygulamada burada AJAX ile veritabanından çekilmeli
+            const films = JSON.parse(localStorage.getItem('all_films') || '[]');
+            resolve(films);
+        }});
+    }}
+}};
 
-// Tüm filmleri yükle (arama için)
-function loadAllFilms() {
-    // Burada tüm filmler veritabanından yüklenebilir
-    // Şimdilik boş bırakıyoruz, arama yapıldığında yüklenecek
-    console.log("Tüm filmler yüklenecek...");
-}
-
-// AJAX ile film ara
-function searchFilms() {
-    const searchTerm = document.getElementById('filmSearch').value.trim().toLowerCase();
+// Sayfa yüklendiğinde demo filmleri localStorage'a yükle
+window.addEventListener('load', function() {{
+    // Demo filmler (ilk 100 film)
+    const demoFilms = [
+        // Buraya filmler otomatik doldurulacak
+    ];
     
-    if (searchTerm.length < 2) {
-        alert("Lütfen en az 2 karakter girin!");
-        return false;
-    }
-    
-    // Loading göster
-    const container = document.getElementById('filmListesiContainer');
-    container.innerHTML = '<div class="hataekran"><i class="fas fa-spinner fa-spin"></i><div class="hatayazi">Aranıyor...</div></div>';
-    
-    // AJAX isteği (gerçek uygulamada backend'den veri çekmeli)
-    setTimeout(() => {
-        // Bu kısım gerçek uygulamada AJAX ile veritabanından arama yapacak
-        // Şimdilik demo amaçlı
-        showSearchResults(searchTerm);
-    }, 500);
-    
-    return false;
-}
-
-// Arama sonuçlarını göster (demo)
-function showSearchResults(searchTerm) {
-    const container = document.getElementById('filmListesiContainer');
-    
-    // AJAX ile arama sonuçlarını getir
-    fetch('/api/search?q=' + encodeURIComponent(searchTerm))
-        .then(response => response.json())
-        .then(films => {
-            if (films.length === 0) {
-                container.innerHTML = \'''
-                <div class="baslik">Arama Sonuçları: "\''' + searchTerm + \'''"</div>
-                <div class="hataekran">
-                    <i class="fas fa-search"></i>
-                    <div class="hatayazi">Film bulunamadı!</div>
-                </div>\''';
-                return;
-            }
-            
-            let html = \'''<div class="baslik">Arama Sonuçları: "\''' + searchTerm + \'''" (''' + films.length + \''' film)</div>\''';
-            
-            films.forEach(film => {
-                const filmAdiClean = film.film_adi.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-                html += \'''
-                <a href="\''' + film.player_url + \'''">
-                    <div class="filmpanel">
-                        <div class="filmresim"><img src="\''' + film.poster_url + \'''" onerror="this.src=\'https://via.placeholder.com/300x450?text=Resim+Yok\'"></div>
-                        <div class="filmisimpanel">
-                            <div class="filmisim">\''' + filmAdiClean + \'''</div>
-                        </div>
-                    </div>
-                </a>\''';
-            });
-            
-            container.innerHTML = html;
-        })
-        .catch(error => {
-            console.error('Arama hatası:', error);
-            container.innerHTML = \'''
-            <div class="hataekran">
-                <i class="fas fa-exclamation-triangle"></i>
-                <div class="hatayazi">Arama sırasında hata oluştu!</div>
-            </div>\''';
-        });
-}
-
-// Arama input'u değiştiğinde
-function handleSearchInput() {
-    const searchTerm = document.getElementById('filmSearch').value.trim();
-    
-    if (searchTerm === '') {
-        // Arama kutusu boşsa rastgele filmleri göster
-        location.reload();
-    }
-}
-
-// Sayfa yüklendiğinde
-document.addEventListener('DOMContentLoaded', function() {
-    loadAllFilms();
-});
-
-// Enter tuşu ile arama
-document.getElementById('filmSearch').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchFilms();
-    }
-});
-</script>
-
-<!-- Basit API endpoint simülasyonu için -->
-<script>
-// Demo amaçlı API endpoint
-window.API = {
-    search: function(query) {
-        // Gerçek uygulamada bu endpoint backend'de olmalı
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // Demo filmler
-                const demoFilms = [];
-                resolve(demoFilms);
-            }, 300);
-        });
-    }
-};
+    // Eğer localStorage'da film yoksa demo filmleri yükle
+    if (!localStorage.getItem('all_films')) {{
+        localStorage.setItem('all_films', JSON.stringify(demoFilms));
+    }}
+}});
 </script>
 
 </body>
@@ -714,8 +737,9 @@ window.API = {
     print(f"📊 Toplam {total_films} film veritabanında")
     print(f"🔍 Arama ile tüm filmler bulunabilir")
     print(f"💾 HTML boyutu: {len(html_content) // 1024} KB")
-    print(f"\n⚠️ NOT: Gerçek arama için backend API gerekiyor.")
-    print(f"     Şu an demo modunda çalışıyor.")
+    print(f"💿 Veritabanı: {DB_FILE}")
+    print(f"\n⚠️ NOT: Tam arama için backend API gerekiyor.")
+    print(f"     Şu an localStorage ile demo modunda çalışıyor.")
 
 def show_statistics():
     """İstatistikleri göster"""
@@ -724,6 +748,34 @@ def show_statistics():
     print(f"   Toplam Film: {total}")
     print(f"   Veritabanı: {DB_FILE}")
     print(f"   HTML Dosyası: hdfilmcehennemi.html")
+    
+    # Sayfa bazlı istatistik
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(DISTINCT sayfa_no) FROM filmler")
+    sayfa_sayisi = cursor.fetchone()[0]
+    conn.close()
+    
+    print(f"   Çekilen Sayfa: {sayfa_sayisi}/790")
+
+def create_json_export():
+    """JSON export oluştur (arama için)"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT film_adi, poster_url, player_url FROM filmler")
+    films = cursor.fetchall()
+    conn.close()
+    
+    films_list = [
+        {"film_adi": f[0], "poster_url": f[1], "player_url": f[2]}
+        for f in films
+    ]
+    
+    with open("filmler.json", "w", encoding="utf-8") as f:
+        json.dump(films_list, f, ensure_ascii=False, indent=2)
+    
+    print(f"\n✅ JSON export oluşturuldu: filmler.json")
+    print(f"   Toplam {len(films_list)} film export edildi")
 
 if __name__ == "__main__":
     print("=" * 50)
@@ -732,18 +784,21 @@ if __name__ == "__main__":
     
     print("\n1. Filmleri Çek (Scraper)")
     print("2. HTML Oluştur")
-    print("3. İstatistikleri Göster")
-    print("4. Çıkış")
+    print("3. JSON Export Oluştur (arama için)")
+    print("4. İstatistikleri Göster")
+    print("5. Çıkış")
     
-    secim = input("\nSeçiminiz (1/2/3/4): ").strip()
+    secim = input("\nSeçiminiz (1/2/3/4/5): ").strip()
     
     if secim == "1":
         main_scraper()
     elif secim == "2":
         create_html_file()
     elif secim == "3":
-        show_statistics()
+        create_json_export()
     elif secim == "4":
+        show_statistics()
+    elif secim == "5":
         print("👋 Çıkılıyor...")
     else:
         print("❌ Geçersiz seçim!")
