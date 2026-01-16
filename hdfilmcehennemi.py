@@ -142,8 +142,8 @@ def main():
     
     filmler_data = {}
     
-    # Kaç sayfa çekilecek
-    TOPLAM_SAYFA = 790
+    # Kaç sayfa çekilecek (test için azalt, 790 çok uzun sürer)
+    TOPLAM_SAYFA = 10  # Test için 10 sayfa, 790 yapmak istersen burayı değiştir
     sayfa_listesi = list(range(1, TOPLAM_SAYFA + 1))
     
     # Tüm sayfaları paralel işle
@@ -173,6 +173,17 @@ def main():
     create_html_file(filmler_data)
 
 def create_html_file(data):
+    # Önce tüm film adlarını temizle (tek tırnak için)
+    cleaned_data = {}
+    for film_id, film_info in data.items():
+        # Tek tırnakları escape et
+        cleaned_film_adi = film_info['film_adi'].replace("'", "&#39;")
+        cleaned_data[film_id] = {
+            "resim": film_info["resim"],
+            "film_adi": cleaned_film_adi,
+            "player_url": film_info["player_url"]
+        }
+    
     # HTML içeriği - SAYFA İÇİNDE AÇILACAK ŞEKİLDE
     html_template = '''<!DOCTYPE html>
 <html lang="tr">
@@ -472,15 +483,19 @@ def create_html_file(data):
 '''
 
     # Toplam film sayısını HTML'e ekle
-    total_films = len(data)
+    total_films = len(cleaned_data)
     html_template = html_template.replace("{TOTAL_FILMS}", str(total_films))
     
     # Film panellerini ekle - SADECE DIV OLARAK (A TAG'I YOK)
     film_counter = 0
-    for film_id, film_info in data.items():
+    for film_id, film_info in cleaned_data.items():
         film_counter += 1
+        
+        # JavaScript için güvenli string
+        safe_film_adi = film_info['film_adi'].replace("'", "\\'")
+        
         html_template += f'''
-    <div class="filmpanel" onclick="openPlayer('{film_info['player_url']}', '{film_info['film_adi'].replace("'", "\\'")}')">
+    <div class="filmpanel" onclick="openPlayer('{film_info['player_url']}', '{safe_film_adi}')">
         <div class="filmresim"><img src="{film_info['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
         <div class="filmisimpanel">
             <div class="filmisim">{film_info['film_adi']}</div>
@@ -582,7 +597,7 @@ function resetFilmSearch() {
         f.write(html_template)
     
     print(f"\n✅ HTML dosyası '{filename}' oluşturuldu!")
-    print(f"🎬 Toplam {len(data)} film eklendi")
+    print(f"🎬 Toplam {len(cleaned_data)} film eklendi")
     print(f"🎥 Filmler SAYFA İÇİNDE açılacak (yeni sekme yok)")
     print(f"💾 Dosya boyutu: {len(html_template) // 1024} KB")
 
