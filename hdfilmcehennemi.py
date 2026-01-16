@@ -5,7 +5,6 @@ import json
 import re
 import concurrent.futures
 from threading import Lock
-import random
 
 # --- AYARLAR ---
 BASE_URL = "https://www.hdfilmcehennemi.nl"
@@ -23,7 +22,6 @@ HEADERS_FILM = {
 
 # Thread-safe lock
 print_lock = Lock()
-data_lock = Lock()
 
 def slugify(text):
     """Metni ID olarak kullanılabilecek formata çevirir"""
@@ -55,20 +53,17 @@ def process_film(film_link, film_adi, poster_url):
             else:
                 player_url = raw_iframe_url
             
-        # EĞER PLAYER_URL YOKSA, BOŞ DÖNDÜR - EKLEME!
+        # EĞER PLAYER_URL YOKSA, BOŞ DÖNDÜR
         if not player_url:
             with print_lock:
                 print(f"❌ ATLANDI: {film_adi[:50]}... (Link yok)")
             return None
         
-        # Film ID oluştur
-        film_id = slugify(film_adi)
-        
         with print_lock:
             print(f"✅ {film_adi[:50]}...")
         
         return {
-            "film_id": film_id,
+            "film_id": slugify(film_adi),
             "resim": poster_url,
             "film_adi": film_adi,
             "player_url": player_url
@@ -94,7 +89,6 @@ def process_page(sayfa):
             html_chunk = data.get('html', '')
             soup = BeautifulSoup(html_chunk, 'html.parser')
             
-            # Film kutularını bul
             film_kutulari = soup.find_all('a', class_='poster')
             
             if not film_kutulari:
@@ -106,27 +100,24 @@ def process_page(sayfa):
                 film_link = a_etiketi.get('href')
                 film_adi = a_etiketi.get('title') or a_etiketi.text.strip()
                 
-                # Poster çekme
                 poster_img = a_etiketi.find('img')
                 poster_url = poster_img.get('data-src') if poster_img else ""
                 
                 if film_link:
-                    # Thread ile film işleme
                     film_tasks.append((film_link, film_adi, poster_url))
             
             page_films = []
             
-            # Thread pool ile paralel işleme (15 thread)
+            # Thread pool ile paralel işleme
             with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
                 futures = []
                 for film_link, film_adi, poster_url in film_tasks:
                     future = executor.submit(process_film, film_link, film_adi, poster_url)
                     futures.append(future)
                 
-                # Sonuçları topla
                 for future in concurrent.futures.as_completed(futures):
                     result = future.result()
-                    if result:  # Sadece linki olan filmleri ekle
+                    if result:
                         page_films.append(result)
                 
             with print_lock:
@@ -146,11 +137,10 @@ def process_page(sayfa):
 def main():
     print("🚀 ULTRA HIZLI BOT BAŞLATILDI!")
     print("⚡ Paralel çekim aktif (10 sayfa x 15 film thread)")
-    print("📊 Sadece player linki olan filmler eklenecek!")
-    print("⏱️ Tahmini süre: 790 sayfa için ~1-2 saat\n")
+    print("🎬 Filmler sayfa içinde açılacak (yeni sekme yok)")
+    print("⏱️ 790 sayfa için ~1-2 saat\n")
     
     filmler_data = {}
-    tum_filmler = []
     
     # Kaç sayfa çekilecek
     TOPLAM_SAYFA = 790
@@ -171,7 +161,6 @@ def main():
                         "film_adi": film["film_adi"],
                         "player_url": film["player_url"]
                     }
-                tum_filmler.extend(page_films)
             except Exception as e:
                 print(f"Sayfa {sayfa} işlenirken hata: {e}")
             
@@ -184,7 +173,7 @@ def main():
     create_html_file(filmler_data)
 
 def create_html_file(data):
-    # HTML içeriği
+    # HTML içeriği - SAYFA İÇİNDE AÇILACAK ŞEKİLDE
     html_template = '''<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -374,11 +363,83 @@ def create_html_file(data):
         margin: 20px 0px;
     }
     
+    /* PLAYER STILLERİ */
+    .player-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .player-container {
+        width: 90%;
+        height: 90%;
+        background: #000;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .player-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #572aa7;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .player-close:hover {
+        background: #ff0000;
+    }
+    
+    .player-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    
+    .player-title {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        color: white;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 5px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        max-width: 60%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        z-index: 10000;
+    }
+    
     @media(max-width:550px) {
         .filmpanel {
             width: 31.33%;
             height: 190px;
             margin: 1%;
+        }
+        .player-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
         }
     }
 </style>
@@ -396,6 +457,16 @@ def create_html_file(data):
 </form>
 </div>
 </div>
+
+<!-- PLAYER OVERLAY (SAYFA İÇİNDE AÇILACAK) -->
+<div class="player-overlay" id="playerOverlay">
+    <div class="player-container">
+        <button class="player-close" onclick="closePlayer()">×</button>
+        <div class="player-title" id="playerTitle"></div>
+        <iframe class="player-iframe" id="playerFrame" allowfullscreen></iframe>
+    </div>
+</div>
+
 <div class="filmpaneldis" id="filmListesiContainer">
     <div class="baslik">HDFİLMCEHENNEMİ VOD - Tüm Filmler</div>
 '''
@@ -404,22 +475,19 @@ def create_html_file(data):
     total_films = len(data)
     html_template = html_template.replace("{TOTAL_FILMS}", str(total_films))
     
-    # Film panellerini ekle (SADECE PLAYER_URL OLANLAR)
+    # Film panellerini ekle - SADECE DIV OLARAK (A TAG'I YOK)
     film_counter = 0
     for film_id, film_info in data.items():
         film_counter += 1
         html_template += f'''
-    <a href="{film_info['player_url']}" target="_blank">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="{film_info['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">{film_info['film_adi']}</div>
-            </div>
+    <div class="filmpanel" onclick="openPlayer('{film_info['player_url']}', '{film_info['film_adi'].replace("'", "\\'")}')">
+        <div class="filmresim"><img src="{film_info['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+        <div class="filmisimpanel">
+            <div class="filmisim">{film_info['film_adi']}</div>
         </div>
-    </a>
+    </div>
 '''
         
-        # Her 100 filmde bir progress göster
         if film_counter % 100 == 0:
             print(f"📝 HTML'e {film_counter}/{total_films} film eklendi...")
 
@@ -427,6 +495,35 @@ def create_html_file(data):
 </div>
 
 <script>
+// PLAYER FONKSİYONLARI
+function openPlayer(url, title) {
+    document.getElementById('playerTitle').textContent = title;
+    document.getElementById('playerFrame').src = url;
+    document.getElementById('playerOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Sayfa kaydırmayı engelle
+}
+
+function closePlayer() {
+    document.getElementById('playerFrame').src = '';
+    document.getElementById('playerOverlay').style.display = 'none';
+    document.body.style.overflow = 'auto'; // Sayfa kaydırmayı geri aç
+}
+
+// ESC tuşu ile player'ı kapat
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closePlayer();
+    }
+});
+
+// Overlay'e tıklayınca kapat (player dışına)
+document.getElementById('playerOverlay').addEventListener('click', function(event) {
+    if (event.target === this) {
+        closePlayer();
+    }
+});
+
+// ARAMA FONKSİYONLARI
 function searchFilms() {
     var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
     var container = document.getElementById('filmListesiContainer');
@@ -436,10 +533,10 @@ function searchFilms() {
     panels.forEach(function(panel) {
         var filmName = panel.querySelector('.filmisim').textContent.toLowerCase();
         if (filmName.includes(searchTerm)) {
-            panel.parentElement.style.display = 'block';
+            panel.style.display = 'block';
             found = true;
         } else {
-            panel.parentElement.style.display = 'none';
+            panel.style.display = 'none';
         }
     });
 
@@ -467,7 +564,7 @@ function resetFilmSearch() {
         var container = document.getElementById('filmListesiContainer');
         var panels = container.querySelectorAll('.filmpanel');
         panels.forEach(function(panel) {
-            panel.parentElement.style.display = 'block';
+            panel.style.display = 'block';
         });
         
         var noResults = container.querySelector('.hataekran');
@@ -480,12 +577,13 @@ function resetFilmSearch() {
 </body>
 </html>'''
     
-    filename = "hdfilmcehennemi_ULTRA.html"
+    filename = "hdfilmcehennemi_INLINE.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_template)
     
     print(f"\n✅ HTML dosyası '{filename}' oluşturuldu!")
-    print(f"🎬 Toplam {len(data)} film eklendi (sadece player linki olanlar)")
+    print(f"🎬 Toplam {len(data)} film eklendi")
+    print(f"🎥 Filmler SAYFA İÇİNDE açılacak (yeni sekme yok)")
     print(f"💾 Dosya boyutu: {len(html_template) // 1024} KB")
 
 if __name__ == "__main__":
