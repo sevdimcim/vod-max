@@ -1,44 +1,89 @@
-name: HDFilmCehennemi Scraper
+name: HDFilmCehennemi Film Scraper
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    # Her gün 08:00 UTC'de çalıştır (Türkiye saatiyle 11:00)
+    - cron: '0 8 * * *'
+    
+  # Manuel tetikleme için
   workflow_dispatch:
+    inputs:
+      pages:
+        description: 'Kaç sayfa taranacak?'
+        required: false
+        default: '5'
+        type: string
+      delay:
+        description: 'Filmler arası bekleme (saniye)'
+        required: false
+        default: '0.5'
+        type: string
 
 jobs:
-  scrape:
+  scrape-films:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Repo'yu klonla
-        uses: actions/checkout@v4
-
-      - name: Python kur
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Gereken paketler
-        run: pip install requests beautifulsoup4
-
-      - name: Scraper çalıştır
-        run: |
-          python hdfilmcehennemi.py
-
-      - name: Git değişikliklerini kontrol et ve commit
-        run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "GitHub Actions"
-
-          # HDFilmCEhennemi dosyasını sahneye al
-          git add hdfilmcehennemi.html
-
-          # Değişiklik var mı?
-          if git diff --cached --quiet; then
-            echo "⚠️ Değişiklik yok, commit atılmadı."
-          else
-            echo "🔄 Değişiklik var, commit atılıyor..."
-            git commit -m "Auto-update: $(date '+%Y-%m-%d %H:%M:%S')"
-            git push
-            echo "✅ Güncelleme gönderildi."
-          fi
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4
+        
+    - name: Run Film Scraper
+      env:
+        PAGES: ${{ inputs.pages || '5' }}
+        DELAY: ${{ inputs.delay || '0.5' }}
+      run: |
+        echo "📅 Scraping started at: $(date)"
+        echo "📊 Pages to scrape: $PAGES"
+        echo "⏱️ Delay between films: $DELAY seconds"
+        python hdfilmcehennemi.py $PAGES $DELAY
+        
+    - name: Commit and Push Changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Dosyalar değişti mi kontrol et
+        git add index.html hdfilmcehennemi.json
+        if git diff --cached --quiet; then
+          echo "⚠️ No changes detected, skipping commit"
+        else
+          echo "🔄 Files updated, committing changes..."
+          git commit -m "🤖 Auto-update: Film data refreshed [$(date +'%Y-%m-%d %H:%M:%S')]"
+          git push origin main
+          echo "✅ Changes pushed to repository"
+        fi
+        
+    - name: Create Summary
+      if: always()
+      run: |
+        echo "## 🎬 HDFilmCehennemi Scraping Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Scraping Time:** $(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
+        echo "- **Pages Scraped:** ${{ inputs.pages || '5' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Delay Between Films:** ${{ inputs.delay || '0.5' }} seconds" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "hdfilmcehennemi.json" ]; then
+          JSON_SIZE=$(stat -c%s "hdfilmcehennemi.json")
+          JSON_KB=$((JSON_SIZE / 1024))
+          FILM_COUNT=$(python3 -c "import json; data=json.load(open('hdfilmcehennemi.json')); print(len(data))")
+          echo "- **JSON File Size:** ${JSON_KB} KB" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total Films:** ${FILM_COUNT}" >> $GITHUB_STEP_SUMMARY
+          echo "- **JSON URL:** https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/hdfilmcehennemi.json" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ -f "index.html" ]; then
+          HTML_SIZE=$(stat -c%s "index.html")
+          HTML_KB=$((HTML_SIZE / 1024))
+          echo "- **HTML File Size:** ${HTML_KB} KB" >> $GITHUB_STEP_SUMMARY
+          echo "- **Live Preview:** https://sevdimcim.github.io/vod-max/" >> $GITHUB_STEP_SUMMARY
+        fi
