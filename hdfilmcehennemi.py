@@ -592,7 +592,7 @@ function resetFilmSearch() {
 </body>
 </html>'''
     
-    filename = "hdfilmcehennemi_INLINE.html"
+    filename = "hdfilmcehennemi.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_template)
     
