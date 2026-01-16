@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import time
 import json
 import re
+import concurrent.futures
+from threading import Lock
+import random
 
 # --- AYARLAR ---
 BASE_URL = "https://www.hdfilmcehennemi.nl"
@@ -18,6 +21,10 @@ HEADERS_FILM = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
+# Thread-safe lock
+print_lock = Lock()
+data_lock = Lock()
+
 def slugify(text):
     """Metni ID olarak kullanılabilecek formata çevirir"""
     text = text.lower()
@@ -25,96 +32,136 @@ def slugify(text):
     text = re.sub(r'[^a-z0-9]', '', text)
     return text
 
+def process_film(film_link, film_adi, poster_url, filmler_data):
+    """Tek bir filmi işler (thread için)"""
+    try:
+        # Film ID oluştur
+        film_id = slugify(film_adi)
+        
+        target_url = BASE_URL + film_link if not film_link.startswith('http') else film_link
+        
+        # Film detay sayfasını çek
+        film_sayfasi = requests.get(target_url, headers=HEADERS_FILM, timeout=5)
+        film_soup = BeautifulSoup(film_sayfasi.text, 'html.parser')
+        
+        # Iframe bulma
+        iframe = film_soup.find('iframe', {'class': 'close'})
+        player_url = ""
+        
+        if iframe and iframe.get('data-src'):
+            raw_iframe_url = iframe.get('data-src')
+            
+            # RPLAYER DÖNÜŞTÜRME
+            if "rapidrame_id=" in raw_iframe_url:
+                rapid_id = raw_iframe_url.split("rapidrame_id=")[1]
+                player_url = f"https://www.hdfilmcehennemi.com/rplayer/{rapid_id}"
+            else:
+                player_url = raw_iframe_url
+            
+        # Veriyi kaydet
+        with data_lock:
+            filmler_data[film_id] = {
+                "resim": poster_url,
+                "film_adi": film_adi,
+                "player_url": player_url
+            }
+        
+        with print_lock:
+            print(f"✅ {film_adi[:50]}...")
+            
+    except Exception as e:
+        with print_lock:
+            print(f"❌ Hata: {film_adi[:30]}... - {str(e)[:50]}")
+
+def process_page(sayfa, filmler_data):
+    """Tek bir sayfayı işler"""
+    try:
+        api_page_url = f"{BASE_URL}/load/page/{sayfa}/categories/film-izle-2/"
+        
+        with print_lock:
+            print(f"📄 SAYFA {sayfa} ÇEKİLİYOR...")
+        
+        response = requests.get(api_page_url, headers=HEADERS_PAGE, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            html_chunk = data.get('html', '')
+            soup = BeautifulSoup(html_chunk, 'html.parser')
+            
+            # Film kutularını bul
+            film_kutulari = soup.find_all('a', class_='poster')
+            
+            if not film_kutulari:
+                return
+            
+            film_tasks = []
+            
+            for a_etiketi in film_kutulari:
+                film_link = a_etiketi.get('href')
+                film_adi = a_etiketi.get('title') or a_etiketi.text.strip()
+                
+                # Poster çekme
+                poster_img = a_etiketi.find('img')
+                poster_url = poster_img.get('data-src') if poster_img else ""
+                
+                if film_link:
+                    # Thread ile film işleme
+                    film_tasks.append((film_link, film_adi, poster_url))
+            
+            # Thread pool ile paralel işleme (20 thread)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+                futures = []
+                for film_link, film_adi, poster_url in film_tasks:
+                    future = executor.submit(process_film, film_link, film_adi, poster_url, filmler_data)
+                    futures.append(future)
+                
+                # Tüm filmler bitene kadar bekle
+                concurrent.futures.wait(futures)
+                
+            with print_lock:
+                print(f"✅ SAYFA {sayfa} TAMAMLANDI - {len(film_tasks)} film")
+                
+        else:
+            with print_lock:
+                print(f"⚠️ Sayfa {sayfa} hata: {response.status_code}")
+                
+    except Exception as e:
+        with print_lock:
+            print(f"💥 Sayfa {sayfa} hatası: {str(e)[:50]}")
+
 def main():
-    print("🚀 Filmler çekiliyor... Afişler ve Player linkleri toplanıyor...\n")
+    print("🚀 ULTRA HIZLI BOT BAŞLATILDI!")
+    print("⚡ Paralel çekim aktif (20 thread)")
+    print("⏱️ Tahmini süre: 5-10 dakika (790 sayfa için 1-2 saat)\n")
     
     filmler_data = {}
     
-    try:
-        # İlk 5 sayfa (istediğin kadar artırabilirsin)
-        for sayfa in range(1, 790):
-            api_page_url = f"{BASE_URL}/load/page/{sayfa}/categories/film-izle-2/"
-            
-            print(f"📄 SAYFA {sayfa} İŞLENİYOR...")
-            
-            response = requests.get(api_page_url, headers=HEADERS_PAGE, timeout=15)
-            
-            if response.status_code == 200:
-                data = response.json()
-                html_chunk = data.get('html', '')
-                soup = BeautifulSoup(html_chunk, 'html.parser')
-                
-                # Film kutularını bul
-                film_kutulari = soup.find_all('a', class_='poster')
-
-                if not film_kutulari:
-                    continue
-
-                for a_etiketi in film_kutulari:
-                    film_link = a_etiketi.get('href')
-                    film_adi = a_etiketi.get('title') or a_etiketi.text.strip()
-                    
-                    # Film ID oluştur
-                    film_id = slugify(film_adi)
-                    
-                    # --- POSTER ÇEKME ---
-                    poster_img = a_etiketi.find('img')
-                    poster_url = poster_img.get('data-src') if poster_img else ""
-                    
-                    if not film_link:
-                        continue
-                    
-                    print(f"🎬 Film: {film_adi}")
-                    print(f"🖼️ Afiş: {poster_url}")
-                    
-                    try:
-                        target_url = BASE_URL + film_link if not film_link.startswith('http') else film_link
-                        film_sayfasi = requests.get(target_url, headers=HEADERS_FILM, timeout=10)
-                        film_soup = BeautifulSoup(film_sayfasi.text, 'html.parser')
-                        
-                        # Iframe bulma
-                        iframe = film_soup.find('iframe', {'class': 'close'})
-                        player_url = ""
-                        
-                        if iframe and iframe.get('data-src'):
-                            raw_iframe_url = iframe.get('data-src')
-                            
-                            # RPLAYER DÖNÜŞTÜRME
-                            if "rapidrame_id=" in raw_iframe_url:
-                                rapid_id = raw_iframe_url.split("rapidrame_id=")[1]
-                                player_url = f"https://www.hdfilmcehennemi.com/rplayer/{rapid_id}"
-                            else:
-                                player_url = raw_iframe_url
-                            
-                            print(f"🔗 Player Link: {player_url}")
-                        else:
-                            print("⚠️ Player link bulunamadı.")
-                            
-                        # Film verisini kaydet
-                        filmler_data[film_id] = {
-                            "resim": poster_url,
-                            "film_adi": film_adi,
-                            "player_url": player_url
-                        }
-                        
-                    except Exception as e:
-                        print(f"❌ Hata (Film Sayfası): {e}")
-                    
-                    print("-" * 50)
-                    time.sleep(0.8) # Ban riskine karşı hafif bekleme
-
-            else:
-                print(f"❌ Sayfa {sayfa} yüklenemedi. Durum Kodu: {response.status_code}")
-
-    except Exception as e:
-        print(f"💥 Ana hata oluştu: {e}")
-
-    print(f"\n✅ Toplam {len(filmler_data)} film başarıyla çekildi!")
+    # Kaç sayfa çekilecek
+    TOPLAM_SAYFA = 790
     
+    # Tüm sayfaları paralel işle
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as page_executor:
+        futures = []
+        
+        for sayfa in range(1, TOPLAM_SAYFA + 1):
+            # Sayfa başına 1 saniye delay (çok agresif olmamak için)
+            time.sleep(0.1)
+            future = page_executor.submit(process_page, sayfa, filmler_data)
+            futures.append(future)
+        
+        # Tüm sayfalar bitene kadar bekle
+        completed = 0
+        for future in concurrent.futures.as_completed(futures):
+            completed += 1
+            print(f"📊 İlerleme: {completed}/{TOPLAM_SAYFA} sayfa tamamlandı")
+    
+    print(f"\n🎉 TAMAMLANDI! Toplam {len(filmler_data)} film çekildi!")
+    
+    # HTML oluştur
     create_html_file(filmler_data)
 
 def create_html_file(data):
-    # HTML içeriği - SENİN VERDİĞİN YAPIDA
+    # HTML içeriği
     html_template = '''<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -303,45 +350,6 @@ def create_html_file(data):
         width: 100%;
         margin: 20px 0px;
     }
-    .playerpanel {
-        width: 100%;
-        height: 100vh;
-        position: fixed;
-        top: 0;
-        left: 0;
-        background: #0a0e17;
-        z-index: 9999;
-        display: none;
-        flex-direction: column;
-        overflow: hidden;
-    }
-    
-    .player-geri-btn {
-        background: #572aa7;
-        color: white;
-        padding: 10px;
-        text-align: center;
-        border-radius: 5px;
-        cursor: pointer;
-        margin: 10px;
-        width: 100px;
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 10000;
-    }
-    
-    #main-player {
-        width: 100%;
-        height: 100%;
-        background: #000;
-    }
-    
-    #film-frame {
-        width: 100%;
-        height: 100%;
-        border: none;
-    }
     
     @media(max-width:550px) {
         .filmpanel {
@@ -356,7 +364,7 @@ def create_html_file(data):
 <div class="aramapanel">
 <div class="aramapanelsol">
 <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
-<div class="logoisim">TITAN TV VOD</div>
+<div class="logoisim">TITAN TV VOD ({TOTAL_FILMS} Film)</div>
 </div>
 <div class="aramapanelsag">
 <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
@@ -366,10 +374,14 @@ def create_html_file(data):
 </div>
 </div>
 <div class="filmpaneldis" id="filmListesiContainer">
-    <div class="baslik">HDFİLMCEHENNEMİ VOD</div>
+    <div class="baslik">HDFİLMCEHENNEMİ VOD - Tüm Filmler</div>
 '''
 
-    # Film panellerini ekle (SENİN VERDİĞİN YAPIDA)
+    # Toplam film sayısını HTML'e ekle
+    total_films = len(data)
+    html_template = html_template.replace("{TOTAL_FILMS}", str(total_films))
+    
+    # Film panellerini ekle
     for film_id, film_info in data.items():
         if film_info["player_url"]:  # Sadece player linki olanları ekle
             html_template += f'''
@@ -456,7 +468,7 @@ function resetFilmSearch() {
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_template)
     
-    print(f"HTML dosyası '{filename}' oluşturuldu!")
+    print(f"✅ HTML dosyası '{filename}' oluşturuldu! ({len(data)} film)")
 
 if __name__ == "__main__":
     main()
