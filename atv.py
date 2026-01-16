@@ -116,8 +116,61 @@ def get_episodes(series_slug, series_name):
     
     return []
 
+def fix_fake_url(video_url):
+    """Fake URL'leri gerçek URL'lere çevir"""
+    if not video_url:
+        return video_url
+    
+    # Eğer i.tmgrup.com.trvideo/ ile başlıyorsa
+    if 'i.tmgrup.com.trvideo/' in video_url:
+        # Örnek: https://i.tmgrup.com.trvideo/karadayi_008_0150.mp4
+        # Çıkarılacak: karadayi_008_0150.mp4
+        try:
+            # Dosya adını al
+            filename = video_url.split('/')[-1]
+            
+            # Pattern: diziadi_bölümno_....
+            # Örnek: karadayi_008_0150.mp4
+            match = re.match(r'([a-zA-Z0-9-]+)_(\d+)_', filename)
+            if match:
+                dizi_adı = match.group(1)  # karadayi
+                bölüm_no = match.group(2)  # 008
+                
+                # Bölüm numarasını düzelt (008 -> 8)
+                bölüm_no_int = int(bölüm_no)
+                
+                # Gerçek URL'yi oluştur
+                # Format: https://atv-vod.ercdn.net/diziadi/bölümno/diziadi_bölümno.smil/playlist.m3u8
+                real_url = f"https://atv-vod.ercdn.net/{dizi_adı}/{bölüm_no_int:03d}/{dizi_adı}_{bölüm_no_int:03d}.smil/playlist.m3u8"
+                
+                print(f"      🔄 Fake URL düzeltildi: {real_url}")
+                return real_url
+        except Exception as e:
+            print(f"      ⚠️  URL düzeltme hatası: {e}")
+    
+    # Diğer fake URL'ler için
+    fake_patterns = [
+        (r'i\.tmgrup\.com\.trvideo/([^/]+)_(\d+)_', 
+         lambda m: f"https://atv-vod.ercdn.net/{m.group(1)}/{int(m.group(2)):03d}/{m.group(1)}_{int(m.group(2)):03d}.smil/playlist.m3u8"),
+        
+        (r'//i\.tmgrup\.com\.tr/([^/]+)/(\d+)/', 
+         lambda m: f"https://atv-vod.ercdn.net/{m.group(1)}/{int(m.group(2)):03d}/{m.group(1)}_{int(m.group(2)):03d}.smil/playlist.m3u8"),
+    ]
+    
+    for pattern, replacement_func in fake_patterns:
+        match = re.search(pattern, video_url)
+        if match:
+            try:
+                real_url = replacement_func(match)
+                print(f"      🔄 Fake URL düzeltildi: {real_url}")
+                return real_url
+            except:
+                pass
+    
+    return video_url
+
 def extract_video_url(episode_url):
-    """Video URL'sini çıkar - MP4 veya M3U8 farketmez"""
+    """Video URL'sini çıkar - Fake URL'leri düzelt"""
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -132,6 +185,9 @@ def extract_video_url(episode_url):
         
         if matches:
             for url in matches:
+                # Fake URL'leri kontrol et
+                url = fix_fake_url(url)
+                
                 # MP4 veya M3U8 farketmez, direk döndür
                 if any(x in url.lower() for x in ['.mp4', '.m3u8', '//']):
                     return url
@@ -148,20 +204,24 @@ def extract_video_url(episode_url):
             video_matches = re.findall(pattern, r.text, re.IGNORECASE)
             for url in video_matches:
                 if 'fragman' not in url.lower():
+                    # Fake URL'leri kontrol et
+                    url = fix_fake_url(url)
                     return url
         
         # 3. atv-vod.ercdn.net domain'ini ara (eski diziler için)
         if 'atv-vod.ercdn.net' in r.text:
-            ercdn_pattern = r'(https?://atv-vod\.ercdn\.net/[^\s"\']+\.mp4[^\s"\']*)'
+            ercdn_pattern = r'(https?://atv-vod\.ercdn\.net/[^\s"\']+\.(?:mp4|m3u8|smil)[^\s"\']*)'
             ercdn_matches = re.findall(ercdn_pattern, r.text)
             if ercdn_matches:
                 return ercdn_matches[0]
         
         # 4. Son çare: Sayfadaki tüm URL'leri ara
-        url_pattern = r'(https?://[^\s"\']+/[^\s"\']+\.(?:mp4|m3u8)[^\s"\']*)'
+        url_pattern = r'(https?://[^\s"\']+/[^\s"\']+\.(?:mp4|m3u8|smil)[^\s"\']*)'
         all_urls = re.findall(url_pattern, r.text)
         for url in all_urls:
             if 'fragman' not in url.lower():
+                # Fake URL'leri kontrol et
+                url = fix_fake_url(url)
                 return url
                 
     except Exception as e:
@@ -189,7 +249,7 @@ def clean_image_url(url):
     return url.strip()
 
 def main():
-    print("ATV TÜM DİZİLER HTML OLUŞTURUCU")
+    print("ATV TÜM DİZİLER HTML OLUŞTURUCU (FAKE URL DÜZELTİCİ)")
     print("=" * 60)
     
     # Tüm dizileri al
@@ -228,13 +288,21 @@ def main():
             video_url = extract_video_url(ep_url)
             
             if video_url:
+                # Fake URL kontrolü
+                if 'i.tmgrup.com.trvideo/' in video_url:
+                    print(f"    ⚠️  Bölüm {ep_num}: Fake URL tespit edildi, düzeltiliyor...")
+                    video_url = fix_fake_url(video_url)
+                
                 # HTML formatında sadece "1. Bölüm", "2. Bölüm" şeklinde kaydet
                 bolum_list.append({
                     "ad": f"{ep_num}. Bölüm",
                     "link": video_url
                 })
                 added_count += 1
-                print(f"    ✓ Bölüm {ep_num}")
+                
+                # URL tipini belirle
+                url_type = "Fake" if 'i.tmgrup.com.tr' in video_url else ('MP4' if '.mp4' in video_url else 'M3U8')
+                print(f"    ✓ Bölüm {ep_num} ({url_type})")
             else:
                 print(f"    ✗ Bölüm {ep_num} (video bulunamadı)")
             
