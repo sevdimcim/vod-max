@@ -1,42 +1,44 @@
-name: Film Scraper
+name: HDFilmCehennemi Scraper
 
 on:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Repo'yu klonla
-      uses: actions/checkout@v4
+      - name: Repo'yu klonla
+        uses: actions/checkout@v4
 
-    - name: Python kur
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    - name: Gerekli kütüphaneleri kur
-      run: |
-        pip install requests beautifulsoup4
+      - name: Gereken paketler
+        run: pip install requests beautifulsoup4
 
-    - name: Scraper çalıştır
-      run: |
-        python hdfilmcehennemi.py
+      - name: Scraper çalıştır
+        run: |
+          python hdfilmcehennemi.py
 
-    - name: Değişiklik kontrolü ve commit
-      run: |
-        if git diff --quiet; then
-          echo "Degisiklik yok."
-        else
+      - name: Git değişikliklerini kontrol et ve commit
+        run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git add filmler.html
-          git commit -m "Otomatik güncelleme - $(date '+%Y-%m-%d %H:%M:%S')"
-          git push
-        fi
+
+          # HDFilmCEhennemi dosyasını sahneye al
+          git add hdfilmcehennemi.html
+
+          # Değişiklik var mı?
+          if git diff --cached --quiet; then
+            echo "⚠️ Değişiklik yok, commit atılmadı."
+          else
+            echo "🔄 Değişiklik var, commit atılıyor..."
+            git commit -m "Auto-update: $(date '+%Y-%m-%d %H:%M:%S')"
+            git push
+            echo "✅ Güncelleme gönderildi."
+          fi
