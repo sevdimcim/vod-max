@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>TITAN TV FİLM VOD</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:700i" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kit.fontawesome.com/bbe955c5ed.js" crossorigin="anonymous"></script>
+    <style>
+        *:not(input):not(textarea) {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            -ms-user-select: none;
+            user-select: none
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #00040d;
+            font-family: sans-serif;
+            font-size: 15px;
+            -webkit-tap-highlight-color: transparent;
+            font-style: italic;
+            line-height: 20px;
+            -webkit-text-size-adjust: 100%;
+            text-decoration: none;
+            -webkit-text-decoration: none;
+            overflow-x: hidden;
+        }
+        .slider-slide {
+            background: #15161a;
+            box-sizing: border-box;
+        }  
+        .slidefilmpanel {
+            transition: .35s;
+            box-sizing: border-box;
+            background: #15161a;
+            overflow: hidden;
+        }
+        .slidefilmpanel:hover {
+            background-color: #572aa7;
+        }
+        .slider {
+            position: relative;
+            padding-bottom: 0px;
+            width: 100%;
+            overflow: hidden;
+            --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+            box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        }
+        .slider-container {
+            display: flex;
+            width: 100%;
+            scroll-snap-type: x var(--tw-scroll-snap-strictness);
+            --tw-scroll-snap-strictness: mandatory;
+            align-items: center;
+            overflow: auto;
+            scroll-behavior: smooth;
+        }
+        .slider-container .slider-slide {
+            aspect-ratio: 9/13.5;
+            display: flex;
+            flex-shrink: 0;
+            flex-basis: 14.14%;
+            scroll-snap-align: start;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-container::-webkit-scrollbar {
+            width: 0px;
+        }
+        .clear {
+            clear: both;
+        }
+        .hataekran i {
+            color: #572aa7;
+            font-size: 80px;
+            text-align: center;
+            width: 100%;
+        }
+        .hataekran {
+            width: 80%;
+            margin: 20px auto;
+            color: #fff;
+            background: #15161a;
+            border: 1px solid #323442;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+        .hatayazi {
+            color: #fff;
+            font-size: 15px;
+            text-align: center;
+            width: 100%;
+            margin: 20px 0px;
+        }
+        .filmpaneldis {
+            background: #15161a;
+            width: 100%;
+            margin: 20px auto;
+            overflow: hidden;
+            padding: 10px 5px;
+            box-sizing: border-box;
+        }
+        .aramafilmpaneldis {
+            background: #15161a;
+            width: 100%;
+            margin: 20px auto;
+            overflow: hidden;
+            padding: 10px 5px;
+            box-sizing: border-box;
+        }
+        .bos {
+            width: 100%;
+            height: 60px;
+            background: #572aa7;
+        }
+        .baslik {
+            width: 96%;
+            color: #fff;
+            padding: 15px 10px;
+            box-sizing: border-box;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 2px solid #572aa7;
+            margin-bottom: 20px;
+        }
+        .filmpanel {
+            width: 12%;
+            height: 200px;
+            background: #15161a;
+            float: left;
+            margin: 1.14%;
+            color: #fff;
+            border-radius: 15px;
+            box-sizing: border-box;
+            box-shadow: 1px 5px 10px rgba(0,0,0,0.1);
+            border: 1px solid #323442;
+            padding: 0px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .filmisimpanel {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            margin-top: -200px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .filmpanel:hover {
+            border: 3px solid #572aa7;
+            box-shadow: 0 0 20px rgba(87, 42, 167, 0.7);
+            transform: translateY(-5px);
+        }
+        .filmpanel:hover .filmisimpanel {
+            opacity: 1;
+        }
+        .filmresim {
+            width: 100%;
+            height: 100%;
+            margin-bottom: 0px;
+            overflow: hidden;
+            position: relative;
+        }
+        .filmresim img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .filmpanel:hover .filmresim img {
+            transform: scale(1.1);
+        }
+        .filmisim {
+            width: 100%;
+            font-size: 14px;
+            text-decoration: none;
+            padding: 5px;
+            box-sizing: border-box;
+            color: #fff;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        .aramapanel {
+            width: 100%;
+            height: 60px;
+            background: #15161a;
+            border-bottom: 1px solid #323442;
+            margin: 0px auto;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: hidden;
+            z-index: 11111;
+            position: sticky;
+            top: 0;
+        }
+        .aramapanelsag {
+            width: auto;
+            height: 40px;
+            box-sizing: border-box;
+            overflow: hidden;
+            float: right;
+        }
+        .aramapanelsol {
+            width: 50%;
+            height: 40px;
+            box-sizing: border-box;
+            overflow: hidden;
+            float: left;
+        }
+        .aramapanelyazi {
+            height: 40px;
+            width: 200px;
+            border: 1px solid #572aa7;
+            box-sizing: border-box;
+            padding: 0px 15px;
+            background: #0a0e17;
+            color: #fff;
+            margin: 0px 5px;
+            border-radius: 20px;
+            outline: none;
+        }
+        .aramapanelbuton {
+            height: 40px;
+            width: 100px;
+            text-align: center;
+            background-color: #572aa7;
+            border: none;
+            color: #fff;
+            box-sizing: border-box;
+            overflow: hidden;
+            float: right;
+            transition: .35s;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .aramapanelbuton:hover {
+            background-color: #6b3ec7;
+            transform: scale(1.05);
+        }
+        .logo {
+            width: 40px;
+            height: 40px;
+            float: left;
+        }
+        .logo img {
+            width: 100%;
+            border-radius: 50%;
+        }
+        .logoisim {
+            font-size: 18px;
+            width: 70%;
+            height: 40px;
+            line-height: 40px;
+            font-weight: bold;
+            color: #fff;
+            margin-left: 10px;
+            float: left;
+        }
+        #dahafazla {
+            background: #572aa7;
+            color: #fff;
+            padding: 10px;
+            margin: 20px auto;
+            width: 200px;
+            text-align: center;
+            transition: .35s;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #dahafazla:hover {
+            background: #6b3ec7;
+            transform: scale(1.05);
+        }
+        .playerpanel {
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #0a0e17;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        #main-player {
+            width: 100%;
+            height: 100%; 
+            background: #000;
+        }
+        
+        #bradmax-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .player-geri-btn {
+            background: #572aa7;
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 20px;
+            width: auto;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10000;
+            font-weight: bold;
+            border: 2px solid #fff;
+            transition: all 0.3s ease;
+        }
+        
+        .player-geri-btn:hover {
+            background: #6b3ec7;
+            transform: scale(1.05);
+        }
+        
+        /* YÜKLEME ANİMASYONU */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #00040d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #572aa7;
+            border-top: 5px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* MESAJ KUTUSU */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #15161a;
+            border: 2px solid #572aa7;
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            z-index: 99998;
+            display: none;
+            box-shadow: 0 0 30px rgba(87, 42, 167, 0.5);
+        }
+        
+        @media(max-width:550px) {
+            .filmpanel {
+                width: 31.33%;
+                height: 190px;
+                margin: 1%;
+            }
+            
+            .filmisimpanel {
+                padding: 5px;
+            }
+            
+            .filmisim {
+                font-size: 12px;
+            }
+            
+            .aramapanelyazi {
+                width: 150px;
+            }
+            
+            .aramapanelbuton {
+                width: 70px;
+            }
+            
+            .logoisim {
+                font-size: 16px;
+            }
+            
+            #main-player {
+                height: 100%; 
+            }
+            
+            .player-geri-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- YÜKLEME EKRANI -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- MESAJ KUTUSU -->
+    <div class="message-box" id="messageBox">
+        <div id="messageText"></div>
+        <button onclick="hideMessage()" style="margin-top: 15px; padding: 8px 20px; background: #572aa7; color: white; border: none; border-radius: 20px; cursor: pointer;">Tamam</button>
+    </div>
+    
+    <!-- ANA PANEL -->
+    <div class="aramapanel">
+        <div class="aramapanelsol">
+            <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
+            <div class="logoisim">TITAN TV FİLM</div>
+        </div>
+        <div class="aramapanelsag">
+            <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
+                <input type="text" id="filmSearch" placeholder="Film ara..." class="aramapanelyazi" oninput="resetFilmSearch()">
+                <input type="submit" value="ARA" class="aramapanelbuton">
+            </form>
+        </div>
+    </div>
+
+    <!-- FİLM LİSTESİ -->
+    <div class="filmpaneldis" id="filmListesiContainer">
+        <div class="baslik">HDFİLMCEHENNEMİ FİLM ARŞİVİ</div>
+    </div>
+
+    <!-- PLAYER -->
+    <div id="playerpanel" class="playerpanel">
+        <div class="player-geri-btn" onclick="geriPlayer()">
+            <i class="fas fa-arrow-left"></i> Geri Dön
+        </div>
+        <div id="main-player"></div>
+    </div>
+
+    <script>
+        const BRADMAX_BASE_URL = "https://bradmax.com/client/embed-player/d9decbf0d308f4bb91825c3f3a2beb7b0aaee2f6_8493?mediaUrl=";
+        const BRADMAX_PARAMS = "&autoplay=true&fs=true&controls=true";
+        
+        var filmler = {
+  "the-rip": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-rip.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/sz7nwn95vzb3",
+    "isim": "The Rip"
+  },
+  "crazy-old-lady": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/xadumjhi3d7w",
+    "isim": "Crazy Old Lady"
+  },
+  "birlikte": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/3548xjcpkhju",
+    "isim": "Birlikte"
+  },
+  "toz-yumagi-dust-bunny": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/dust-bunny.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/50ajrrtywc6i",
+    "isim": "Toz Yumağı - Dust Bunny"
+  },
+  "the-bad-shepherd": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-shepherd.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/1smfk8ksulbw",
+    "isim": "The Bad Shepherd"
+  },
+  "the-getback": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-getback.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/ldbokaczm6sb",
+    "isim": "The Getback"
+  },
+  "yariscilar-buyuk-hesaplasma": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/xvxxn5gninrd",
+    "isim": "Yarışçılar: Büyük Hesaplaşma"
+  },
+  "one-last-adventure-the-making-of-stranger-things-5": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/one-last-adventure-the-making-of-stranger-things-5.webp",
+    "link": "",
+    "isim": "One Last Adventure: The Making of Stranger Things 5"
+  },
+  "elinden-gelenin-en-i-yisi": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-best-you-can.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/jkjty2a8rgkh",
+    "isim": "Elinden Gelenin En İyisi"
+  },
+  "sicc-n-8": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/sijjin-8.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/9ra28jn6w2cl",
+    "isim": "Siccîn 8"
+  },
+  "freddynin-pizza-dukkaninda-bes-gece-2": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/five-nights-at-freddy-s-2.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/tfews38ploqv",
+    "isim": "Freddynin Pizza Dükkanında Beş Gece 2"
+  },
+  "hood": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/tyho4nst7006",
+    "isim": "Hood"
+  },
+  "play-dead": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/play-dead.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/yq1oqap4xpxt",
+    "isim": "Play Dead"
+  },
+  "sore-gelecekten-gelen-es": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/sore-a-wife-from-the-future.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/z93a2wc7c8qx",
+    "isim": "Sore: Gelecekten Gelen Eş"
+  },
+  "the-enchanted-tinderbox": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-enchanted-tinderbox.webp",
+    "link": "",
+    "isim": "The Enchanted Tinderbox"
+  },
+  "vermiglio": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/vermiglio.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/5hh2yxf5aex1",
+    "isim": "Vermiglio"
+  },
+  "sleepwalker": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/sleepwalker.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/k38zdbn05v2l",
+    "isim": "Sleepwalker"
+  },
+  "the-inheritance": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-inheritance.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/jmu0h6mbz27u",
+    "isim": "The Inheritance"
+  },
+  "the-internship": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-internship.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/gjncguyl9fzu",
+    "isim": "The Internship"
+  },
+  "sihirbazlar-cetesi-daha-bir-sey-gormediniz": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/8jpf5fzq1d81",
+    "isim": "Sihirbazlar Çetesi Daha Bir Şey Görmediniz"
+  },
+  "oscar-shaw": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/oscar-shaw.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/r8skt5zj3jef",
+    "isim": "Oscar Shaw"
+  },
+  "beraber": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/2k32ubksynb8",
+    "isim": "Beraber"
+  },
+  "we-bury-the-dead": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/we-bury-the-dead.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/ne1ppxfpu4uq",
+    "isim": "We Bury the Dead"
+  },
+  "bugonia": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/bugonia.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/b9v2r49x82k5",
+    "isim": "Bugonia"
+  },
+  "kisa-ziyaret-uzun-hikaye": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-travellers.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/gwrepkqazzw5",
+    "isim": "Kısa Ziyaret Uzun Hikaye"
+  },
+  "guller": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-roses.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/7t12yh5p5eut",
+    "isim": "Güller"
+  },
+  "not-without-hope": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/not-without-hope.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/44n0gr94dmx3",
+    "isim": "Not Without Hope"
+  },
+  "the-long-walk": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-long-walk.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/vv5bqfmhnam6",
+    "isim": "The Long Walk"
+  },
+  "under-fire": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/under-fire-hdfc.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/mx161ypovsfr",
+    "isim": "Under Fire"
+  },
+  "people-you-may-know": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/1-people-you-may-know-izle.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/thqr66kp352b",
+    "isim": "People You May Know"
+  },
+  "rembrandt": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-rembrandt-syndrome.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/csqx7cun8jxu",
+    "isim": "Rembrandt"
+  },
+  "the-last-viking": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-last-viking.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/kc4ubiuegjbl",
+    "isim": "The Last Viking"
+  },
+  "the-tiger": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-tiger.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/qxzerkvvjgv0",
+    "isim": "The Tiger"
+  },
+  "follow-my-voice": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/rkel0po4vgyx",
+    "isim": "Follow My Voice"
+  },
+  "the-war-between": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-war-between.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/5y4r02pr3l7p",
+    "isim": "The War Between"
+  },
+  "cheetahs-up-close-with-bertie-gregory": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/cheetahs-up-close-with-bertie-gregory.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/3eff9wikzbj6",
+    "isim": "Cheetahs Up Close with Bertie Gregory"
+  },
+  "eddington": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/eddington.webp",
+    "link": "",
+    "isim": "Eddington"
+  },
+  "trap-house": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/trap-house-hdfc.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/mlxixw8h374x",
+    "isim": "Trap House"
+  },
+  "evcil-hayvanlar-yolda": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/pets-on-a-train.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/quk82dk9zunp",
+    "isim": "Evcil Hayvanlar Yolda"
+  },
+  "blucher-battle-on-oslo": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/blucher.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/yzwefi787uo0",
+    "isim": "Blücher - Battle on Oslo"
+  },
+  "wicked-i-yilik-ugruna": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/wicked-for-good.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/hc75oz87z20d",
+    "isim": "Wicked İyilik Uğruna"
+  },
+  "chainsaw-man-the-movie-reze-arc": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/chainsaw-man-the-movie-reze-arc.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/auecj800i1t1",
+    "isim": "Chainsaw Man - The Movie: Reze Arc"
+  },
+  "the-ruse": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-ruse.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/jeaufof0c9zk",
+    "isim": "The Ruse"
+  },
+  "olume-kosan-adam": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-running-man-hdfc.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/ohg4rbsybjgu",
+    "isim": "Ölüme Koşan Adam"
+  },
+  "sisu-2": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/sisu-road-to-revenge.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/8hrh4yextjvr",
+    "isim": "Sisu 2"
+  },
+  "butun-seytanlar-burada": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/all-the-devils-are-here.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/dmktkmp86d0b",
+    "isim": "Bütün Şeytanlar Burada"
+  },
+  "venus-te-gorusuruz": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/see-you-on-venus.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/x3cyq29wmohm",
+    "isim": "Venüs'te Görüşürüz"
+  },
+  "tatilde-tanistigimiz-i-nsanlar": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/people-we-meet-on-vacation.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/4cpi9mc2dscy",
+    "isim": "Tatilde Tanıştığımız İnsanlar"
+  },
+  "detective-knight-independence": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-independence.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/xfd8z8jz7491",
+    "isim": "Detective Knight Independence"
+  },
+  "zootropolis-2": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/zootopia-2.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/zfdchf9i3sow",
+    "isim": "Zootropolis 2"
+  },
+  "cover-up": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/cover-up.webp",
+    "link": "",
+    "isim": "Cover-Up"
+  },
+  "suddenly": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/suddenly-hdfc-hdfc.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/yg3ln7v22dax",
+    "isim": "Suddenly"
+  },
+  "sauvages": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/fr1oe7m50azt",
+    "isim": "Sauvages"
+  },
+  "detective-knight-redemption": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-redemption.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/kpdhpvqzqofr",
+    "isim": "Detective Knight Redemption"
+  },
+  "tehlikeli-i-saret": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/hear-no-evil.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/rpc8mrtwng3t",
+    "isim": "Tehlikeli İşaret"
+  },
+  "dogulu": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/dogulu.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/lluxu3qpqlym",
+    "isim": "Doğulu"
+  },
+  "bay-bayan-aslan": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-aslan.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/chfbkkwhsvx4",
+    "isim": "Bay & Bayan Aslan"
+  },
+  "100-nights-of-hero": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/100-nights-of-hero.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/vqux2tzxp7on",
+    "isim": "100 Nights of Hero"
+  },
+  "elveda-june": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/goodbye-june.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/wio0psyxi6dg",
+    "isim": "Elveda June"
+  },
+  "sonsuza-dek": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/eternity.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/ad53ofnjb8to",
+    "isim": "Sonsuza Dek"
+  },
+  "on-falling": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/on-falling.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/4t119jwn7itc",
+    "isim": "On Falling"
+  },
+  "gatao-like-father-like-son": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-like-father-like-son.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/pv6d9tysa3z2",
+    "isim": "GATAO: Like Father Like Son"
+  },
+  "gatao-big-brothers": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-big-brothers.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/1hemixssp86u",
+    "isim": "GATAO: Big Brothers"
+  },
+  "fierce-town-zloy-gorod": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/fierce-town.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/1uz2busngwpu",
+    "isim": "Fierce Town - Zloy gorod"
+  },
+  "arcadian": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/arcadian.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/03kmlgppi4jb",
+    "isim": "Arcadian"
+  },
+  "hazel-s-heart": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/hazel-s-heart.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/qo2sdgnxgw31",
+    "isim": "Hazel's Heart"
+  },
+  "zebun": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/zebun.webp",
+    "link": "",
+    "isim": "Zebun"
+  },
+  "four-letters-of-love": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/four-letters-of-love.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/xwdwdoprvpon",
+    "isim": "Four Letters of Love"
+  },
+  "fackham-hall": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/fackham-hall.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/mrktqne344x0",
+    "isim": "Fackham Hall"
+  },
+  "ata-demirer-gazinosu": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-gazinosu.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/t7y5kpq5ahzb",
+    "isim": "Ata Demirer Gazinosu"
+  },
+  "avatar-ates-ve-kul": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/avatar-fire-and-ash.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/hyl0takfor73",
+    "isim": "Avatar Ateş ve Kül"
+  },
+  "worldbreaker": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/worldbreaker.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/5asym5xp76i0",
+    "isim": "Worldbreaker"
+  },
+  "cesurluk-zamani-a-time-for-bravery": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/a-time-for-bravery.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/ssq7q0l1e7ob",
+    "isim": "Cesurluk Zamanı - A Time For Bravery"
+  },
+  "tufan-the-great-flood": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-great-flood.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/wuclyvtl4dck",
+    "isim": "Tufan - The Great Flood"
+  },
+  "ali-cevlik": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/ali-cevlik.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/seo5buk7lej7",
+    "isim": "Ali Çevlik"
+  },
+  "detective-knight-rogue": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-rogue.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/l8w92jsw1d2v",
+    "isim": "Detective Knight Rogue"
+  },
+  "it-ends": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/it-ends.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/qnafxjgiwmhx",
+    "isim": "It Ends"
+  },
+  "hayaller": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/dreams-hdfc.webp",
+    "link": "",
+    "isim": "Hayaller"
+  },
+  "the-best-mother-in-the-world": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-best-mother-in-the-world.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/0ey79zj95ypd",
+    "isim": "The Best Mother in the World"
+  },
+  "on-saniye": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/in-ten-seconds.webp",
+    "link": "",
+    "isim": "On Saniye"
+  },
+  "the-secrets-we-bury": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-secrets-we-bury.webp",
+    "link": "",
+    "isim": "The Secrets We Bury"
+  },
+  "preparation-for-the-next-life": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/preparation-for-the-next-life.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/bkhppqrsdng3",
+    "isim": "Preparation for the Next Life"
+  },
+  "the-thing-with-feathers": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-thing-with-feathers.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/1me2wqrros8q",
+    "isim": "The Thing with Feathers"
+  },
+  "siyah-telefon-2": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/black-phone-2.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/vhuhc13oplge",
+    "isim": "Siyah Telefon 2"
+  },
+  "sessiz-gece-kanli-gece": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/silent-night-deadly-night.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/52nw6yqw2w0e",
+    "isim": "Sessiz Gece Kanlı Gece"
+  },
+  "only-on-earth": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/only-on-earth.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/xc08hgx83kl4",
+    "isim": "Only on Earth"
+  },
+  "raat-akeli-hai-the-bansal-murders": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/raat-akeli-hai-the-bansal-murders.webp",
+    "link": "",
+    "isim": "Raat Akeli Hai: The Bansal Murders"
+  },
+  "last-seen-alive": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/last-seen-alive.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/7x0eoyntox18",
+    "isim": "Last Seen Alive"
+  },
+  "turbulence": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/turbulence-hdfc.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/q3nwe7z8suvr",
+    "isim": "Turbulence"
+  },
+  "lone-samurai": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/lone-samurai.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/d72fuvew0osf",
+    "isim": "Lone Samurai"
+  },
+  "influencers": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/influencers.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/r778f4xx7zmx",
+    "isim": "Influencers"
+  },
+  "yasama-atesi": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/soul-on-fire.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/9fh8yb5brwc2",
+    "isim": "Yaşama Ateşi"
+  },
+  "truth-treason": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/truth-treason.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/x91zbesz3zb0",
+    "isim": "Truth & Treason"
+  },
+  "yavasca-soyle-tell-me-softly": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/tell-me-softly.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/5n8sx2wnh4hc",
+    "isim": "Yavaşça Söyle - Tell Me Softly"
+  },
+  "bicaklar-cekildi-olu-adamin-uyanisi": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/wake-up-dead-man-a-knives-out-mystery.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/2idhr0tc9gv7",
+    "isim": "Bıçaklar Çekildi Ölü Adamın Uyanışı"
+  },
+  "biz-melek-degiliz": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/we-re-no-angels.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/iizh6s9dveaf",
+    "isim": "Biz Melek Değiliz"
+  },
+  "bir-oh-desem": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/waiting-to-exhale.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/qoeskid9go8c",
+    "isim": "Bir Oh Desem"
+  },
+  "lost-in-the-spotlight": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/lost-in-the-spotlight.webp",
+    "link": "",
+    "isim": "Lost in the Spotlight"
+  },
+  "the-fakenapping": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-fakenapping.webp",
+    "link": "",
+    "isim": "The Fakenapping"
+  },
+  "rabbit-trap": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/rabbit-trap.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/44l5fiktbqhj",
+    "isim": "Rabbit Trap"
+  },
+  "merv": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/merv.webp",
+    "link": "",
+    "isim": "Merv"
+  },
+  "sarah-squirm-live-in-the-flesh": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/sarah-squirm-live-in-the-flesh.webp",
+    "link": "",
+    "isim": "Sarah Squirm Live in the Flesh"
+  },
+  "koln-75": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/koln-75.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/ctd0xhacpix9",
+    "isim": "Köln 75"
+  },
+  "christy": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/christy.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/5ubukqts4iyy",
+    "isim": "Christy"
+  },
+  "keeper": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/keeper.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/0p3zcf7d33vg",
+    "isim": "Keeper"
+  },
+  "kombucha": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/kombucha.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/teokfazzkepr",
+    "isim": "Kombucha"
+  },
+  "ogul-the-carpenter-s-son": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-carpenter-s-son.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/662i64gkpxco",
+    "isim": "Oğul - The Carpenter's Son"
+  },
+  "i-swear": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/i-swear.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/bbk1bufzod4l",
+    "isim": "I Swear"
+  },
+  "ai-eo": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/eo.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/sigilg4v32sk",
+    "isim": "Ai - Eo"
+  },
+  "the-prosecutor": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-prosecutor.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/87inldipnvss",
+    "isim": "The Prosecutor"
+  },
+  "please-don-t-feed-the-children": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/please-don-t-feed-the-children.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/u9s5g25fykvm",
+    "isim": "Please Don't Feed the Children"
+  },
+  "delirtiyorsun": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/you-drive-me-crazy.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/hyhio65mqyvf",
+    "isim": "Delirtiyorsun"
+  },
+  "safe-house": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/safe-house.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/ii1pps1mlw31",
+    "isim": "Safe House"
+  },
+  "onemsiz-biri-2": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/nobody-2.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/pf51f72fxsvv",
+    "isim": "Önemsiz Biri 2"
+  },
+  "run-begi": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/run-begihdfc.webp",
+    "link": "https://hdfilmcehennemi.mobi/video/embed/i00JdGVpwzy/",
+    "isim": "Run - Begi"
+  },
+  "pose": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/pose.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/fb4eilcpy9u7",
+    "isim": "Pose"
+  },
+  "the-shadow-s-edge": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-shadow-s-edge.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/khwj0ajswv6o",
+    "isim": "The Shadow's Edge"
+  },
+  "the-family-mcmullen": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-family-mcmullen.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/qqd22qnovca7",
+    "isim": "The Family McMullen"
+  },
+  "ask-ve-sarap-love-and-wine": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/love-and-wine.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/zvxj6esmh3re",
+    "isim": "Aşk ve Şarap - Love and Wine"
+  },
+  "babam-noel-i-kurtariyor-2": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-night-my-dad-saved-christmas-2.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/98tz49195gb7",
+    "isim": "Babam Noel'i Kurtarıyor 2"
+  },
+  "jay-kelly": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/jay-kelly.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/twpubfubn7p2",
+    "isim": "Jay Kelly"
+  },
+  "evcilik": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-playroom.webp",
+    "link": "",
+    "isim": "Evcilik"
+  },
+  "lali-time-to-step-up": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/lali-time-to-step-up.webp",
+    "link": "",
+    "isim": "Lali: Time To Step Up"
+  },
+  "sulis-1907": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-riot.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/aaktqas1ejb1",
+    "isim": "Sulis 1907"
+  },
+  "keske-bana-soyleseydin": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/i-wish-you-had-told-me.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/y13fwhvhpdpl",
+    "isim": "Keşke Bana Söyleseydin"
+  },
+  "best-served-cold": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/best-served-cold.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/2fh5brtld8gp",
+    "isim": "Best Served Cold"
+  },
+  "ata-demirer-tek-kisilik-dev-kadro-2": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro-2.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/6v7tbdxav1fr",
+    "isim": "Ata Demirer: Tek Kişilik Dev Kadro 2"
+  },
+  "gri-gokyuzu": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/grey-skies.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/bi8iv8d3u6kh",
+    "isim": "Gri Gökyüzü"
+  },
+  "re-born-re-born": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/re-born.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/mmaymcszhbcf",
+    "isim": "RE:BORN - Re Born"
+  },
+  "noel-annem-my-secret-santa": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/my-secret-santa.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/nht1qhh0w85m",
+    "isim": "Noel Annem - My Secret Santa"
+  },
+  "ne-eglence-ama": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/oh-what-fun.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/0e7pa7zn4jat",
+    "isim": "Ne Eğlence Ama!"
+  },
+  "the-legend-of-nigger-charley": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-legend-of-nigger-charley.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/aoe27kj6uabz",
+    "isim": "The Legend of Nigger Charley"
+  },
+  "sevimli": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/loveable.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/ibfu3dhzi1a9",
+    "isim": "Sevimli"
+  },
+  "piyano": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/the-piano.webp",
+    "link": "",
+    "isim": "Piyano"
+  },
+  "gatao-2-yeni-kral": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-2-rise-of-the-king.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/obuuttr29fzy",
+    "isim": "Gatao 2 : Yeni Kral"
+  },
+  "tron-ares": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/tron-ares.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/he4zb424248h",
+    "isim": "TRON Ares"
+  },
+  "shanks": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/shanks.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/y2oob0sgjq9o",
+    "isim": "Shanks"
+  },
+  "carol-of-the-bells": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/carol-of-the-bells.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/d3m4e6elnssy",
+    "isim": "Carol of the Bells"
+  },
+  "gatao": {
+    "resim": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao.webp",
+    "link": "https://www.hdfilmcehennemi.com/rplayer/lltaikubgto3",
+    "isim": "Gatao"
+  }
+};
+        
+        // YÜKLEME BİTTİĞİNDE
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            initApp();
+        }, 1000);
+        
+        function initApp() {
+            var container = document.getElementById("filmListesiContainer");
+            
+            Object.keys(filmler).forEach(function(key) {
+                var film = filmler[key];
+                var item = document.createElement("div");
+                item.className = "filmpanel";
+                item.onclick = function() { 
+                    if (film.link) {
+                        showPlayer(film.link, key);
+                    } else {
+                        showMessage("Bu film için video linki bulunamadı.");
+                    }
+                };
+                item.innerHTML = `
+                    <div class="filmresim">
+                        <img src="${film.resim}" alt="${film.isim}" onerror="this.src='https://via.placeholder.com/300x450/15161a/ffffff?text=No+Image'">
+                    </div>
+                    <div class="filmisimpanel">
+                        <div class="filmisim">${film.isim}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+            
+            // TOPLAM FİLM SAYISINI GÖSTER
+            var baslik = document.querySelector('.baslik');
+            baslik.textContent += ` (${Object.keys(filmler).length} Film)`;
+        }
+        
+        function showPlayer(streamUrl, filmID) {
+            document.getElementById("playerpanel").style.display = "flex"; 
+            
+            // Player'ı hazırla
+            document.getElementById("main-player").innerHTML = "";
+            
+            const fullUrl = BRADMAX_BASE_URL + encodeURIComponent(streamUrl) + BRADMAX_PARAMS;
+            const iframeHtml = `<iframe id="bradmax-iframe" src="${fullUrl}" allowfullscreen tabindex="0" autofocus></iframe>`;
+            
+            document.getElementById("main-player").innerHTML = iframeHtml;
+            
+            // Sayfa hash'ini güncelle
+            history.pushState({ page: 'player', filmID: filmID, streamUrl: streamUrl }, '', '#player-' + filmID);
+        }
+        
+        function geriPlayer() {
+            document.getElementById("playerpanel").style.display = "none";
+            document.getElementById("main-player").innerHTML = "";
+            
+            // Ana sayfaya dön
+            history.replaceState({ page: 'anaSayfa' }, '', '#anaSayfa');
+        }
+        
+        // MESAJ FONKSİYONLARI
+        function showMessage(text) {
+            document.getElementById('messageText').textContent = text;
+            document.getElementById('messageBox').style.display = 'block';
+        }
+        
+        function hideMessage() {
+            document.getElementById('messageBox').style.display = 'none';
+        }
+        
+        // ARAMA FONKSİYONLARI
+        function searchFilms() {
+            var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
+            var container = document.getElementById('filmListesiContainer');
+            var panels = container.querySelectorAll('.filmpanel');
+            var found = false;
+            
+            // Başlık hariç tüm panelleri kontrol et
+            panels.forEach(function(panel) {
+                if (panel.classList.contains('baslik')) return;
+                
+                var filmName = "";
+                var filmIsimDiv = panel.querySelector('.filmisim');
+                if (filmIsimDiv) {
+                    filmName = filmIsimDiv.textContent.toLowerCase();
+                }
+                
+                if (filmName.includes(searchTerm)) {
+                    panel.style.display = 'block';
+                    found = true;
+                } else {
+                    panel.style.display = 'none';
+                }
+            });
+            
+            if (!found && searchTerm) {
+                showMessage(`"${searchTerm}" için film bulunamadı.`);
+            }
+            
+            return false;
+        }
+        
+        function resetFilmSearch() {
+            var container = document.getElementById('filmListesiContainer');
+            var panels = container.querySelectorAll('.filmpanel');
+            
+            panels.forEach(function(panel) {
+                panel.style.display = 'block';
+            });
+        }
+        
+        // BROWSER HISTORY YÖNETİMİ
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.page === 'player') {
+                // Player'da kalmaya devam et
+                return;
+            } else {
+                // Ana sayfaya dön
+                geriPlayer();
+            }
+        });
+        
+        // SAYFA YÜKLENDİĞİNDE HASH KONTROLÜ
+        window.addEventListener('load', function() {
+            var hash = window.location.hash;
+            if (hash.startsWith('#player-')) {
+                var filmID = hash.replace('#player-', '');
+                if (filmler[filmID] && filmler[filmID].link) {
+                    setTimeout(() => {
+                        showPlayer(filmler[filmID].link, filmID);
+                    }, 500);
+                }
+            }
+        });
+        
+        // ESC TUŞU İLE PLAYER'DAN ÇIK
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                geriPlayer();
+            }
+        });
+    </script>
+</body>
+</html>
