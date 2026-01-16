@@ -1,65 +1,70 @@
-import requests
-from bs4 import BeautifulSoup
 import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
 
-# --- AYARLAR ---
-# Site bu bilgileri görmezse 404 veriyor
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "X-Requested-With": "XMLHttpRequest", # 'Ben bir AJAX isteğiyim' diyoruz
-    "Referer": "https://www.hdfilmcehennemi.nl/category/film-izle-2/", # 'Kategori sayfasından geliyorum' diyoruz
-    "Accept": "*/*"
-}
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
-def video_linki_bul(film_url):
-    """Film sayfasına girip o meşhur iframe linkini çeker"""
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
+def get_iframe(url):
     try:
-        # Film sayfasına giderken normal header kullanıyoruz
-        r = requests.get(film_url, headers={"User-Agent": headers["User-Agent"]}, timeout=10)
-        s = BeautifulSoup(r.text, 'html.parser')
-        iframe = s.find('iframe', {'class': 'close'})
-        return iframe.get('data-src') if iframe else "Link Bulunamadı"
-    except:
-        return "Bağlantı Hatası"
+        driver.get(url)
+        time.sleep(3)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        iframe = soup.find('iframe', {'class': 'close'})
+        return iframe.get('data-src') if iframe else "Link Yok"
+    except: return "Hata"
 
-# --- ANA DÖNGÜ ---
-# 1'den 970'e kadar (veya kaç sayfa istersen)
-for sayfa_no in range(1, 10): 
-    # Senin yakaladığın o gizli yükleme linki:
-    load_url = f"https://www.hdfilmcehennemi.nl/load/page/{sayfa_no}/categories/film-izle-2/"
-    
-    print(f"\n🚀 {sayfa_no}. SAYFA ÇEKİLİYOR: {load_url}")
-    
-    try:
-        # requests.get ile o gizli linke 'X-Requested-With' ile sızıyoruz
-        response = requests.get(load_url, headers=headers, timeout=15)
+try:
+    # 970 sayfa taranabilir, test için range'i ayarla
+    for sayfa in range(1, 20):
+        # STRATEJİ: Site hangisine izin verirse oradan dalacağız
+        denenecek_linkler = [
+            f"https://www.hdfilmcehennemi.nl/category/film-izle-2/?page={sayfa}",
+            f"https://www.hdfilmcehennemi.nl/kategori/film-izle-2/page/{sayfa}/",
+            f"https://www.hdfilmcehennemi.nl/film-izle-2/page/{sayfa}/"
+        ]
         
-        if response.status_code != 200:
-            print(f"❌ Site cevap vermedi. Kod: {response.status_code}")
-            continue
+        film_listesi = []
+        
+        for link in denenecek_linkler:
+            print(f"🔍 Deneniyor: {link}")
+            driver.get(link)
+            time.sleep(4)
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
+            # Senin attığın kaynakta film linkleri 'poster' class'lı a etiketleriydi
+            bulunanlar = soup.find_all('a', class_='poster')
             
-        soup = BeautifulSoup(response.text, 'html.parser')
-        filmler = soup.find_all('a', class_='poster')
+            if bulunanlar:
+                film_listesi = bulunanlar
+                print(f"✅ Yol Bulundu! Sayfa {sayfa} üzerinden {len(bulunanlar)} film çekiliyor.")
+                break
         
-        if not filmler:
-            print("⚠️ Bu sayfada film bulunamadı.")
-            break
+        if not film_listesi:
+            print(f"❌ Sayfa {sayfa} için hiçbir kapı açılmadı. Engel var.")
+            # Eğer ilk sayfada bile bulamazsa site yapısı kökten değişmiş olabilir
+            if sayfa == 1: break 
+            continue
 
-        for film in filmler:
-            f_adi = film.get('title')
+        # Sayfa içindeki filmleri tara
+        for film in film_listesi:
+            f_adi = film.get('title') or "İsimsiz Film"
             f_link = film.get('href')
             
             if f_link:
                 print(f"🎬 {f_adi}")
-                v_link = video_linki_bul(f_link)
+                # Mevcut sekmede git-gel yapıyoruz (Oturum ölmesin diye)
+                v_link = get_iframe(f_link)
                 print(f"🔗 {v_link}")
                 print("-" * 30)
-                
-                # Saniyede 1 film çekerek ban riskini sıfıra indiriyoruz
-                time.sleep(0.5)
 
-    except Exception as e:
-        print(f"💥 Sayfa {sayfa_no} taranırken hata: {e}")
-        time.sleep(2)
-
-print("\n✅ İşlem tamamlandı!")
+finally:
+    driver.quit()
+    
