@@ -35,8 +35,6 @@
         color: #fff;
         padding: 15px 10px;
         box-sizing: border-box;
-        font-size: 18px;
-        font-weight: bold;
     }
     .filmpanel {
         width: 12%;
@@ -96,7 +94,7 @@
     }
     .aramapanel {
         width: 100%;
-        height: 70px;
+        height: 60px;
         background: #15161a;
         border-bottom: 1px solid #323442;
         margin: 0px auto;
@@ -104,72 +102,61 @@
         box-sizing: border-box;
         overflow: hidden;
         z-index: 11111;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
     }
     .aramapanelsag {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        width: auto;
+        height: 40px;
+        box-sizing: border-box;
+        overflow: hidden;
+        float: right;
     }
     .aramapanelsol {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        width: 50%;
+        height: 40px;
+        box-sizing: border-box;
+        overflow: hidden;
+        float: left;
     }
     .aramapanelyazi {
         height: 40px;
-        width: 250px;
-        border: 1px solid #572aa7;
+        width: 120px;
+        border: 1px solid #ccc;
         box-sizing: border-box;
-        padding: 0px 15px;
+        padding: 0px 10px;
         color: #000;
-        font-size: 14px;
-        border-radius: 5px;
-        background: #fff;
+        margin: 0px 5px;
     }
     .aramapanelbuton {
         height: 40px;
-        width: 80px;
+        width: 40px;
         text-align: center;
         background-color: #572aa7;
         border: none;
         color: #fff;
         box-sizing: border-box;
-        border-radius: 5px;
+        overflow: hidden;
+        float: right;
         transition: .35s;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
     }
     .aramapanelbuton:hover {
         background-color: #fff;
-        color: #572aa7;
-        border: 1px solid #572aa7;
+        color: #000;
     }
     .logo {
         width: 40px;
         height: 40px;
+        float: left;
     }
     .logo img {
         width: 100%;
-        border-radius: 5px;
     }
     .logoisim {
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 15px;
+        width: 70%;
+        height: 40px;
+        line-height: 40px;
+        font-weight: 500;
         color: #fff;
-    }
-    .info-bar {
-        background: #572aa7;
-        color: white;
-        padding: 8px 15px;
-        text-align: center;
-        font-size: 13px;
-        margin: 5px 0;
-        border-radius: 5px;
-        font-weight: bold;
     }
     .hataekran i {
         color: #572aa7;
@@ -183,10 +170,9 @@
         color: #fff;
         background: #15161a;
         border: 1px solid #323442;
-        padding: 20px;
+        padding: 10px;
         box-sizing: border-box;
         border-radius: 10px;
-        text-align: center;
     }
     .hatayazi {
         color: #fff;
@@ -202,23 +188,6 @@
             height: 190px;
             margin: 1%;
         }
-        .aramapanelyazi {
-            width: 180px;
-        }
-        .aramapanel {
-            flex-direction: column;
-            height: auto;
-            padding: 15px;
-        }
-        .aramapanelsol, .aramapanelsag {
-            width: 100%;
-            justify-content: center;
-            margin: 5px 0;
-        }
-        .info-bar {
-            font-size: 12px;
-            padding: 6px 10px;
-        }
     }
 </style>
 </head>
@@ -226,439 +195,33 @@
 <div class="aramapanel">
 <div class="aramapanelsol">
 <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
-<div class="logoisim">TITAN TV VOD (215 Film)</div>
+<div class="logoisim">TITAN TV (230 Film)</div>
 </div>
 <div class="aramapanelsag">
-<div class="info-bar">🎲 Ekranda 99 film | 🔍 Tüm 215 filmde arama yapabilirsiniz</div>
 <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
-    <input type="text" id="filmSearch" placeholder="Film adı yazın..." class="aramapanelyazi" oninput="resetFilmSearch()">
+    <input type="text" id="filmSearch" placeholder="Film ara..." class="aramapanelyazi" oninput="resetFilmSearch()">
     <input type="submit" value="ARA" class="aramapanelbuton">
 </form>
 </div>
 </div>
 
 <div class="filmpaneldis" id="filmListesiContainer">
-    <div class="baslik">HDFİLMCEHENNEMİ VOD - Rastgele 99 Film</div>
+    <div class="baslik">HDFİLMCEHENNEMİ VOD</div>
 
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/0fia9gsdisk2">
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/pv6d9tysa3z2">
         <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/coyotes-2025-film.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gatao-like-father-like-son.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
             <div class="filmisimpanel">
-                <div class="filmisim">Coyotes</div>
+                <div class="filmisim">GATAO: Like Father Like Son</div>
             </div>
         </div>
     </a>
 
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/zt0ak7rsni4y">
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/vqux2tzxp7on">
         <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/lost-horizon.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/100-nights-of-hero.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
             <div class="filmisimpanel">
-                <div class="filmisim">Lost Horizon</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/5ubukqts4iyy">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/christy.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Christy</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/s6bvrkz4c0ic">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ice-fall.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Icefall</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/ibfu3dhzi1a9">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/loveable.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Sevimli</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://hdfilmcehennemi.mobi/video/embed/NOwl1QUzSHD/">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-sadness.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Sadness</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/3m13lsh6n4xi">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/playdate.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Oyun Buluşması - Playdate</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/st9fjvcfdspj">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gunslingers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Gunslingers</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/ks3ljhrhwg8r">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/efendiler.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Efendiler</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/jmqo7pllo949">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/lost-found.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Lost & Found</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/p83clwiaof3y">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/herd.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Herd</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/63ecvtlac3iy">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/being-eddie.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Being Eddie</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/r4vjanzyl0ka">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sisu.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Sisu</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/yky4mecdwdiv">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hep-yek-loto.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Hep Yek Loto</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/xadumjhi3d7w">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Crazy Old Lady</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/u9s5g25fykvm">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/please-don-t-feed-the-children.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Please Don&#39;t Feed the Children</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/cfoyxalxjjyl">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/vicious.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Vicious</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/ii1pps1mlw31">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/safe-house.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Safe House</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/6v7tbdxav1fr">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Ata Demirer: Tek Kişilik Dev Kadro 2</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/pesbwaqg3okg">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/grand-prix-of-europe.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Büyük Yarış</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/5bi0tv4n07li">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ataturk-1881-1919.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Atatürk 1881 - 1919</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/r50sfqhryaqk">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/no-chains-no-masters.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">No Chains No Masters</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/omsdp56w6xv2">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/a-very-jonas-christmas-movie.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">A Very Jonas Christmas Movie</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/thqr66kp352b">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/1-people-you-may-know-izle.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">People You May Know</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/auecj800i1t1">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/chainsaw-man-the-movie-reze-arc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Chainsaw Man - The Movie: Reze Arc</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/cwjaj8liun9g">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mahavatar-narsimha.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Tanrılar ve Şeytanlar - Mahavatar Narsimha</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/t15q2m4rkmtp">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/anniversary.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Anniversary</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/gh51yvhi6d9c">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gerisayimyerli.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Geri Sayım</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/3548xjcpkhju">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Birlikte</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/irs2agswla2r">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/altered.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Altered</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/qoeskid9go8c">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/waiting-to-exhale.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Bir Oh Desem</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/kh2se6cf9ynt">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mass-jathara.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Mass Jathara</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/t7y5kpq5ahzb">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-gazinosu.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Ata Demirer Gazinosu</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/mfv8hk5tf8jz">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/revolver-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Revolver</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/uq9woy5nqgc1">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hell-house-llc-lineage.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Hell House LLC: Lineage</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/zvxj6esmh3re">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/love-and-wine.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Aşk ve Şarap - Love and Wine</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/q84gf8ndp0hx">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/frankenstein-2025-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Frankenstein</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/8jpf5fzq1d81">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Sihirbazlar Çetesi Daha Bir Şey Görmediniz</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/khwj0ajswv6o">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-shadow-s-edge.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Shadow&#39;s Edge</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/pf51f72fxsvv">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/nobody-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Önemsiz Biri 2</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/9fh8yb5brwc2">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/soul-on-fire.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Yaşama Ateşi</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/1smfk8ksulbw">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-shepherd.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Bad Shepherd</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/2k32ubksynb8">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Beraber</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/jdd5ypzg0pd5">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-mahi.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Mr & Mrs Mahi</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/mf867eb2xz90">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/groom-two-brides.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Groom & Two Brides</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/kq3f3uof8l7t">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/tee-yai-born-to-be-bad.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Tee Yai Born to Be Bad</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/fr1oe7m50azt">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Sauvages</div>
+                <div class="filmisim">100 Nights of Hero</div>
             </div>
         </div>
     </a>
@@ -672,452 +235,29 @@
         </div>
     </a>
 
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/a8qx7xtr4i5p">
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ltxch2znfdzc">
         <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/champagne-problems.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/jack-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
             <div class="filmisimpanel">
-                <div class="filmisim">Champagne Problems</div>
+                <div class="filmisim">Jack</div>
             </div>
         </div>
     </a>
 
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/uigo3k58c9um">
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ikz872abbdmu">
         <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/toying-with-the-holidays.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-home.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
             <div class="filmisimpanel">
-                <div class="filmisim">Toying with the Holidays</div>
+                <div class="filmisim">The Home</div>
             </div>
         </div>
     </a>
 
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/3psenn0788i1">
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/jdd5ypzg0pd5">
         <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-white-house-effect.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-mahi.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
             <div class="filmisimpanel">
-                <div class="filmisim">The White House Effect</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/ne1ppxfpu4uq">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/we-bury-the-dead.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">We Bury the Dead</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/he4zb424248h">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/tron-ares.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">TRON Ares</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/k53fbmnqf2ki">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/tyler-perry-s-finding-joy.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Tyler Perry&#39;den Joy&#39;un Kısmeti</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/qnafxjgiwmhx">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/it-ends.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">It Ends</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/54nzupk1tfzv">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/forced-vacation.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Zoraki Tatil</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/ts4w8ttf7ynt">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/black-cab.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Black Cab</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/tyho4nst7006">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Hood</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/y2oob0sgjq9o">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/shanks.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Shanks</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/sz7nwn95vzb3">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-rip.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Rip</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/sbxtvre33x1b">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/a-run-for-money.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Kaç Para Kaç</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/tfews38ploqv">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/five-nights-at-freddy-s-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Freddynin Pizza Dükkanında Beş Gece 2</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/xvxxn5gninrd">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Yarışçılar: Büyük Hesaplaşma</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/vf9eu8dn6w57">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/grey-owl.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Gri Baykuş</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/mlla1bg94jv2">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/jurassic-world-rebirth.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Jurassic World Yeniden Doğuş</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/1me2wqrros8q">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-thing-with-feathers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Thing with Feathers</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/wcehnfo5rdz4">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-old-woman-with-the-knife.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Old Woman with the Knife</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/mrktqne344x0">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/fackham-hall.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Fackham Hall</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/jf2914tsqar8">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/agatha-and-the-curse-of-ishtar.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Agatha and the Curse of Ishtar</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/2pmk32hbra85">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/day-of-a-lion.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Day of a Lion</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/0ey79zj95ypd">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-best-mother-in-the-world.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Best Mother in the World</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/wuclyvtl4dck">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-great-flood.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Tufan - The Great Flood</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://hdfilmcehennemi.mobi/video/embed/i00JdGVpwzy/">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/run-begihdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Run - Begi</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/hmusi33kmwlw">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/as-in-heaven.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">As in Heaven</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/ssq7q0l1e7ob">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/a-time-for-bravery.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Cesurluk Zamanı - A Time For Bravery</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/nht1qhh0w85m">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/my-secret-santa.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Noel Annem - My Secret Santa</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/50ajrrtywc6i">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/dust-bunny.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Toz Yumağı - Dust Bunny</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/ilk35ptaoyj2">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-carman-family-deaths.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Carman Family Deaths</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/8hwtcqq260wy">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-naked-gun.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Çıplak Silah</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/o9hphy2adwfm">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/love-war.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Savaşın Kalbinde</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/ohg4rbsybjgu">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-running-man-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Ölüme Koşan Adam</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/6cw06fiqf8ct">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-substance.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Cevher</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/iizh6s9dveaf">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/we-re-no-angels.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Biz Melek Değiliz</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/mx161ypovsfr">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/under-fire-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Under Fire</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/bkhppqrsdng3">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/preparation-for-the-next-life.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Preparation for the Next Life</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/modxo3dko1hl">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/man-finds-tape.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Man Finds Tape</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/fxnnih8gv8u4">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mrs-christmas.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Mrs. Christmas</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/su2sf9hx4aci">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/daddy-or-mommy.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Bu Nasıl Boşanma</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/8hrh4yextjvr">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sisu-road-to-revenge.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Sisu 2</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/hyl0takfor73">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/avatar-fire-and-ash.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Avatar Ateş ve Kül</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/m5skfjwrjtud">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-hand-that-rocks-the-cradle-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The Hand That Rocks the Cradle</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/chfbkkwhsvx4">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-aslan.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Bay & Bayan Aslan</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/7ps1fq323m8s">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/special-unit-the-first-murder.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Special Unit - The First Murder</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/rkel0po4vgyx">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Follow My Voice</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/5y4r02pr3l7p">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-war-between.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">The War Between</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/qy97lnazp5mu">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/a-big-bold-beautiful-journey.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Büyük Cesur ve Güzel Bir Yolculuk</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/tvrnmtibg5h0">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/shelby-oaks.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Shelby Oaks</div>
-            </div>
-        </div>
-    </a>
-
-    <a href="https://www.hdfilmcehennemi.nl/rplayer/5n8sx2wnh4hc">
-        <div class="filmpanel">
-            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/tell-me-softly.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-            <div class="filmisimpanel">
-                <div class="filmisim">Yavaşça Söyle - Tell Me Softly</div>
+                <div class="filmisim">Mr & Mrs Mahi</div>
             </div>
         </div>
     </a>
@@ -1131,19 +271,844 @@
         </div>
     </a>
 
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ma7s13qmh3jq">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/my-only-sunshine.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Hayat Var</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/2k32ubksynb8">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Beraber</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/i0ueyhpn3u4v">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/jingle-bell-heist.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Noel Soygunu - Jingle Bell Heist</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/rkel0po4vgyx">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Follow My Voice</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/s3qq24vso0fl">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/freakier-friday.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Daha Çılgın Cuma</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/xadumjhi3d7w">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Crazy Old Lady</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/6b9dns5m8sri">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/circle.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Circle</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/0p3zcf7d33vg">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/keeper.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Keeper</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/y2oob0sgjq9o">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/shanks.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Shanks</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/k38zdbn05v2l">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sleepwalker.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Sleepwalker</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/hhc5idv7ymr0">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/play-dead-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Play Dead</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/5bi0tv4n07li">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ataturk-1881-1919.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Atatürk 1881 - 1919</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/4gwtu6s1qjiz">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/left-handed-girl.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Solak Kız</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/3eff9wikzbj6">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/cheetahs-up-close-with-bertie-gregory.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Cheetahs Up Close with Bertie Gregory</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/gh51yvhi6d9c">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gerisayimyerli.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Geri Sayım</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/1uz2busngwpu">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/fierce-town.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Fierce Town - Zloy gorod</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/wio0psyxi6dg">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/goodbye-june.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Elveda June</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/pav5dfh3py83">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/what-matters-most.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">What Matters Most</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/03kmlgppi4jb">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/arcadian.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Arcadian</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://hdfilmcehennemi.mobi/video/embed/NOwl1QUzSHD/">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-sadness.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">The Sadness</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/i4tzagfs3bvq">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/soygun-oyunu-buyuk-vurgun.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Soygun Oyunu Büyük Vurgun</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/fr1oe7m50azt">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Sauvages</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/chfbkkwhsvx4">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-aslan.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Bay & Bayan Aslan</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/0e7pa7zn4jat">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/oh-what-fun.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Ne Eğlence Ama!</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/tyho4nst7006">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Hood</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/subaqdntliq7">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/wildcat-2025-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Wildcat</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/wc6lq7fpnx46">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-gentleman.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">The Gentleman</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/rpc8mrtwng3t">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hear-no-evil.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Tehlikeli İşaret</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/nht1qhh0w85m">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/my-secret-santa.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Noel Annem - My Secret Santa</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/wcehnfo5rdz4">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-old-woman-with-the-knife.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">The Old Woman with the Knife</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/usy0ctl7dipp">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hierarchy-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Hierarchy</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/quk82dk9zunp">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/pets-on-a-train.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Evcil Hayvanlar Yolda</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/obuuttr29fzy">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gatao-2-rise-of-the-king.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Gatao 2 : Yeni Kral</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/cy2u0qh5vj3p">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hunting-season.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Hunting Season</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/4kkqp6vhbvyt">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/dead-to-rights.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Dead to Rights</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/t7y5kpq5ahzb">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-gazinosu.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Ata Demirer Gazinosu</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/662i64gkpxco">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-carpenter-s-son.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Oğul - The Carpenter&#39;s Son</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/0fia9gsdisk2">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/coyotes-2025-film.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Coyotes</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/aoe27kj6uabz">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-legend-of-nigger-charley.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">The Legend of Nigger Charley</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/5vsatnmsptjf">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-guys-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Kim Demiş Kötüyüz Diye? 2</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/2fh5brtld8gp">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/best-served-cold.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Best Served Cold</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/zt0ak7rsni4y">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/lost-horizon.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Lost Horizon</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/8jpf5fzq1d81">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Sihirbazlar Çetesi Daha Bir Şey Görmediniz</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/4t119jwn7itc">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/on-falling.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">On Falling</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/denh3xkmwpwd">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hunting-jessica-brok.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Hunting Jessica Brok</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/6cw06fiqf8ct">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-substance.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Cevher</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/kh9nkwxd7puv">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Ata Demirer: Tek Kişilik Dev Kadro</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/7i2bs943btsp">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sunny-sanskari-ki-tulsi-kumari.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Sunny Sanskari Ki Tulsi Kumari</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ts4w8ttf7ynt">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/black-cab.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Black Cab</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ibfu3dhzi1a9">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/loveable.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Sevimli</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/87inldipnvss">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-prosecutor.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">The Prosecutor</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/bkhppqrsdng3">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/preparation-for-the-next-life.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Preparation for the Next Life</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ztm5yarrjmtg">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/eddington.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Eddington</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/tvrnmtibg5h0">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/shelby-oaks.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Shelby Oaks</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/mlrwg0eeuftt">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/after-the-hunt.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">After the Hunt</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ii1pps1mlw31">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/safe-house.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Safe House</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/zfdchf9i3sow">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/zootopia-2.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Zootropolis 2</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/wuclyvtl4dck">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-great-flood.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Tufan - The Great Flood</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/bbk1bufzod4l">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/i-swear.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">I Swear</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/kcrzofgz8yo0">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/time-for-them-to-come-home-for-christmas.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Time for Them to Come Home for Christmas</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/irs2agswla2r">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/altered.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Altered</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/vv5bqfmhnam6">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-long-walk.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">The Long Walk</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/su2sf9hx4aci">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/daddy-or-mommy.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Bu Nasıl Boşanma</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ol3wa807q9s3">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/traumatika.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Traumatika</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://hdfilmcehennemi.mobi/video/embed/i00JdGVpwzy/">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/run-begihdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Run - Begi</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/63dujd54f925">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/tinsel-town.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Tinsel Town</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/jzzt6tluxsiz">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/28-years-later.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">28 Yıl Sonra</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/s1vp6x6h4749">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/trattoria.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Trattoria</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/pesbwaqg3okg">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/grand-prix-of-europe.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Büyük Yarış</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/0ppgxr4zou7a">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/boonie-bears-time-twist.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Ayı Kardeşler: Zaman Yolculuğu</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/xc08hgx83kl4">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/only-on-earth.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Only on Earth</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://hdfilmcehennemi.mobi/video/embed/nUoFXSmr9qz/">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/muzzle-city-of-wolves.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Muzzle: City of Wolves</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/xnrcn2n2if4c">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/13-days-13-nights-in-the-hell-of-kabul.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">13 Days 13 Nights In the Hell of Kabul</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/qqd22qnovca7">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-family-mcmullen.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">The Family McMullen</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ypwps18ybze2">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/lucky-baskhar.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Lucky Baskhar</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/5ubukqts4iyy">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/christy.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Christy</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/5n8sx2wnh4hc">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/tell-me-softly.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Yavaşça Söyle - Tell Me Softly</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/st9fjvcfdspj">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/gunslingers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Gunslingers</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/ona0wr70md0s">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-pretty-one.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">İkiz Hayat</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/m5skfjwrjtud">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/the-hand-that-rocks-the-cradle-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">The Hand That Rocks the Cradle</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/q3nwe7z8suvr">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/turbulence-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Turbulence</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/a8qx7xtr4i5p">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/champagne-problems.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Champagne Problems</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/xvxxn5gninrd">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Yarışçılar: Büyük Hesaplaşma</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/qo2sdgnxgw31">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/hazel-s-heart.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Hazel&#39;s Heart</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/2pmk32hbra85">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/day-of-a-lion.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Day of a Lion</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/z93a2wc7c8qx">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sore-a-wife-from-the-future.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Sore: Gelecekten Gelen Eş</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/r4vjanzyl0ka">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/sisu.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Sisu</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/omsdp56w6xv2">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/a-very-jonas-christmas-movie.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">A Very Jonas Christmas Movie</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/twpubfubn7p2">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/jay-kelly.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Jay Kelly</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/3548xjcpkhju">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Birlikte</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/fb4eilcpy9u7">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/pose.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Pose</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="https://www.hdfilmcehennemi.nl/rplayer/modxo3dko1hl">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="https://www.hdfilmcehennemi.nl/images/list/poster/man-finds-tape.webp" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">Man Finds Tape</div>
+            </div>
+        </div>
+    </a>
+
 </div>
 <script>
 // Tüm film verileri
-const allFilms = [{"film_adi": "Toz Yumağı - Dust Bunny", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/dust-bunny.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/50ajrrtywc6i"}, {"film_adi": "The Rip", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-rip.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sz7nwn95vzb3"}, {"film_adi": "The Bad Shepherd", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-shepherd.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1smfk8ksulbw"}, {"film_adi": "The Gentleman", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-gentleman.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wc6lq7fpnx46"}, {"film_adi": "Crazy Old Lady", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xadumjhi3d7w"}, {"film_adi": "Birlikte", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3548xjcpkhju"}, {"film_adi": "The Getback", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-getback.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ldbokaczm6sb"}, {"film_adi": "Yarışçılar: Büyük Hesaplaşma", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xvxxn5gninrd"}, {"film_adi": "Siccîn 8", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sijjin-8.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/9ra28jn6w2cl"}, {"film_adi": "Freddynin Pizza Dükkanında Beş Gece 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/five-nights-at-freddy-s-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tfews38ploqv"}, {"film_adi": "Hood", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tyho4nst7006"}, {"film_adi": "Vermiglio", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/vermiglio.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5hh2yxf5aex1"}, {"film_adi": "Sleepwalker", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sleepwalker.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/k38zdbn05v2l"}, {"film_adi": "Sihirbazlar Çetesi Daha Bir Şey Görmediniz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8jpf5fzq1d81"}, {"film_adi": "The Internship", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-internship.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/gjncguyl9fzu"}, {"film_adi": "Play Dead", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/play-dead-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hhc5idv7ymr0"}, {"film_adi": "Bugonia", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/bugonia.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/b9v2r49x82k5"}, {"film_adi": "We Bury the Dead", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/we-bury-the-dead.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ne1ppxfpu4uq"}, {"film_adi": "Beraber", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2k32ubksynb8"}, {"film_adi": "Güller", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-roses.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7t12yh5p5eut"}, {"film_adi": "The Inheritance", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-inheritance.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jmu0h6mbz27u"}, {"film_adi": "Sore: Gelecekten Gelen Eş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sore-a-wife-from-the-future.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/z93a2wc7c8qx"}, {"film_adi": "Not Without Hope", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/not-without-hope.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/44n0gr94dmx3"}, {"film_adi": "Under Fire", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/under-fire-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mx161ypovsfr"}, {"film_adi": "The Last Viking", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-last-viking.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kc4ubiuegjbl"}, {"film_adi": "Follow My Voice", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/rkel0po4vgyx"}, {"film_adi": "The Long Walk", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-long-walk.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/vv5bqfmhnam6"}, {"film_adi": "The Tiger", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-tiger.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qxzerkvvjgv0"}, {"film_adi": "People You May Know", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/1-people-you-may-know-izle.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/thqr66kp352b"}, {"film_adi": "Evcil Hayvanlar Yolda", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/pets-on-a-train.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/quk82dk9zunp"}, {"film_adi": "Blücher - Battle on Oslo", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/blucher.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yzwefi787uo0"}, {"film_adi": "Chainsaw Man - The Movie: Reze Arc", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/chainsaw-man-the-movie-reze-arc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/auecj800i1t1"}, {"film_adi": "The Ruse", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-ruse.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jeaufof0c9zk"}, {"film_adi": "Play Dead", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/play-dead.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yq1oqap4xpxt"}, {"film_adi": "Ölüme Koşan Adam", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-running-man-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ohg4rbsybjgu"}, {"film_adi": "Sisu 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sisu-road-to-revenge.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8hrh4yextjvr"}, {"film_adi": "Bütün Şeytanlar Burada", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/all-the-devils-are-here.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/dmktkmp86d0b"}, {"film_adi": "The War Between", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-war-between.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5y4r02pr3l7p"}, {"film_adi": "Wicked İyilik Uğruna", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/wicked-for-good.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hc75oz87z20d"}, {"film_adi": "Zootropolis 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/zootopia-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/zfdchf9i3sow"}, {"film_adi": "Detective Knight Redemption", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-redemption.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kpdhpvqzqofr"}, {"film_adi": "Suddenly", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/suddenly-hdfc-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yg3ln7v22dax"}, {"film_adi": "Detective Knight Independence", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-independence.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xfd8z8jz7491"}, {"film_adi": "Sauvages", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/fr1oe7m50azt"}, {"film_adi": "Eddington", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/eddington.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ztm5yarrjmtg"}, {"film_adi": "Rembrandt", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-rembrandt-syndrome.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/csqx7cun8jxu"}, {"film_adi": "Venüs'te Görüşürüz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/see-you-on-venus.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/x3cyq29wmohm"}, {"film_adi": "Doğulu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/dogulu.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/lluxu3qpqlym"}, {"film_adi": "Sonsuza Dek", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/eternity.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ad53ofnjb8to"}, {"film_adi": "GATAO: Big Brothers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-big-brothers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1hemixssp86u"}, {"film_adi": "Arcadian", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/arcadian.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/03kmlgppi4jb"}, {"film_adi": "Fierce Town - Zloy gorod", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/fierce-town.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1uz2busngwpu"}, {"film_adi": "Tehlikeli İşaret", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hear-no-evil.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/rpc8mrtwng3t"}, {"film_adi": "Ata Demirer Gazinosu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-gazinosu.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/t7y5kpq5ahzb"}, {"film_adi": "100 Nights of Hero", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/100-nights-of-hero.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/vqux2tzxp7on"}, {"film_adi": "Fackham Hall", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/fackham-hall.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mrktqne344x0"}, {"film_adi": "Avatar Ateş ve Kül", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/avatar-fire-and-ash.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hyl0takfor73"}, {"film_adi": "Tufan - The Great Flood", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-great-flood.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wuclyvtl4dck"}, {"film_adi": "Cesurluk Zamanı - A Time For Bravery", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-time-for-bravery.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ssq7q0l1e7ob"}, {"film_adi": "GATAO: Like Father Like Son", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-like-father-like-son.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pv6d9tysa3z2"}, {"film_adi": "Four Letters of Love", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/four-letters-of-love.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xwdwdoprvpon"}, {"film_adi": "It Ends", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/it-ends.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qnafxjgiwmhx"}, {"film_adi": "Hazel's Heart", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hazel-s-heart.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qo2sdgnxgw31"}, {"film_adi": "Worldbreaker", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/worldbreaker.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5asym5xp76i0"}, {"film_adi": "The Best Mother in the World", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-best-mother-in-the-world.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0ey79zj95ypd"}, {"film_adi": "Elveda June", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/goodbye-june.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wio0psyxi6dg"}, {"film_adi": "Ali Çevlik", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ali-cevlik.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/seo5buk7lej7"}, {"film_adi": "Bay & Bayan Aslan", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-aslan.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/chfbkkwhsvx4"}, {"film_adi": "Preparation for the Next Life", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/preparation-for-the-next-life.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/bkhppqrsdng3"}, {"film_adi": "Siyah Telefon 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/black-phone-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/vhuhc13oplge"}, {"film_adi": "Sessiz Gece Kanlı Gece", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/silent-night-deadly-night.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/52nw6yqw2w0e"}, {"film_adi": "Only on Earth", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/only-on-earth.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xc08hgx83kl4"}, {"film_adi": "Last Seen Alive", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/last-seen-alive.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7x0eoyntox18"}, {"film_adi": "The Thing with Feathers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-thing-with-feathers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1me2wqrros8q"}, {"film_adi": "Yavaşça Söyle - Tell Me Softly", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tell-me-softly.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5n8sx2wnh4hc"}, {"film_adi": "Turbulence", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/turbulence-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/q3nwe7z8suvr"}, {"film_adi": "Yaşama Ateşi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/soul-on-fire.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/9fh8yb5brwc2"}, {"film_adi": "Truth & Treason", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/truth-treason.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/x91zbesz3zb0"}, {"film_adi": "Biz Melek Değiliz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/we-re-no-angels.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/iizh6s9dveaf"}, {"film_adi": "Rabbit Trap", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/rabbit-trap.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/44l5fiktbqhj"}, {"film_adi": "Köln 75", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/koln-75.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ctd0xhacpix9"}, {"film_adi": "Christy", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/christy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5ubukqts4iyy"}, {"film_adi": "Oğul - The Carpenter's Son", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-carpenter-s-son.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/662i64gkpxco"}, {"film_adi": "I Swear", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/i-swear.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/bbk1bufzod4l"}, {"film_adi": "Influencers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/influencers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r778f4xx7zmx"}, {"film_adi": "Kombucha", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/kombucha.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/teokfazzkepr"}, {"film_adi": "Ai - Eo", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/eo.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sigilg4v32sk"}, {"film_adi": "Bir Oh Desem", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/waiting-to-exhale.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qoeskid9go8c"}, {"film_adi": "The Prosecutor", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-prosecutor.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/87inldipnvss"}, {"film_adi": "Önemsiz Biri 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/nobody-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pf51f72fxsvv"}, {"film_adi": "The Shadow's Edge", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-shadow-s-edge.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/khwj0ajswv6o"}, {"film_adi": "Please Don't Feed the Children", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/please-don-t-feed-the-children.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/u9s5g25fykvm"}, {"film_adi": "Pose", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/pose.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/fb4eilcpy9u7"}, {"film_adi": "Aşk ve Şarap - Love and Wine", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/love-and-wine.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/zvxj6esmh3re"}, {"film_adi": "Best Served Cold", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/best-served-cold.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2fh5brtld8gp"}, {"film_adi": "Safe House", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/safe-house.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ii1pps1mlw31"}, {"film_adi": "Ata Demirer: Tek Kişilik Dev Kadro 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6v7tbdxav1fr"}, {"film_adi": "Jay Kelly", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jay-kelly.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/twpubfubn7p2"}, {"film_adi": "Babam Noel'i Kurtarıyor 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-night-my-dad-saved-christmas-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/98tz49195gb7"}, {"film_adi": "Noel Annem - My Secret Santa", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/my-secret-santa.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/nht1qhh0w85m"}, {"film_adi": "The Legend of Nigger Charley", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-legend-of-nigger-charley.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/aoe27kj6uabz"}, {"film_adi": "Gri Gökyüzü", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/grey-skies.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/bi8iv8d3u6kh"}, {"film_adi": "Sevimli", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/loveable.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ibfu3dhzi1a9"}, {"film_adi": "Delirtiyorsun", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/you-drive-me-crazy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hyhio65mqyvf"}, {"film_adi": "The Family McMullen", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-family-mcmullen.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qqd22qnovca7"}, {"film_adi": "TRON Ares", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tron-ares.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/he4zb424248h"}, {"film_adi": "Run - Begi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/run-begihdfc.webp", "player_url": "https://hdfilmcehennemi.mobi/video/embed/i00JdGVpwzy/"}, {"film_adi": "Keşke Bana Söyleseydin", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/i-wish-you-had-told-me.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/y13fwhvhpdpl"}, {"film_adi": "Carol of the Bells", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/carol-of-the-bells.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/d3m4e6elnssy"}, {"film_adi": "Gatao 2 : Yeni Kral", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-2-rise-of-the-king.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/obuuttr29fzy"}, {"film_adi": "Shanks", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/shanks.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/y2oob0sgjq9o"}, {"film_adi": "Bu Nasıl Boşanma", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/daddy-or-mommy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/su2sf9hx4aci"}, {"film_adi": "Esrarengiz Canavar 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/troll-2-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/4kp1z1a74zfg"}, {"film_adi": "Trattoria", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/trattoria.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s1vp6x6h4749"}, {"film_adi": "The Sadness", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-sadness.webp", "player_url": "https://hdfilmcehennemi.mobi/video/embed/NOwl1QUzSHD/"}, {"film_adi": "Ata Demirer: Tek Kişilik Dev Kadro", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kh9nkwxd7puv"}, {"film_adi": "Troll - Esrarengiz Canavar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/troll.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/9lgahzrrpmso"}, {"film_adi": "Toying with the Holidays", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/toying-with-the-holidays.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/uigo3k58c9um"}, {"film_adi": "Efendiler", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/efendiler.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ks3ljhrhwg8r"}, {"film_adi": "Mass Jathara", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mass-jathara.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kh2se6cf9ynt"}, {"film_adi": "Kim Demiş Kötüyüz Diye? 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-guys-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5vsatnmsptjf"}, {"film_adi": "Gri Baykuş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/grey-owl.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/vf9eu8dn6w57"}, {"film_adi": "Wildcat", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/wildcat-2025-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/subaqdntliq7"}, {"film_adi": "No Chains No Masters", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/no-chains-no-masters.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r50sfqhryaqk"}, {"film_adi": "Revolver", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/revolver-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mfv8hk5tf8jz"}, {"film_adi": "Time for Them to Come Home for Christmas", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/time-for-them-to-come-home-for-christmas.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kcrzofgz8yo0"}, {"film_adi": "Mrs. Christmas", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mrs-christmas.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/fxnnih8gv8u4"}, {"film_adi": "She Rides Shotgun", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/she-rides-shotgun.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/b00izn8agov3"}, {"film_adi": "Noel Soygunu - Jingle Bell Heist", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jingle-bell-heist.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/i0ueyhpn3u4v"}, {"film_adi": "Hunting Season", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hunting-season.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/cy2u0qh5vj3p"}, {"film_adi": "Solak Kız", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/left-handed-girl.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/4gwtu6s1qjiz"}, {"film_adi": "Stephen", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/stephen.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1z03v8478zt0"}, {"film_adi": "Altered", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/altered.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/irs2agswla2r"}, {"film_adi": "Man Finds Tape", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/man-finds-tape.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/modxo3dko1hl"}, {"film_adi": "Pişmanım Ama - Regretting You", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/regretting-you.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/o3ts0f9sgrsx"}, {"film_adi": "Sisu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sisu.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r4vjanzyl0ka"}, {"film_adi": "İkizsiz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/twinless.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/e7519ps0crja"}, {"film_adi": "Once Upon My Mother", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/once-upon-my-mother.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/o3psozdn2yj1"}, {"film_adi": "The Old Woman with the Knife", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-old-woman-with-the-knife.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wcehnfo5rdz4"}, {"film_adi": "Gunslingers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gunslingers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/st9fjvcfdspj"}, {"film_adi": "The Conjuring Last Rites", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-conjuring-last-rites.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6jipwievqpfx"}, {"film_adi": "Hunting Jessica Brok", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hunting-jessica-brok.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/denh3xkmwpwd"}, {"film_adi": "The Age of Disclosure", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-age-of-disclosure.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ppncpzxvegk4"}, {"film_adi": "Black Cab", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/black-cab.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ts4w8ttf7ynt"}, {"film_adi": "Shelby Oaks", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/shelby-oaks.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tvrnmtibg5h0"}, {"film_adi": "Çıldırmanın Eşiğinde - Las Locuras", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/las-locuras.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/93ocikyc2kjz"}, {"film_adi": "Risque", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/risque.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/h8qxvdge8mjz"}, {"film_adi": "Muzzle: City of Wolves", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/muzzle-city-of-wolves.webp", "player_url": "https://hdfilmcehennemi.mobi/video/embed/nUoFXSmr9qz/"}, {"film_adi": "Lost Horizon", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lost-horizon.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/zt0ak7rsni4y"}, {"film_adi": "Tanrılar ve Şeytanlar - Mahavatar Narsimha", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mahavatar-narsimha.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/cwjaj8liun9g"}, {"film_adi": "Herd", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/herd.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/p83clwiaof3y"}, {"film_adi": "Day of a Lion", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/day-of-a-lion.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2pmk32hbra85"}, {"film_adi": "13 Days 13 Nights In the Hell of Kabul", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/13-days-13-nights-in-the-hell-of-kabul.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xnrcn2n2if4c"}, {"film_adi": "The Carman Family Deaths", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-carman-family-deaths.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ilk35ptaoyj2"}, {"film_adi": "Çıplak Silah", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-naked-gun.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8hwtcqq260wy"}, {"film_adi": "Violent Ends", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/violent-ends.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/e3kl2977lg7h"}, {"film_adi": "Büyük Yarış", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/grand-prix-of-europe.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pesbwaqg3okg"}, {"film_adi": "The Hand That Rocks the Cradle", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-hand-that-rocks-the-cradle-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/m5skfjwrjtud"}, {"film_adi": "Büyük Cesur ve Güzel Bir Yolculuk", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-big-bold-beautiful-journey.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qy97lnazp5mu"}, {"film_adi": "Anniversary", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/anniversary.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/t15q2m4rkmtp"}, {"film_adi": "A Very Jonas Christmas Movie", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-very-jonas-christmas-movie.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/omsdp56w6xv2"}, {"film_adi": "As in Heaven", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/as-in-heaven.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hmusi33kmwlw"}, {"film_adi": "Savaş Üstüne Savaş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/one-battle-after-another.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/28fgxldys3uu"}, {"film_adi": "Evimdeki Yabancı", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-stranger-in-my-home.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1ks9rxktowfb"}, {"film_adi": "What Matters Most", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/what-matters-most.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pav5dfh3py83"}, {"film_adi": "The Son of a Thousand Men", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-son-of-a-thousand-men.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tt3shd4rnzey"}, {"film_adi": "Special Unit - The First Murder", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/special-unit-the-first-murder.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7ps1fq323m8s"}, {"film_adi": "Champagne Problems", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/champagne-problems.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/a8qx7xtr4i5p"}, {"film_adi": "Hell House LLC: Lineage", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hell-house-llc-lineage.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/uq9woy5nqgc1"}, {"film_adi": "Oyun Buluşması - Playdate", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/playdate.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3m13lsh6n4xi"}, {"film_adi": "Kundakçı", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/pyromaniac.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s3i53dsd0801"}, {"film_adi": "Ancak Rüyada Olur", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/in-your-dreams.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/nke5jf9ccni6"}, {"film_adi": "U.F.O.", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/u-f-o.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/a6xiedmjfufr"}, {"film_adi": "Kosmos", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/kosmos.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/e9qdx73f0jvu"}, {"film_adi": "Daha Çılgın Cuma", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/freakier-friday.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s3qq24vso0fl"}, {"film_adi": "Stitch Head", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/stitch-head.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sgnxjbr9gvnm"}, {"film_adi": "Dead to Rights", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/dead-to-rights.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/4kkqp6vhbvyt"}, {"film_adi": "Tee Yai Born to Be Bad", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tee-yai-born-to-be-bad.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kq3f3uof8l7t"}, {"film_adi": "Coyotes", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/coyotes-2025-film.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0fia9gsdisk2"}, {"film_adi": "Being Eddie", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/being-eddie.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/63ecvtlac3iy"}, {"film_adi": "The Home", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-home.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ikz872abbdmu"}, {"film_adi": "A Merry Little Ex-Mas", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-merry-little-ex-mas.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/gwcplvl1nmt9"}, {"film_adi": "Geri Sayım", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gerisayimyerli.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/gh51yvhi6d9c"}, {"film_adi": "İkiz Hayat", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-pretty-one.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ona0wr70md0s"}, {"film_adi": "Lucky Baskhar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lucky-baskhar.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ypwps18ybze2"}, {"film_adi": "Hep Yek Loto", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hep-yek-loto.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yky4mecdwdiv"}, {"film_adi": "Atatürk 1881 - 1919", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ataturk-1881-1919.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5bi0tv4n07li"}, {"film_adi": "Hayat Var", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/my-only-sunshine.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ma7s13qmh3jq"}, {"film_adi": "Tinsel Town", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tinsel-town.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/63dujd54f925"}, {"film_adi": "Beauty from Pain", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/beauty-from-pain.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3hyvqfch6gig"}, {"film_adi": "Agatha and the Curse of Ishtar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/agatha-and-the-curse-of-ishtar.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jf2914tsqar8"}, {"film_adi": "Kaç Para Kaç", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-run-for-money.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sbxtvre33x1b"}, {"film_adi": "Vicious", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/vicious.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/cfoyxalxjjyl"}, {"film_adi": "Frankenstein", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/frankenstein-2025-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/q84gf8ndp0hx"}, {"film_adi": "Icefall", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ice-fall.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s6bvrkz4c0ic"}, {"film_adi": "Sunny Sanskari Ki Tulsi Kumari", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sunny-sanskari-ki-tulsi-kumari.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7i2bs943btsp"}, {"film_adi": "Mango", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mango.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5uv4fx8j6tg6"}, {"film_adi": "Duvarın Ötesi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/east-of-wall.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jf2s5lmdvdm5"}, {"film_adi": "Groom & Two Brides", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/groom-two-brides.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mf867eb2xz90"}, {"film_adi": "Lost & Found", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lost-found.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jmqo7pllo949"}, {"film_adi": "Savaşın Kalbinde", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/love-war.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/o9hphy2adwfm"}, {"film_adi": "Circle", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/circle.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6b9dns5m8sri"}, {"film_adi": "Baramulla", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/baramulla.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/h2l6ir0mxk1f"}, {"film_adi": "Mr & Mrs Mahi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-mahi.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jdd5ypzg0pd5"}, {"film_adi": "Fantastik Dörtlü İlk Adımlar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-fantastic-four-first-steps.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/c2tnhs41toab"}, {"film_adi": "Jurassic World Yeniden Doğuş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jurassic-world-rebirth.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mlla1bg94jv2"}, {"film_adi": "28 Yıl Sonra", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/28-years-later.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jzzt6tluxsiz"}, {"film_adi": "Jack", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jack-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ltxch2znfdzc"}, {"film_adi": "Tyler Perry'den Joy'un Kısmeti", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tyler-perry-s-finding-joy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/k53fbmnqf2ki"}, {"film_adi": "Cevher", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-substance.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6cw06fiqf8ct"}, {"film_adi": "Zoraki Tatil", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/forced-vacation.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/54nzupk1tfzv"}, {"film_adi": "The White House Effect", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-white-house-effect.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3psenn0788i1"}, {"film_adi": "Hierarchy", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hierarchy-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/usy0ctl7dipp"}, {"film_adi": "Ayı Kardeşler: Zaman Yolculuğu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/boonie-bears-time-twist.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0ppgxr4zou7a"}, {"film_adi": "Traumatika", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/traumatika.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ol3wa807q9s3"}];
-
-// Ekrandaki filmler (99 rastgele)
-let displayedFilms = [{"film_adi": "Coyotes", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/coyotes-2025-film.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0fia9gsdisk2"}, {"film_adi": "Lost Horizon", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lost-horizon.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/zt0ak7rsni4y"}, {"film_adi": "Christy", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/christy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5ubukqts4iyy"}, {"film_adi": "Icefall", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ice-fall.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s6bvrkz4c0ic"}, {"film_adi": "Sevimli", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/loveable.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ibfu3dhzi1a9"}, {"film_adi": "The Sadness", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-sadness.webp", "player_url": "https://hdfilmcehennemi.mobi/video/embed/NOwl1QUzSHD/"}, {"film_adi": "Oyun Buluşması - Playdate", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/playdate.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3m13lsh6n4xi"}, {"film_adi": "Gunslingers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gunslingers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/st9fjvcfdspj"}, {"film_adi": "Efendiler", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/efendiler.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ks3ljhrhwg8r"}, {"film_adi": "Lost & Found", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lost-found.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jmqo7pllo949"}, {"film_adi": "Herd", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/herd.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/p83clwiaof3y"}, {"film_adi": "Being Eddie", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/being-eddie.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/63ecvtlac3iy"}, {"film_adi": "Sisu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sisu.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r4vjanzyl0ka"}, {"film_adi": "Hep Yek Loto", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hep-yek-loto.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yky4mecdwdiv"}, {"film_adi": "Crazy Old Lady", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xadumjhi3d7w"}, {"film_adi": "Please Don't Feed the Children", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/please-don-t-feed-the-children.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/u9s5g25fykvm"}, {"film_adi": "Vicious", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/vicious.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/cfoyxalxjjyl"}, {"film_adi": "Safe House", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/safe-house.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ii1pps1mlw31"}, {"film_adi": "Ata Demirer: Tek Kişilik Dev Kadro 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6v7tbdxav1fr"}, {"film_adi": "Büyük Yarış", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/grand-prix-of-europe.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pesbwaqg3okg"}, {"film_adi": "Atatürk 1881 - 1919", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ataturk-1881-1919.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5bi0tv4n07li"}, {"film_adi": "No Chains No Masters", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/no-chains-no-masters.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r50sfqhryaqk"}, {"film_adi": "A Very Jonas Christmas Movie", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-very-jonas-christmas-movie.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/omsdp56w6xv2"}, {"film_adi": "People You May Know", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/1-people-you-may-know-izle.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/thqr66kp352b"}, {"film_adi": "Chainsaw Man - The Movie: Reze Arc", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/chainsaw-man-the-movie-reze-arc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/auecj800i1t1"}, {"film_adi": "Tanrılar ve Şeytanlar - Mahavatar Narsimha", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mahavatar-narsimha.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/cwjaj8liun9g"}, {"film_adi": "Anniversary", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/anniversary.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/t15q2m4rkmtp"}, {"film_adi": "Geri Sayım", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gerisayimyerli.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/gh51yvhi6d9c"}, {"film_adi": "Birlikte", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3548xjcpkhju"}, {"film_adi": "Altered", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/altered.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/irs2agswla2r"}, {"film_adi": "Bir Oh Desem", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/waiting-to-exhale.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qoeskid9go8c"}, {"film_adi": "Mass Jathara", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mass-jathara.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kh2se6cf9ynt"}, {"film_adi": "Ata Demirer Gazinosu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-gazinosu.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/t7y5kpq5ahzb"}, {"film_adi": "Revolver", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/revolver-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mfv8hk5tf8jz"}, {"film_adi": "Hell House LLC: Lineage", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hell-house-llc-lineage.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/uq9woy5nqgc1"}, {"film_adi": "Aşk ve Şarap - Love and Wine", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/love-and-wine.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/zvxj6esmh3re"}, {"film_adi": "Frankenstein", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/frankenstein-2025-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/q84gf8ndp0hx"}, {"film_adi": "Sihirbazlar Çetesi Daha Bir Şey Görmediniz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8jpf5fzq1d81"}, {"film_adi": "The Shadow's Edge", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-shadow-s-edge.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/khwj0ajswv6o"}, {"film_adi": "Önemsiz Biri 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/nobody-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pf51f72fxsvv"}, {"film_adi": "Yaşama Ateşi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/soul-on-fire.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/9fh8yb5brwc2"}, {"film_adi": "The Bad Shepherd", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-shepherd.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1smfk8ksulbw"}, {"film_adi": "Beraber", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2k32ubksynb8"}, {"film_adi": "Mr & Mrs Mahi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-mahi.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jdd5ypzg0pd5"}, {"film_adi": "Groom & Two Brides", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/groom-two-brides.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mf867eb2xz90"}, {"film_adi": "Tee Yai Born to Be Bad", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tee-yai-born-to-be-bad.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kq3f3uof8l7t"}, {"film_adi": "Sauvages", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/fr1oe7m50azt"}, {"film_adi": "Carol of the Bells", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/carol-of-the-bells.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/d3m4e6elnssy"}, {"film_adi": "Champagne Problems", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/champagne-problems.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/a8qx7xtr4i5p"}, {"film_adi": "Toying with the Holidays", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/toying-with-the-holidays.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/uigo3k58c9um"}, {"film_adi": "The White House Effect", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-white-house-effect.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3psenn0788i1"}, {"film_adi": "We Bury the Dead", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/we-bury-the-dead.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ne1ppxfpu4uq"}, {"film_adi": "TRON Ares", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tron-ares.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/he4zb424248h"}, {"film_adi": "Tyler Perry'den Joy'un Kısmeti", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tyler-perry-s-finding-joy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/k53fbmnqf2ki"}, {"film_adi": "It Ends", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/it-ends.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qnafxjgiwmhx"}, {"film_adi": "Zoraki Tatil", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/forced-vacation.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/54nzupk1tfzv"}, {"film_adi": "Black Cab", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/black-cab.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ts4w8ttf7ynt"}, {"film_adi": "Hood", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tyho4nst7006"}, {"film_adi": "Shanks", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/shanks.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/y2oob0sgjq9o"}, {"film_adi": "The Rip", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-rip.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sz7nwn95vzb3"}, {"film_adi": "Kaç Para Kaç", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-run-for-money.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sbxtvre33x1b"}, {"film_adi": "Freddynin Pizza Dükkanında Beş Gece 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/five-nights-at-freddy-s-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tfews38ploqv"}, {"film_adi": "Yarışçılar: Büyük Hesaplaşma", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xvxxn5gninrd"}, {"film_adi": "Gri Baykuş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/grey-owl.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/vf9eu8dn6w57"}, {"film_adi": "Jurassic World Yeniden Doğuş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jurassic-world-rebirth.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mlla1bg94jv2"}, {"film_adi": "The Thing with Feathers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-thing-with-feathers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1me2wqrros8q"}, {"film_adi": "The Old Woman with the Knife", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-old-woman-with-the-knife.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wcehnfo5rdz4"}, {"film_adi": "Fackham Hall", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/fackham-hall.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mrktqne344x0"}, {"film_adi": "Agatha and the Curse of Ishtar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/agatha-and-the-curse-of-ishtar.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jf2914tsqar8"}, {"film_adi": "Day of a Lion", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/day-of-a-lion.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2pmk32hbra85"}, {"film_adi": "The Best Mother in the World", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-best-mother-in-the-world.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0ey79zj95ypd"}, {"film_adi": "Tufan - The Great Flood", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-great-flood.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wuclyvtl4dck"}, {"film_adi": "Run - Begi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/run-begihdfc.webp", "player_url": "https://hdfilmcehennemi.mobi/video/embed/i00JdGVpwzy/"}, {"film_adi": "As in Heaven", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/as-in-heaven.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hmusi33kmwlw"}, {"film_adi": "Cesurluk Zamanı - A Time For Bravery", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-time-for-bravery.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ssq7q0l1e7ob"}, {"film_adi": "Noel Annem - My Secret Santa", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/my-secret-santa.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/nht1qhh0w85m"}, {"film_adi": "Toz Yumağı - Dust Bunny", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/dust-bunny.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/50ajrrtywc6i"}, {"film_adi": "The Carman Family Deaths", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-carman-family-deaths.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ilk35ptaoyj2"}, {"film_adi": "Çıplak Silah", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-naked-gun.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8hwtcqq260wy"}, {"film_adi": "Savaşın Kalbinde", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/love-war.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/o9hphy2adwfm"}, {"film_adi": "Ölüme Koşan Adam", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-running-man-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ohg4rbsybjgu"}, {"film_adi": "Cevher", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-substance.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6cw06fiqf8ct"}, {"film_adi": "Biz Melek Değiliz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/we-re-no-angels.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/iizh6s9dveaf"}, {"film_adi": "Under Fire", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/under-fire-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mx161ypovsfr"}, {"film_adi": "Preparation for the Next Life", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/preparation-for-the-next-life.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/bkhppqrsdng3"}, {"film_adi": "Man Finds Tape", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/man-finds-tape.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/modxo3dko1hl"}, {"film_adi": "Mrs. Christmas", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mrs-christmas.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/fxnnih8gv8u4"}, {"film_adi": "Bu Nasıl Boşanma", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/daddy-or-mommy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/su2sf9hx4aci"}, {"film_adi": "Sisu 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sisu-road-to-revenge.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8hrh4yextjvr"}, {"film_adi": "Avatar Ateş ve Kül", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/avatar-fire-and-ash.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hyl0takfor73"}, {"film_adi": "The Hand That Rocks the Cradle", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-hand-that-rocks-the-cradle-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/m5skfjwrjtud"}, {"film_adi": "Bay & Bayan Aslan", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-aslan.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/chfbkkwhsvx4"}, {"film_adi": "Special Unit - The First Murder", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/special-unit-the-first-murder.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7ps1fq323m8s"}, {"film_adi": "Follow My Voice", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/rkel0po4vgyx"}, {"film_adi": "The War Between", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-war-between.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5y4r02pr3l7p"}, {"film_adi": "Büyük Cesur ve Güzel Bir Yolculuk", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-big-bold-beautiful-journey.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qy97lnazp5mu"}, {"film_adi": "Shelby Oaks", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/shelby-oaks.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tvrnmtibg5h0"}, {"film_adi": "Yavaşça Söyle - Tell Me Softly", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tell-me-softly.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5n8sx2wnh4hc"}, {"film_adi": "Bütün Şeytanlar Burada", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/all-the-devils-are-here.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/dmktkmp86d0b"}];
+const allFilms = [{"film_adi": "Toz Yumağı - Dust Bunny", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/dust-bunny.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/50ajrrtywc6i"}, {"film_adi": "The Gentleman", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-gentleman.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wc6lq7fpnx46"}, {"film_adi": "Crazy Old Lady", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xadumjhi3d7w"}, {"film_adi": "The Getback", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-getback.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ldbokaczm6sb"}, {"film_adi": "Yarışçılar: Büyük Hesaplaşma", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xvxxn5gninrd"}, {"film_adi": "Elinden Gelenin En İyisi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-best-you-can.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jkjty2a8rgkh"}, {"film_adi": "The Rip", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-rip.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sz7nwn95vzb3"}, {"film_adi": "Birlikte", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3548xjcpkhju"}, {"film_adi": "The Bad Shepherd", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-shepherd.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1smfk8ksulbw"}, {"film_adi": "Siccîn 8", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sijjin-8.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/9ra28jn6w2cl"}, {"film_adi": "Freddynin Pizza Dükkanında Beş Gece 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/five-nights-at-freddy-s-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tfews38ploqv"}, {"film_adi": "Hood", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tyho4nst7006"}, {"film_adi": "Play Dead", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/play-dead-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hhc5idv7ymr0"}, {"film_adi": "Sore: Gelecekten Gelen Eş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sore-a-wife-from-the-future.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/z93a2wc7c8qx"}, {"film_adi": "The Internship", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-internship.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/gjncguyl9fzu"}, {"film_adi": "The Inheritance", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-inheritance.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jmu0h6mbz27u"}, {"film_adi": "Sleepwalker", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sleepwalker.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/k38zdbn05v2l"}, {"film_adi": "Vermiglio", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/vermiglio.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5hh2yxf5aex1"}, {"film_adi": "Sihirbazlar Çetesi Daha Bir Şey Görmediniz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8jpf5fzq1d81"}, {"film_adi": "Oscar Shaw", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/oscar-shaw.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r8skt5zj3jef"}, {"film_adi": "Beraber", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2k32ubksynb8"}, {"film_adi": "Bugonia", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/bugonia.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/b9v2r49x82k5"}, {"film_adi": "Kısa Ziyaret Uzun Hikaye", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-travellers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/gwrepkqazzw5"}, {"film_adi": "We Bury the Dead", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/we-bury-the-dead.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ne1ppxfpu4uq"}, {"film_adi": "Not Without Hope", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/not-without-hope.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/44n0gr94dmx3"}, {"film_adi": "Güller", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-roses.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7t12yh5p5eut"}, {"film_adi": "Rembrandt", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-rembrandt-syndrome.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/csqx7cun8jxu"}, {"film_adi": "People You May Know", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/1-people-you-may-know-izle.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/thqr66kp352b"}, {"film_adi": "Cheetahs Up Close with Bertie Gregory", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/cheetahs-up-close-with-bertie-gregory.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3eff9wikzbj6"}, {"film_adi": "The Long Walk", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-long-walk.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/vv5bqfmhnam6"}, {"film_adi": "Follow My Voice", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/rkel0po4vgyx"}, {"film_adi": "The War Between", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-war-between.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5y4r02pr3l7p"}, {"film_adi": "Eddington", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/eddington.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ztm5yarrjmtg"}, {"film_adi": "The Last Viking", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-last-viking.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kc4ubiuegjbl"}, {"film_adi": "The Tiger", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-tiger.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qxzerkvvjgv0"}, {"film_adi": "Under Fire", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/under-fire-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mx161ypovsfr"}, {"film_adi": "Trap House", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/trap-house-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mlxixw8h374x"}, {"film_adi": "Evcil Hayvanlar Yolda", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/pets-on-a-train.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/quk82dk9zunp"}, {"film_adi": "Blücher - Battle on Oslo", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/blucher.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yzwefi787uo0"}, {"film_adi": "Wicked İyilik Uğruna", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/wicked-for-good.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hc75oz87z20d"}, {"film_adi": "Chainsaw Man - The Movie: Reze Arc", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/chainsaw-man-the-movie-reze-arc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/auecj800i1t1"}, {"film_adi": "Play Dead", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/play-dead.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yq1oqap4xpxt"}, {"film_adi": "Venüs'te Görüşürüz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/see-you-on-venus.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/x3cyq29wmohm"}, {"film_adi": "Sisu 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sisu-road-to-revenge.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8hrh4yextjvr"}, {"film_adi": "Bütün Şeytanlar Burada", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/all-the-devils-are-here.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/dmktkmp86d0b"}, {"film_adi": "The Ruse", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-ruse.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jeaufof0c9zk"}, {"film_adi": "Ölüme Koşan Adam", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-running-man-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ohg4rbsybjgu"}, {"film_adi": "Detective Knight Independence", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-independence.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xfd8z8jz7491"}, {"film_adi": "Tatilde Tanıştığımız İnsanlar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/people-we-meet-on-vacation.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/4cpi9mc2dscy"}, {"film_adi": "Zootropolis 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/zootopia-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/zfdchf9i3sow"}, {"film_adi": "Suddenly", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/suddenly-hdfc-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yg3ln7v22dax"}, {"film_adi": "Sauvages", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/fr1oe7m50azt"}, {"film_adi": "Detective Knight Redemption", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-redemption.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kpdhpvqzqofr"}, {"film_adi": "Bay & Bayan Aslan", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-aslan.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/chfbkkwhsvx4"}, {"film_adi": "Doğulu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/dogulu.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/lluxu3qpqlym"}, {"film_adi": "GATAO: Big Brothers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-big-brothers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1hemixssp86u"}, {"film_adi": "On Falling", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/on-falling.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/4t119jwn7itc"}, {"film_adi": "GATAO: Like Father Like Son", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-like-father-like-son.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pv6d9tysa3z2"}, {"film_adi": "Elveda June", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/goodbye-june.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wio0psyxi6dg"}, {"film_adi": "Fierce Town - Zloy gorod", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/fierce-town.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1uz2busngwpu"}, {"film_adi": "Sonsuza Dek", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/eternity.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ad53ofnjb8to"}, {"film_adi": "Tehlikeli İşaret", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hear-no-evil.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/rpc8mrtwng3t"}, {"film_adi": "100 Nights of Hero", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/100-nights-of-hero.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/vqux2tzxp7on"}, {"film_adi": "Arcadian", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/arcadian.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/03kmlgppi4jb"}, {"film_adi": "Hazel's Heart", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hazel-s-heart.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qo2sdgnxgw31"}, {"film_adi": "Four Letters of Love", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/four-letters-of-love.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xwdwdoprvpon"}, {"film_adi": "Fackham Hall", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/fackham-hall.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mrktqne344x0"}, {"film_adi": "Ata Demirer Gazinosu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-gazinosu.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/t7y5kpq5ahzb"}, {"film_adi": "Avatar Ateş ve Kül", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/avatar-fire-and-ash.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hyl0takfor73"}, {"film_adi": "Cesurluk Zamanı - A Time For Bravery", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-time-for-bravery.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ssq7q0l1e7ob"}, {"film_adi": "Worldbreaker", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/worldbreaker.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5asym5xp76i0"}, {"film_adi": "Tufan - The Great Flood", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-great-flood.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wuclyvtl4dck"}, {"film_adi": "Ali Çevlik", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ali-cevlik.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/seo5buk7lej7"}, {"film_adi": "Detective Knight Rogue", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-rogue.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/l8w92jsw1d2v"}, {"film_adi": "It Ends", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/it-ends.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qnafxjgiwmhx"}, {"film_adi": "The Best Mother in the World", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-best-mother-in-the-world.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0ey79zj95ypd"}, {"film_adi": "Preparation for the Next Life", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/preparation-for-the-next-life.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/bkhppqrsdng3"}, {"film_adi": "Siyah Telefon 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/black-phone-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/vhuhc13oplge"}, {"film_adi": "Yaşama Ateşi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/soul-on-fire.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/9fh8yb5brwc2"}, {"film_adi": "Last Seen Alive", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/last-seen-alive.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7x0eoyntox18"}, {"film_adi": "Only on Earth", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/only-on-earth.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xc08hgx83kl4"}, {"film_adi": "Influencers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/influencers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r778f4xx7zmx"}, {"film_adi": "Sessiz Gece Kanlı Gece", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/silent-night-deadly-night.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/52nw6yqw2w0e"}, {"film_adi": "Turbulence", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/turbulence-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/q3nwe7z8suvr"}, {"film_adi": "The Thing with Feathers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-thing-with-feathers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1me2wqrros8q"}, {"film_adi": "Lone Samurai", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lone-samurai.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/d72fuvew0osf"}, {"film_adi": "Yavaşça Söyle - Tell Me Softly", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tell-me-softly.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5n8sx2wnh4hc"}, {"film_adi": "Bıçaklar Çekildi Ölü Adamın Uyanışı", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/wake-up-dead-man-a-knives-out-mystery.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2idhr0tc9gv7"}, {"film_adi": "Biz Melek Değiliz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/we-re-no-angels.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/iizh6s9dveaf"}, {"film_adi": "Truth & Treason", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/truth-treason.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/x91zbesz3zb0"}, {"film_adi": "Rabbit Trap", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/rabbit-trap.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/44l5fiktbqhj"}, {"film_adi": "Köln 75", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/koln-75.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ctd0xhacpix9"}, {"film_adi": "Christy", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/christy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5ubukqts4iyy"}, {"film_adi": "Oğul - The Carpenter's Son", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-carpenter-s-son.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/662i64gkpxco"}, {"film_adi": "Keeper", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/keeper.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0p3zcf7d33vg"}, {"film_adi": "Bir Oh Desem", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/waiting-to-exhale.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qoeskid9go8c"}, {"film_adi": "I Swear", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/i-swear.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/bbk1bufzod4l"}, {"film_adi": "The Prosecutor", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-prosecutor.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/87inldipnvss"}, {"film_adi": "Ai - Eo", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/eo.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sigilg4v32sk"}, {"film_adi": "Kombucha", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/kombucha.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/teokfazzkepr"}, {"film_adi": "Safe House", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/safe-house.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ii1pps1mlw31"}, {"film_adi": "Delirtiyorsun", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/you-drive-me-crazy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hyhio65mqyvf"}, {"film_adi": "Aşk ve Şarap - Love and Wine", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/love-and-wine.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/zvxj6esmh3re"}, {"film_adi": "The Family McMullen", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-family-mcmullen.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qqd22qnovca7"}, {"film_adi": "Run - Begi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/run-begihdfc.webp", "player_url": "https://hdfilmcehennemi.mobi/video/embed/i00JdGVpwzy/"}, {"film_adi": "Please Don't Feed the Children", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/please-don-t-feed-the-children.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/u9s5g25fykvm"}, {"film_adi": "The Shadow's Edge", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-shadow-s-edge.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/khwj0ajswv6o"}, {"film_adi": "Pose", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/pose.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/fb4eilcpy9u7"}, {"film_adi": "Önemsiz Biri 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/nobody-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pf51f72fxsvv"}, {"film_adi": "Babam Noel'i Kurtarıyor 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-night-my-dad-saved-christmas-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/98tz49195gb7"}, {"film_adi": "Jay Kelly", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jay-kelly.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/twpubfubn7p2"}, {"film_adi": "Sulis 1907", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-riot.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/aaktqas1ejb1"}, {"film_adi": "Keşke Bana Söyleseydin", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/i-wish-you-had-told-me.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/y13fwhvhpdpl"}, {"film_adi": "Best Served Cold", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/best-served-cold.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2fh5brtld8gp"}, {"film_adi": "Noel Annem - My Secret Santa", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/my-secret-santa.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/nht1qhh0w85m"}, {"film_adi": "Gri Gökyüzü", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/grey-skies.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/bi8iv8d3u6kh"}, {"film_adi": "Ata Demirer: Tek Kişilik Dev Kadro 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6v7tbdxav1fr"}, {"film_adi": "RE:BORN - Re Born", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/re-born.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mmaymcszhbcf"}, {"film_adi": "Ne Eğlence Ama!", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/oh-what-fun.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0e7pa7zn4jat"}, {"film_adi": "Sevimli", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/loveable.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ibfu3dhzi1a9"}, {"film_adi": "The Legend of Nigger Charley", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-legend-of-nigger-charley.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/aoe27kj6uabz"}, {"film_adi": "Gatao 2 : Yeni Kral", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gatao-2-rise-of-the-king.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/obuuttr29fzy"}, {"film_adi": "TRON Ares", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tron-ares.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/he4zb424248h"}, {"film_adi": "Shanks", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/shanks.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/y2oob0sgjq9o"}, {"film_adi": "Carol of the Bells", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/carol-of-the-bells.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/d3m4e6elnssy"}, {"film_adi": "Trattoria", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/trattoria.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s1vp6x6h4749"}, {"film_adi": "Efendiler", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/efendiler.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ks3ljhrhwg8r"}, {"film_adi": "Mass Jathara", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mass-jathara.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kh2se6cf9ynt"}, {"film_adi": "The Sadness", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-sadness.webp", "player_url": "https://hdfilmcehennemi.mobi/video/embed/NOwl1QUzSHD/"}, {"film_adi": "Troll - Esrarengiz Canavar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/troll.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/9lgahzrrpmso"}, {"film_adi": "Bu Nasıl Boşanma", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/daddy-or-mommy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/su2sf9hx4aci"}, {"film_adi": "Ata Demirer: Tek Kişilik Dev Kadro", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ata-demirer-tek-kisilik-dev-kadro.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kh9nkwxd7puv"}, {"film_adi": "Toying with the Holidays", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/toying-with-the-holidays.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/uigo3k58c9um"}, {"film_adi": "Time for Them to Come Home for Christmas", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/time-for-them-to-come-home-for-christmas.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kcrzofgz8yo0"}, {"film_adi": "Kim Demiş Kötüyüz Diye? 2", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-guys-2.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5vsatnmsptjf"}, {"film_adi": "Revolver", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/revolver-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mfv8hk5tf8jz"}, {"film_adi": "No Chains No Masters", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/no-chains-no-masters.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r50sfqhryaqk"}, {"film_adi": "Wildcat", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/wildcat-2025-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/subaqdntliq7"}, {"film_adi": "Muzzle: City of Wolves", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/muzzle-city-of-wolves.webp", "player_url": "https://hdfilmcehennemi.mobi/video/embed/nUoFXSmr9qz/"}, {"film_adi": "Stephen", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/stephen.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1z03v8478zt0"}, {"film_adi": "Lost Horizon", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lost-horizon.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/zt0ak7rsni4y"}, {"film_adi": "Solak Kız", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/left-handed-girl.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/4gwtu6s1qjiz"}, {"film_adi": "Noel Soygunu - Jingle Bell Heist", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jingle-bell-heist.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/i0ueyhpn3u4v"}, {"film_adi": "Mrs. Christmas", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mrs-christmas.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/fxnnih8gv8u4"}, {"film_adi": "Gunslingers", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gunslingers.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/st9fjvcfdspj"}, {"film_adi": "İkizsiz", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/twinless.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/e7519ps0crja"}, {"film_adi": "Hunting Season", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hunting-season.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/cy2u0qh5vj3p"}, {"film_adi": "She Rides Shotgun", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/she-rides-shotgun.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/b00izn8agov3"}, {"film_adi": "Man Finds Tape", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/man-finds-tape.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/modxo3dko1hl"}, {"film_adi": "Pişmanım Ama - Regretting You", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/regretting-you.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/o3ts0f9sgrsx"}, {"film_adi": "Once Upon My Mother", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/once-upon-my-mother.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/o3psozdn2yj1"}, {"film_adi": "Altered", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/altered.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/irs2agswla2r"}, {"film_adi": "Soygun Oyunu Büyük Vurgun", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/soygun-oyunu-buyuk-vurgun.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/i4tzagfs3bvq"}, {"film_adi": "Black Cab", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/black-cab.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ts4w8ttf7ynt"}, {"film_adi": "Sisu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sisu.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r4vjanzyl0ka"}, {"film_adi": "The Old Woman with the Knife", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-old-woman-with-the-knife.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/wcehnfo5rdz4"}, {"film_adi": "The Conjuring Last Rites", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-conjuring-last-rites.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6jipwievqpfx"}, {"film_adi": "Risque", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/risque.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/h8qxvdge8mjz"}, {"film_adi": "Train Dreams", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/train-dreams.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/r28x7b4fhmp3"}, {"film_adi": "Hunting Jessica Brok", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hunting-jessica-brok.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/denh3xkmwpwd"}, {"film_adi": "Shelby Oaks", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/shelby-oaks.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tvrnmtibg5h0"}, {"film_adi": "Çıldırmanın Eşiğinde - Las Locuras", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/las-locuras.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/93ocikyc2kjz"}, {"film_adi": "The Age of Disclosure", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-age-of-disclosure.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ppncpzxvegk4"}, {"film_adi": "After the Hunt", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/after-the-hunt.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mlrwg0eeuftt"}, {"film_adi": "Herd", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/herd.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/p83clwiaof3y"}, {"film_adi": "Champagne Problems", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/champagne-problems.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/a8qx7xtr4i5p"}, {"film_adi": "Violent Ends", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/violent-ends.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/e3kl2977lg7h"}, {"film_adi": "Special Unit - The First Murder", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/special-unit-the-first-murder.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7ps1fq323m8s"}, {"film_adi": "Tanrılar ve Şeytanlar - Mahavatar Narsimha", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mahavatar-narsimha.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/cwjaj8liun9g"}, {"film_adi": "The Son of a Thousand Men", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-son-of-a-thousand-men.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/tt3shd4rnzey"}, {"film_adi": "The Carman Family Deaths", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-carman-family-deaths.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ilk35ptaoyj2"}, {"film_adi": "Day of a Lion", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/day-of-a-lion.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/2pmk32hbra85"}, {"film_adi": "Çıplak Silah", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-naked-gun.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/8hwtcqq260wy"}, {"film_adi": "13 Days 13 Nights In the Hell of Kabul", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/13-days-13-nights-in-the-hell-of-kabul.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/xnrcn2n2if4c"}, {"film_adi": "Anniversary", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/anniversary.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/t15q2m4rkmtp"}, {"film_adi": "Büyük Yarış", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/grand-prix-of-europe.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pesbwaqg3okg"}, {"film_adi": "A Very Jonas Christmas Movie", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-very-jonas-christmas-movie.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/omsdp56w6xv2"}, {"film_adi": "As in Heaven", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/as-in-heaven.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/hmusi33kmwlw"}, {"film_adi": "Büyük Cesur ve Güzel Bir Yolculuk", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-big-bold-beautiful-journey.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/qy97lnazp5mu"}, {"film_adi": "The Hand That Rocks the Cradle", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-hand-that-rocks-the-cradle-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/m5skfjwrjtud"}, {"film_adi": "Evimdeki Yabancı", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-stranger-in-my-home.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/1ks9rxktowfb"}, {"film_adi": "What Matters Most", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/what-matters-most.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/pav5dfh3py83"}, {"film_adi": "Savaş Üstüne Savaş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/one-battle-after-another.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/28fgxldys3uu"}, {"film_adi": "Kosmos", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/kosmos.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/e9qdx73f0jvu"}, {"film_adi": "U.F.O.", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/u-f-o.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/a6xiedmjfufr"}, {"film_adi": "Tee Yai Born to Be Bad", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tee-yai-born-to-be-bad.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/kq3f3uof8l7t"}, {"film_adi": "Stitch Head", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/stitch-head.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sgnxjbr9gvnm"}, {"film_adi": "Ancak Rüyada Olur", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/in-your-dreams.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/nke5jf9ccni6"}, {"film_adi": "Daha Çılgın Cuma", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/freakier-friday.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s3qq24vso0fl"}, {"film_adi": "Kundakçı", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/pyromaniac.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s3i53dsd0801"}, {"film_adi": "Hell House LLC: Lineage", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hell-house-llc-lineage.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/uq9woy5nqgc1"}, {"film_adi": "Dead to Rights", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/dead-to-rights.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/4kkqp6vhbvyt"}, {"film_adi": "Oyun Buluşması - Playdate", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/playdate.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3m13lsh6n4xi"}, {"film_adi": "Being Eddie", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/being-eddie.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/63ecvtlac3iy"}, {"film_adi": "Coyotes", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/coyotes-2025-film.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0fia9gsdisk2"}, {"film_adi": "The Home", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-home.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ikz872abbdmu"}, {"film_adi": "A Merry Little Ex-Mas", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-merry-little-ex-mas.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/gwcplvl1nmt9"}, {"film_adi": "Lucky Baskhar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lucky-baskhar.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ypwps18ybze2"}, {"film_adi": "Hep Yek Loto", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hep-yek-loto.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/yky4mecdwdiv"}, {"film_adi": "İkiz Hayat", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-pretty-one.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ona0wr70md0s"}, {"film_adi": "Geri Sayım", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/gerisayimyerli.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/gh51yvhi6d9c"}, {"film_adi": "Tinsel Town", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tinsel-town.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/63dujd54f925"}, {"film_adi": "Atatürk 1881 - 1919", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ataturk-1881-1919.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5bi0tv4n07li"}, {"film_adi": "Agatha and the Curse of Ishtar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/agatha-and-the-curse-of-ishtar.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jf2914tsqar8"}, {"film_adi": "Hayat Var", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/my-only-sunshine.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ma7s13qmh3jq"}, {"film_adi": "Beauty from Pain", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/beauty-from-pain.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3hyvqfch6gig"}, {"film_adi": "Kaç Para Kaç", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/a-run-for-money.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/sbxtvre33x1b"}, {"film_adi": "Vicious", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/vicious.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/cfoyxalxjjyl"}, {"film_adi": "Circle", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/circle.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6b9dns5m8sri"}, {"film_adi": "Savaşın Kalbinde", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/love-war.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/o9hphy2adwfm"}, {"film_adi": "Lost & Found", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/lost-found.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jmqo7pllo949"}, {"film_adi": "Icefall", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/ice-fall.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/s6bvrkz4c0ic"}, {"film_adi": "Duvarın Ötesi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/east-of-wall.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jf2s5lmdvdm5"}, {"film_adi": "Sunny Sanskari Ki Tulsi Kumari", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/sunny-sanskari-ki-tulsi-kumari.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/7i2bs943btsp"}, {"film_adi": "Mango", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mango.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/5uv4fx8j6tg6"}, {"film_adi": "Groom & Two Brides", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/groom-two-brides.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mf867eb2xz90"}, {"film_adi": "Frankenstein", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/frankenstein-2025-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/q84gf8ndp0hx"}, {"film_adi": "Baramulla", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/baramulla.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/h2l6ir0mxk1f"}, {"film_adi": "Mr & Mrs Mahi", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/mr-mrs-mahi.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jdd5ypzg0pd5"}, {"film_adi": "Tyler Perry'den Joy'un Kısmeti", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/tyler-perry-s-finding-joy.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/k53fbmnqf2ki"}, {"film_adi": "Fantastik Dörtlü İlk Adımlar", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-fantastic-four-first-steps.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/c2tnhs41toab"}, {"film_adi": "Jack", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jack-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ltxch2znfdzc"}, {"film_adi": "28 Yıl Sonra", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/28-years-later.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/jzzt6tluxsiz"}, {"film_adi": "Jurassic World Yeniden Doğuş", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/jurassic-world-rebirth.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/mlla1bg94jv2"}, {"film_adi": "The White House Effect", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-white-house-effect.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/3psenn0788i1"}, {"film_adi": "Zoraki Tatil", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/forced-vacation.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/54nzupk1tfzv"}, {"film_adi": "Ayı Kardeşler: Zaman Yolculuğu", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/boonie-bears-time-twist.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/0ppgxr4zou7a"}, {"film_adi": "Hierarchy", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/hierarchy-hdfc.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/usy0ctl7dipp"}, {"film_adi": "Cevher", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/the-substance.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/6cw06fiqf8ct"}, {"film_adi": "Traumatika", "poster_url": "https://www.hdfilmcehennemi.nl/images/list/poster/traumatika.webp", "player_url": "https://www.hdfilmcehennemi.nl/rplayer/ol3wa807q9s3"}];
 
 function searchFilms() {
     const searchTerm = document.getElementById('filmSearch').value.trim().toLowerCase();
     
     if (searchTerm.length < 2) {
-        alert("Lütfen en az 2 karakter girin!");
+        alert("En az 2 karakter girin!");
         return false;
     }
     
@@ -1160,30 +1125,15 @@ function displaySearchResults(films, searchTerm) {
     const container = document.getElementById('filmListesiContainer');
     
     if (films.length === 0) {
-        container.innerHTML = `
-            <div class="baslik">Arama Sonuçları: "${searchTerm}"</div>
-            <div class="hataekran">
-                <i class="fas fa-search"></i>
-                <div class="hatayazi">Film bulunamadı!</div>
-            </div>
-        `;
+        container.innerHTML = '<div class="baslik">"${searchTerm}" için sonuç yok</div><div class="hataekran"><i class="fas fa-search"></i><div class="hatayazi">Film bulunamadı!</div></div>';
         return;
     }
     
-    let html = `<div class="baslik">Arama Sonuçları: "${searchTerm}" (${films.length} film)</div>`;
+    let html = '<div class="baslik">"${searchTerm}" için ${films.length} film</div>';
     
     films.forEach(film => {
         const filmAdiClean = film.film_adi.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        html += `
-        <a href="${film.player_url}">
-            <div class="filmpanel">
-                <div class="filmresim"><img src="${film.poster_url}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-                <div class="filmisimpanel">
-                    <div class="filmisim">${filmAdiClean}</div>
-                </div>
-            </div>
-        </a>
-        `;
+        html += '<a href="'+film.player_url+'"><div class="filmpanel"><div class="filmresim"><img src="'+film.poster_url+'" onerror="this.src=\'https://via.placeholder.com/300x450?text=Resim+Yok\'"></div><div class="filmisimpanel"><div class="filmisim">'+filmAdiClean+'</div></div></div></a>';
     });
     
     container.innerHTML = html;
@@ -1193,29 +1143,8 @@ function resetFilmSearch() {
     const searchTerm = document.getElementById('filmSearch').value.toLowerCase();
     if (searchTerm === "") {
         // Arama kutusu boşsa rastgele filmleri göster
-        displayRandomFilms();
+        location.reload();
     }
-}
-
-function displayRandomFilms() {
-    const container = document.getElementById('filmListesiContainer');
-    let html = `<div class="baslik">HDFİLMCEHENNEMİ VOD - Rastgele 99 Film</div>`;
-    
-    displayedFilms.forEach(film => {
-        const filmAdiClean = film.film_adi.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        html += `
-        <a href="${film.player_url}">
-            <div class="filmpanel">
-                <div class="filmresim"><img src="${film.poster_url}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-                <div class="filmisimpanel">
-                    <div class="filmisim">${filmAdiClean}</div>
-                </div>
-            </div>
-        </a>
-        `;
-    });
-    
-    container.innerHTML = html;
 }
 
 // Enter tuşu ile arama
@@ -1223,11 +1152,6 @@ document.getElementById('filmSearch').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         searchFilms();
     }
-});
-
-// Sayfa yüklendiğinde
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Toplam film:", allFilms.length);
 });
 </script>
 </body>
