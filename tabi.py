@@ -1,80 +1,65 @@
 import time
 import json
-from seleniumwire import webdriver  # Trafiği yakalamak için selenium-wire
+from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
 
-# --- KULLANICI BİLGİLERİ ---
+# --- BİLGİLER ---
 EMAIL = "sonhan3087@gmail.com"
 SIFRE = "996633Eko."
-# İzlemek istediğin sayfanın linki
 VIDEO_URL = "https://www.tabii.com/tr/watch/565323?trackId=566764"
 
-def tabiyi_patlat():
-    # Tarayıcı ayarları
+def botu_baslat():
     chrome_options = Options()
-    # chrome_options.add_argument("--headless") # Arka planda çalışsın istersen bunu aç
+    chrome_options.add_argument("--headless") # Ekransız mod (ŞART)
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--mute-audio") # Sesi kapat
+    # Network loglarını okumak için gerekli ayar
+    chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
-    print("[*] Tarayıcı başlatılıyor (IDM Modu Aktif)...")
+    print("[*] Chrome başlatılıyor...")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
     try:
-        # 1. Tabii Giriş Sayfasına Git
+        # 1. Giriş Yap
         driver.get("https://www.tabii.com/tr/login")
-        time.sleep(3)
-
-        # 2. Giriş İşlemi (Manuel Taklit)
-        print("[*] Giriş yapılıyor...")
+        time.sleep(5)
         driver.find_element(By.NAME, "email").send_keys(EMAIL)
         driver.find_element(By.NAME, "password").send_keys(SIFRE)
+        driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        print("[+] Giriş yapıldı, video sayfasına gidiliyor...")
         
-        # Giriş butonuna bas (Sayfa yapısına göre class değişebilir, en garanti yol selector)
-        login_btn = driver.find_element(By.XPATH, "//button[@type='submit']")
-        login_btn.click()
+        time.sleep(7)
         
-        time.sleep(5) # Girişin tamamlanmasını bekle
-
-        # 3. Video Sayfasına Git
-        print(f"[*] Video sayfasına gidiliyor: {VIDEO_URL}")
+        # 2. Video Sayfasına Git
         driver.get(VIDEO_URL)
-        time.sleep(10) # Videonun yüklenmesi ve trafiğin oluşması için süre ver
+        print("[*] Sayfa yüklendi, trafik koklanıyor (15 sn bekle)...")
+        time.sleep(15) # Videonun başlaması için süre tanı
 
-        # 4. IDM GİBİ TRAFİĞİ KOKLA
-        print("[*] Trafik analiz ediliyor, video linki aranıyor...")
+        # 3. Loglardan Linki Cımbızla
+        logs = driver.get_log("performance")
+        found_url = "Bulunamadı"
         
-        found_url = None
-        for request in driver.requests:
-            if request.response:
-                # Tabii'nin MP4 veya M3U8 linklerini yakalıyoruz
-                # IDM'nin yakaladığı 'cms-tabii' veya 'video_' içeren linkleri süz
-                if 'cms-tabii' in request.url or '.m3u8' in request.url or 'video_' in request.url:
-                    if request.response.status_code == 200:
-                        found_url = request.url
-                        break # İlk kaliteli linki bulduğunda dur
+        for entry in logs:
+            log = json.loads(entry["message"])["message"]
+            if "Network.requestWillBeSent" in log["method"]:
+                url = log["params"]["request"]["url"]
+                # IDM'nin yakaladığı yapıları filtrele
+                if "cms-tabii" in url or "video_" in url or ".m3u8" in url:
+                    found_url = url
+                    break
 
-        if found_url:
-            print("\n" + "═"*60)
-            print("🚀 BİNGO! IDM'NİN YAKALADIĞI LİNK BURADA:")
-            print(f"\n{found_url}\n")
-            print("═"*60)
-            
-            # Linki bir dosyaya kaydet
-            with open("yakalanan_link.txt", "w") as f:
-                f.write(found_url)
-            print("[+] Link 'yakalanan_link.txt' dosyasına kaydedildi.")
-        else:
-            print("[-] Maalesef trafikten link cımbızlanamadı. Sayfayı yenileyip tekrar dene.")
+        print(f"\n[🚀] SONUÇ: {found_url}\n")
+        
+        with open("yakalanan_link.txt", "w") as f:
+            f.write(found_url)
 
     except Exception as e:
-        print(f"[-] Hata çıktı: {e}")
+        print(f"[-] Hata: {str(e)}")
     finally:
-        print("[*] Tarayıcı kapatılıyor...")
         driver.quit()
 
 if __name__ == "__main__":
-    tabiyi_patlat()
+    botu_baslat()
