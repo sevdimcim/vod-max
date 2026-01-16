@@ -1,78 +1,45 @@
-name: HDFilmCehennemi Film Scraper
+name: Film Scraper
 
 on:
   schedule:
-    - cron: '0 8 * * *'
-
-  workflow_dispatch:
-    inputs:
-      pages:
-        description: 'Kaç sayfa taranacak?'
-        required: false
-        default: '5'
-      delay:
-        description: 'Filmler arası bekleme (saniye)'
-        required: false
-        default: '0.5'
+    - cron: "0 */6 * * *"   # 6 saatte bir çalışır
+  workflow_dispatch:        # Manuel çalıştırma butonu
+  push:
+    branches:
+      - main
 
 jobs:
-  scrape-films:
+  scrape:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout repository
+    - name: Repo'yu klonla
       uses: actions/checkout@v3
-      
-    - name: Setup Python
+
+    - name: Python kur
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
-        
-    - name: Install dependencies
+        python-version: 3.10
+
+    - name: Gerekli kütüphaneleri kur
       run: |
         pip install requests beautifulsoup4
-        
-    - name: Set Variables
-      id: vars
-      run: |
-        # workflow_dispatch ise inputs kullan
-        # schedule ise default değerlere düş
-        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          echo "PAGES=${{ github.event.inputs.pages }}" >> $GITHUB_ENV
-          echo "DELAY=${{ github.event.inputs.delay }}" >> $GITHUB_ENV
-        else
-          echo "PAGES=5" >> $GITHUB_ENV
-          echo "DELAY=0.5" >> $GITHUB_ENV
-        fi
 
-    - name: Run Film Scraper
+    - name: Scraper çalıştır
       run: |
-        echo "📅 Scraping started at: $(date)"
-        echo "📊 Pages to scrape: $PAGES"
-        echo "⏱️ Delay between films: $DELAY seconds"
-        python hdfilmcehennemi.py "$PAGES" "$DELAY"
-        
-    - name: Commit and Push Changes
+        echo ">>> Scraper çalışıyor..."
+        python3 scraper.py
+
+    - name: Değişiklik var mı kontrol et
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        
-        if git diff --name-only | grep -q "hdfilmcehennemi.html"; then
-          git add hdfilmcehennemi.html
-          git commit -m "🤖 Auto-update: Film data refreshed"
-          git push
+        if [ -z "$(git status --porcelain)" ]; then
+          echo ">>> Değişiklik yok, commit yapılmayacak."
         else
-          echo "⚠️ No changes in HTML file, skipping commit"
-        fi
-        
-    - name: Create Summary
-      if: always()
-      run: |
-        echo "## 🎬 HDFilmCehennemi Scraping Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- **Scraping Time:** $(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
-        echo "- **Pages Scraped:** $PAGES" >> $GITHUB_STEP_SUMMARY
-        echo "- **Delay Between Films:** $DELAY seconds" >> $GITHUB_STEP_SUMMARY
-        if [ -f "hdfilmcehennemi.html" ]; then
-          FILESIZE=$(stat -c%s "hdfilmcehennemi.html")
-          echo "- **HTML File Size:** $((FILESIZE / 1024)) KB" >> $GITHUB_STEP_SUMMARY
+          echo ">>> Değişiklik var, commit atılıyor..."
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          git add filmler.html
+          git commit -m "Otomatik güncelleme - $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
         fi
