@@ -23,13 +23,6 @@ HEADERS_FILM = {
 # Thread-safe lock
 print_lock = Lock()
 
-def slugify(text):
-    """Metni ID olarak kullanılabilecek formata çevirir"""
-    text = text.lower()
-    text = text.replace('ı', 'i').replace('ğ', 'g').replace('ü', 'u').replace('ş', 's').replace('ö', 'o').replace('ç', 'c')
-    text = re.sub(r'[^a-z0-9]', '', text)
-    return text
-
 def process_film(film_link, film_adi, poster_url):
     """Tek bir filmi işler ve veriyi döndürür"""
     try:
@@ -46,12 +39,18 @@ def process_film(film_link, film_adi, poster_url):
         if iframe and iframe.get('data-src'):
             raw_iframe_url = iframe.get('data-src')
             
-            # RPLAYER DÖNÜŞTÜRME
-            if "rapidrame_id=" in raw_iframe_url:
-                rapid_id = raw_iframe_url.split("rapidrame_id=")[1]
-                player_url = f"https://www.hdfilmcehennemi.com/rplayer/{rapid_id}"
-            else:
+            # .nl DOMAIN KULLAN (SENİN HTML'DEKİ GİBİ)
+            # Direkt raw_iframe_url'i kullan, .com'a çevirme!
+            player_url = raw_iframe_url
+            
+            # Eğer rplayer linkiyse .nl domain ile
+            if "/rplayer/" in raw_iframe_url:
+                # zaten .nl domain'i olmalı
                 player_url = raw_iframe_url
+            elif "rapidrame_id=" in raw_iframe_url:
+                rapid_id = raw_iframe_url.split("rapidrame_id=")[1]
+                # .nl DOMAIN KULLAN!
+                player_url = f"https://www.hdfilmcehennemi.nl/rplayer/{rapid_id}"
         
         # EĞER PLAYER_URL YOKSA, BOŞ DÖNDÜR
         if not player_url:
@@ -63,7 +62,6 @@ def process_film(film_link, film_adi, poster_url):
             print(f"✅ {film_adi[:50]}...")
         
         return {
-            "film_id": slugify(film_adi),
             "resim": poster_url,
             "film_adi": film_adi,
             "player_url": player_url
@@ -137,29 +135,21 @@ def process_page(sayfa):
 def main():
     print("🚀 BOT BAŞLATILDI!")
     print("⚡ 6 Sayfa çekilecek...")
-    print("🎬 Filmler YENİ SEKMEDE açılacak (iframe engeli nedeniyle)")
+    print("🎬 Filmler .nl domain ile açılacak (senin HTML'deki gibi)")
     print("⏱️ Tahmini süre: 2-3 dakika\n")
     
-    filmler_data = {}
+    filmler = []
     
     # 6 sayfa çek
     TOPLAM_SAYFA = 6
-    sayfa_listesi = list(range(1, TOPLAM_SAYFA + 1))
     
     # Sayfaları sırayla işle
-    completed = 0
-    for sayfa in sayfa_listesi:
+    for sayfa in range(1, TOPLAM_SAYFA + 1):
         try:
             page_films = process_page(sayfa)
-            for film in page_films:
-                filmler_data[film["film_id"]] = {
-                    "resim": film["resim"],
-                    "film_adi": film["film_adi"],
-                    "player_url": film["player_url"]
-                }
+            filmler.extend(page_films)
             
-            completed += 1
-            print(f"📊 İlerleme: {completed}/{TOPLAM_SAYFA} sayfa - Toplam {len(filmler_data)} film")
+            print(f"📊 İlerleme: {sayfa}/{TOPLAM_SAYFA} sayfa - Toplam {len(filmler)} film")
             
             # Sayfalar arası biraz bekle
             if sayfa < TOPLAM_SAYFA:
@@ -168,24 +158,14 @@ def main():
         except Exception as e:
             print(f"Sayfa {sayfa} işlenirken hata: {e}")
     
-    print(f"\n🎉 TAMAMLANDI! Toplam {len(filmler_data)} film çekildi!")
+    print(f"\n🎉 TAMAMLANDI! Toplam {len(filmler)} film çekildi!")
     
-    # HTML oluştur
-    create_html_file(filmler_data)
+    # HTML oluştur (SENİN HTML YAPINDA)
+    create_html_file(filmler)
 
-def create_html_file(data):
-    # Film adlarını temizle
-    cleaned_data = {}
-    for film_id, film_info in data.items():
-        cleaned_film_adi = film_info['film_adi'].replace("'", "&#39;").replace('"', "&quot;")
-        cleaned_data[film_id] = {
-            "resim": film_info["resim"],
-            "film_adi": cleaned_film_adi,
-            "player_url": film_info["player_url"]
-        }
-    
-    # HTML içeriği - YENİ SEKMEDE AÇILACAK (iframe engeli nedeniyle)
-    html_template = '''<!DOCTYPE html>
+def create_html_file(filmler):
+    # HTML içeriği - SENİN VERDİĞİN HTML YAPISINDA
+    html_content = '''<!DOCTYPE html>
 <html lang="tr">
 <head>
 <title>TITAN TV VOD</title>
@@ -248,11 +228,6 @@ def create_html_file(data):
     }
     .filmpanel:hover {
         color: #fff;
-        border: 3px solid #572aa7;
-        box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
-    }
-    .filmpanel:focus {
-        outline: none;
         border: 3px solid #572aa7;
         box-shadow: 0 0 10px rgba(87, 42, 167, 0.5);
     }
@@ -387,7 +362,7 @@ def create_html_file(data):
 <div class="aramapanel">
 <div class="aramapanelsol">
 <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
-<div class="logoisim">TITAN TV VOD (__TOTAL_FILMS__ Film)</div>
+<div class="logoisim">TITAN TV VOD (''' + str(len(filmler)) + ''' Film)</div>
 </div>
 <div class="aramapanelsag">
 <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
@@ -401,32 +376,26 @@ def create_html_file(data):
     <div class="baslik">HDFİLMCEHENNEMİ VOD - Tüm Filmler</div>
 '''
 
-    # Toplam film sayısını HTML'e ekle
-    total_films = len(cleaned_data)
-    html_template = html_template.replace("__TOTAL_FILMS__", str(total_films))
-    
-    # Film panellerini ekle - YENİ SEKMEDE AÇILACAK
-    film_counter = 0
-    for film_id, film_info in cleaned_data.items():
-        film_counter += 1
+    # Film panellerini ekle (SENİN HTML YAPINDA)
+    for film in filmler:
+        # Film adını temizle
+        film_adi_clean = film['film_adi'].replace('"', '&quot;').replace("'", "&#39;")
         
-        html_template += f'''
-    <div class="filmpanel" onclick="window.open('{film_info['player_url']}', '_blank', 'noopener,noreferrer')">
-        <div class="filmresim"><img src="{film_info['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
-        <div class="filmisimpanel">
-            <div class="filmisim">{film_info['film_adi']}</div>
+        html_content += f'''
+    <a href="{film['player_url']}">
+        <div class="filmpanel">
+            <div class="filmresim"><img src="{film['resim']}" onerror="this.src='https://via.placeholder.com/300x450?text=Resim+Yok'"></div>
+            <div class="filmisimpanel">
+                <div class="filmisim">{film_adi_clean}</div>
+            </div>
         </div>
-    </div>
+    </a>
 '''
-        
-        if film_counter % 20 == 0:
-            print(f"📝 HTML'e {film_counter}/{total_films} film eklendi...")
 
-    html_template += '''
+    html_content += '''
 </div>
 
 <script>
-// ARAMA FONKSİYONLARI
 function searchFilms() {
     var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
     var container = document.getElementById('filmListesiContainer');
@@ -436,10 +405,10 @@ function searchFilms() {
     panels.forEach(function(panel) {
         var filmName = panel.querySelector('.filmisim').textContent.toLowerCase();
         if (filmName.includes(searchTerm)) {
-            panel.style.display = 'block';
+            panel.parentElement.style.display = 'block';
             found = true;
         } else {
-            panel.style.display = 'none';
+            panel.parentElement.style.display = 'none';
         }
     });
 
@@ -467,7 +436,7 @@ function resetFilmSearch() {
         var container = document.getElementById('filmListesiContainer');
         var panels = container.querySelectorAll('.filmpanel');
         panels.forEach(function(panel) {
-            panel.style.display = 'block';
+            panel.parentElement.style.display = 'block';
         });
         
         var noResults = container.querySelector('.hataekran');
@@ -476,27 +445,20 @@ function resetFilmSearch() {
         }
     }
 }
-
-// YENİ PENCERE AÇMA (iframe engeli nedeniyle)
-function openInNewWindow(url) {
-    window.open(url, '_blank', 'width=1200,height=700,scrollbars=yes,resizable=yes');
-}
 </script>
 </body>
 </html>'''
-    
+
     filename = "hdfilmcehennemi.html"
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(html_template)
+        f.write(html_content)
     
     print(f"\n✅ HTML dosyası '{filename}' oluşturuldu!")
-    print(f"🎬 Toplam {len(cleaned_data)} film eklendi")
-    print(f"🎥 Filmler YENİ SEKMEDE açılacak (iframe engeli nedeniyle)")
+    print(f"🎬 Toplam {len(filmler)} film eklendi")
+    print(f"🔗 Tüm linkler .nl domain ile (senin HTML'deki gibi)")
     print(f"🔍 Arama özelliği aktif")
-    print(f"📱 Mobil uyumlu tasarım")
-    print(f"💾 Dosya boyutu: {len(html_template) // 1024} KB")
-    print(f"\n⚠️ NOT: HDFilmCehennemi iframe embedding'i engellediği için")
-    print(f"     filmler yeni sekmede açılacak. Bu sitenin güvenlik politikasıdır.")
+    print(f"📱 Mobil uyumlu")
+    print(f"💾 Dosya boyutu: {len(html_content) // 1024} KB")
 
 if __name__ == "__main__":
     main()
