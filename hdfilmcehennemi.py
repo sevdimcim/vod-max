@@ -32,7 +32,7 @@ def main():
     
     try:
         # İlk 5 sayfa (istediğin kadar artırabilirsin)
-        for sayfa in range(1, 6):
+        for sayfa in range(1, 790):
             api_page_url = f"{BASE_URL}/load/page/{sayfa}/categories/film-izle-2/"
             
             print(f"📄 SAYFA {sayfa} İŞLENİYOR...")
