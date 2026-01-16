@@ -3,15 +3,15 @@ name: Tabii Video Link Bot
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # Manuel olarak butona basıp başlatmanı sağlar
+  workflow_dispatch: 
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Depoyu Çek (Checkout)
-      uses: actions/checkout@v3
+    - name: Depoyu Çek
+      uses: actions/checkout@v4
 
     - name: Python Kur
       uses: actions/setup-python@v4
@@ -21,22 +21,13 @@ jobs:
     - name: Bağımlılıkları Yükle
       run: |
         python -m pip install --upgrade pip
-        pip install requests selenium-wire webdriver-manager selenium
-
-    - name: Chrome Kurulumu (GitHub Runner için)
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
+        pip install requests selenium webdriver-manager
 
     - name: Botu Çalıştır
-      env:
-        # Kodun içindeki e-posta ve şifreyi buraya da tanımlayabilirsin (opsiyonel)
-        EMAIL: "sonhan3087@gmail.com"
-        PASSWORD: "996633Eko."
       run: python tabi.py
 
-    - name: Sonuçları Kaydet (Artifact)
-      uses: actions/upload-artifact@v3
+    - name: Sonucu Kaydet
+      uses: actions/upload-artifact@v4
       with:
         name: yakalanan-link
         path: yakalanan_link.txt
