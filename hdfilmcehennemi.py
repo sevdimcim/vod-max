@@ -31,12 +31,22 @@ MAX_RETRIES = 1 if TURBO_MODE else 2
 # Connection pooling için session
 def create_session():
     session = requests.Session()
-    retry_strategy = Retry(
-        total=1,
-        backoff_factor=0.1,
-        status_forcelist=[429, 500, 502, 503, 504],
-        method_whitelist=["HEAD", "GET", "OPTIONS"]
-    )
+    try:
+        # Yeni urllib3 versiyonu
+        retry_strategy = Retry(
+            total=1,
+            backoff_factor=0.1,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["HEAD", "GET", "OPTIONS"]
+        )
+    except TypeError:
+        # Eski urllib3 versiyonu
+        retry_strategy = Retry(
+            total=1,
+            backoff_factor=0.1,
+            status_forcelist=[429, 500, 502, 503, 504],
+            method_whitelist=["HEAD", "GET", "OPTIONS"]
+        )
     adapter = HTTPAdapter(max_retries=retry_strategy, pool_connections=200, pool_maxsize=200)
     session.mount("http://", adapter)
     session.mount("https://", adapter)
