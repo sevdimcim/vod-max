@@ -240,30 +240,64 @@
         </div>
         <div class="aramapanelsag">
             <form action="" name="ara" method="GET" onsubmit="return searchFilms()">
-                <input type="text" id="filmSearch" placeholder="Film Ara..!" class="aramapanelyazi" oninput="resetFilmSearch()">
+                <input type="text" id="filmSearch" placeholder="Film Ara..!" class="aramapanelyazi" oninput="liveSearch()">
                 <input type="submit" value="ARA" class="aramapanelbuton">
             </form>
         </div>
     </div>
 
     <div class="filmpaneldis" id="filmListesiContainer">
-        <div class="baslik">HDFİLMCEHENNEMİ FİLM ARŞİVİ (İlk 99 Film Önizleme)</div>
+        <div class="baslik">HDFİLMCEHENNEMİ FİLM ARŞİVİ</div>
     </div>
 
     <script>
-        // JSON verisi inline (daha hızlı) - SADECE İLK 99 FİLM
-        const filmler = {"people-you-may-know":{"isim":"People You May Know","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/1-people-you-may-know-izle.webp","link":""},"the-long-walk":{"isim":"The Long Walk","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-long-walk.webp","link":""},"under-fire":{"isim":"Under Fire","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/under-fire-hdfc.webp","link":""},"the-tiger":{"isim":"The Tiger","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-tiger.webp","link":""},"rembrandt":{"isim":"Rembrandt","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-rembrandt-syndrome.webp","link":""},"follow-my-voice":{"isim":"Follow My Voice","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp","link":""},"the-last-viking":{"isim":"The Last Viking","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-last-viking.webp","link":""},"cheetahs-up-close-with-bertie-gregory":{"isim":"Cheetahs Up Close with Bertie Gregory","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/cheetahs-up-close-with-bertie-gregory.webp","link":""},"the-war-between":{"isim":"The War Between","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-war-between.webp","link":""},"trap-house":{"isim":"Trap House","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/trap-house-hdfc.webp","link":""},"eddington":{"isim":"Eddington","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/eddington.webp","link":""},"blucher-battle-on-oslo":{"isim":"Blücher - Battle on Oslo","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/blucher.webp","link":""},"wicked-i-yilik-ugruna":{"isim":"Wicked İyilik Uğruna","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/wicked-for-good.webp","link":""},"play-dead":{"isim":"Play Dead","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/play-dead.webp","link":""},"butun-seytanlar-burada":{"isim":"Bütün Şeytanlar Burada","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/all-the-devils-are-here.webp","link":""},"sisu-2":{"isim":"Sisu 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sisu-road-to-revenge.webp","link":""},"the-ruse":{"isim":"The Ruse","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-ruse.webp","link":""},"venus-te-gorusuruz":{"isim":"Venüs'te Görüşürüz","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/see-you-on-venus.webp","link":""},"olume-kosan-adam":{"isim":"Ölüme Koşan Adam","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-running-man-hdfc.webp","link":""},"chainsaw-man-the-movie-reze-arc":{"isim":"Chainsaw Man - The Movie: Reze Arc","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/chainsaw-man-the-movie-reze-arc.webp","link":""},"evcil-hayvanlar-yolda":{"isim":"Evcil Hayvanlar Yolda","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/pets-on-a-train.webp","link":""},"tatilde-tanistigimiz-i-nsanlar":{"isim":"Tatilde Tanıştığımız İnsanlar","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/people-we-meet-on-vacation.webp","link":""},"cover-up":{"isim":"Cover-Up","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/cover-up.webp","link":""},"detective-knight-independence":{"isim":"Detective Knight Independence","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-independence.webp","link":""},"zootropolis-2":{"isim":"Zootropolis 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/zootopia-2.webp","link":""},"detective-knight-redemption":{"isim":"Detective Knight Redemption","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-redemption.webp","link":""},"sauvages":{"isim":"Sauvages","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp","link":""},"suddenly":{"isim":"Suddenly","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/suddenly-hdfc-hdfc.webp","link":""},"muzzle-city-of-wolves":{"isim":"Muzzle: City of Wolves","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/muzzle-city-of-wolves.webp","link":""},"hunting-season":{"isim":"Hunting Season","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/hunting-season.webp","link":""},"stephen":{"isim":"Stephen","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/stephen.webp","link":""},"lost-horizon":{"isim":"Lost Horizon","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/lost-horizon.webp","link":""},"she-rides-shotgun":{"isim":"She Rides Shotgun","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/she-rides-shotgun.webp","link":""},"noel-soygunu-jingle-bell-heist":{"isim":"Noel Soygunu - Jingle Bell Heist","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/jingle-bell-heist.webp","link":""},"i-kizsiz":{"isim":"İkizsiz","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/twinless.webp","link":""},"mrs-christmas":{"isim":"Mrs. Christmas","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/mrs-christmas.webp","link":""},"solak-kiz":{"isim":"Solak Kız","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/left-handed-girl.webp","link":""},"gunslingers":{"isim":"Gunslingers","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/gunslingers.webp","link":""},"soygun-oyunu-buyuk-vurgun":{"isim":"Soygun Oyunu Büyük Vurgun","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/soygun-oyunu-buyuk-vurgun.webp","link":""},"altered":{"isim":"Altered","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/altered.webp","link":""},"once-upon-my-mother":{"isim":"Once Upon My Mother","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/once-upon-my-mother.webp","link":""},"risque":{"isim":"Risque","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/risque.webp","link":""},"man-finds-tape":{"isim":"Man Finds Tape","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/man-finds-tape.webp","link":""},"sisu":{"isim":"Sisu","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sisu.webp","link":""},"black-cab":{"isim":"Black Cab","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/black-cab.webp","link":""},"pismanim-ama-regretting-you":{"isim":"Pişmanım Ama - Regretting You","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/regretting-you.webp","link":""},"the-old-woman-with-the-knife":{"isim":"The Old Woman with the Knife","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-old-woman-with-the-knife.webp","link":""},"train-dreams":{"isim":"Train Dreams","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/train-dreams.webp","link":""},"the-conjuring-last-rites":{"isim":"The Conjuring Last Rites","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-conjuring-last-rites.webp","link":""},"hunting-jessica-brok":{"isim":"Hunting Jessica Brok","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/hunting-jessica-brok.webp","link":""},"one-shot-with-ed-sheeran":{"isim":"ONE SHOT with Ed Sheeran","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/one-shot-with-ed-sheeran.webp","link":""},"the-family-plan-2":{"isim":"The Family Plan 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-family-plan-2.webp","link":""},"after-the-hunt":{"isim":"After the Hunt","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/after-the-hunt.webp","link":""},"shelby-oaks":{"isim":"Shelby Oaks","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/shelby-oaks.webp","link":""},"the-age-of-disclosure":{"isim":"The Age of Disclosure","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-age-of-disclosure.webp","link":""},"cildirmanin-esiginde-las-locuras":{"isim":"Çıldırmanın Eşiğinde - Las Locuras","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/las-locuras.webp","link":""},"the-bad-shepherd":{"isim":"The Bad Shepherd","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-shepherd.webp","link":""},"the-rip":{"isim":"The Rip","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-rip.webp","link":""},"one-last-adventure-the-making-of-stranger-things-5":{"isim":"One Last Adventure: The Making of Stranger Things 5","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/one-last-adventure-the-making-of-stranger-things-5.webp","link":""},"elinden-gelenin-en-i-yisi":{"isim":"Elinden Gelenin En İyisi","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-best-you-can.webp","link":""},"sicc-n-8":{"isim":"Siccîn 8","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sijjin-8.webp","link":""},"the-getback":{"isim":"The Getback","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-getback.webp","link":""},"crazy-old-lady":{"isim":"Crazy Old Lady","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp","link":""},"the-gentleman":{"isim":"The Gentleman","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-gentleman.webp","link":""},"toz-yumagi-dust-bunny":{"isim":"Toz Yumağı - Dust Bunny","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/dust-bunny.webp","link":""},"birlikte":{"isim":"Birlikte","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp","link":""},"yariscilar-buyuk-hesaplasma":{"isim":"Yarışçılar: Büyük Hesaplaşma","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp","link":""},"the-enchanted-tinderbox":{"isim":"The Enchanted Tinderbox","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-enchanted-tinderbox.webp","link":""},"freddynin-pizza-dukkaninda-bes-gece-2":{"isim":"Freddynin Pizza Dükkanında Beş Gece 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/five-nights-at-freddy-s-2.webp","link":""},"sore-gelecekten-gelen-es":{"isim":"Sore: Gelecekten Gelen Eş","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sore-a-wife-from-the-future.webp","link":""},"sleepwalker":{"isim":"Sleepwalker","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sleepwalker.webp","link":""},"vermiglio":{"isim":"Vermiglio","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/vermiglio.webp","link":""},"the-internship":{"isim":"The Internship","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-internship.webp","link":""},"hood":{"isim":"Hood","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp","link":""},"sihirbazlar-cetesi-daha-bir-sey-gormediniz":{"isim":"Sihirbazlar Çetesi Daha Bir Şey Görmediniz","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp","link":""},"beraber":{"isim":"Beraber","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp","link":""},"oscar-shaw":{"isim":"Oscar Shaw","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/oscar-shaw.webp","link":""},"bugonia":{"isim":"Bugonia","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/bugonia.webp","link":""},"kisa-ziyaret-uzun-hikaye":{"isim":"Kısa Ziyaret Uzun Hikaye","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-travellers.webp","link":""},"the-inheritance":{"isim":"The Inheritance","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-inheritance.webp","link":""},"not-without-hope":{"isim":"Not Without Hope","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/not-without-hope.webp","link":""},"we-bury-the-dead":{"isim":"We Bury the Dead","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/we-bury-the-dead.webp","link":""},"guller":{"isim":"Güller","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-roses.webp","link":""},"only-on-earth":{"isim":"Only on Earth","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/only-on-earth.webp","link":""},"the-thing-with-feathers":{"isim":"The Thing with Feathers","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-thing-with-feathers.webp","link":""},"siyah-telefon-2":{"isim":"Siyah Telefon 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/black-phone-2.webp","link":""},"sessiz-gece-kanli-gece":{"isim":"Sessiz Gece Kanlı Gece","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/silent-night-deadly-night.webp","link":""},"yasama-atesi":{"isim":"Yaşama Ateşi","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/soul-on-fire.webp","link":""},"last-seen-alive":{"isim":"Last Seen Alive","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/last-seen-alive.webp","link":""},"influencers":{"isim":"Influencers","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/influencers.webp","link":""},"raat-akeli-hai-the-bansal-murders":{"isim":"Raat Akeli Hai: The Bansal Murders","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/raat-akeli-hai-the-bansal-murders.webp","link":""},"turbulence":{"isim":"Turbulence","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/turbulence-hdfc.webp","link":""},"lone-samurai":{"isim":"Lone Samurai","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/lone-samurai.webp","link":""},"truth-treason":{"isim":"Truth & Treason","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/truth-treason.webp","link":""},"bicaklar-cekildi-olu-adamin-uyanisi":{"isim":"Bıçaklar Çekildi Ölü Adamın Uyanışı","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/wake-up-dead-man-a-knives-out-mystery.webp","link":""},"the-fakenapping":{"isim":"The Fakenapping","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-fakenapping.webp","link":""},"biz-melek-degiliz":{"isim":"Biz Melek Değiliz","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/we-re-no-angels.webp","link":""},"merv":{"isim":"Merv","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/merv.webp","link":""},"sarah-squirm-live-in-the-flesh":{"isim":"Sarah Squirm Live in the Flesh","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sarah-squirm-live-in-the-flesh.webp","link":""}};
+        // İlk 99 filmi (HTML'ye gömülü)
+        let filmler = {"people-you-may-know":{"isim":"People You May Know","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/1-people-you-may-know-izle.webp","link":""},"under-fire":{"isim":"Under Fire","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/under-fire-hdfc.webp","link":""},"the-long-walk":{"isim":"The Long Walk","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-long-walk.webp","link":""},"the-war-between":{"isim":"The War Between","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-war-between.webp","link":""},"follow-my-voice":{"isim":"Follow My Voice","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/follow-my-voice.webp","link":""},"the-last-viking":{"isim":"The Last Viking","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-last-viking.webp","link":""},"rembrandt":{"isim":"Rembrandt","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-rembrandt-syndrome.webp","link":""},"eddington":{"isim":"Eddington","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/eddington.webp","link":""},"cheetahs-up-close-with-bertie-gregory":{"isim":"Cheetahs Up Close with Bertie Gregory","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/cheetahs-up-close-with-bertie-gregory.webp","link":""},"evcil-hayvanlar-yolda":{"isim":"Evcil Hayvanlar Yolda","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/pets-on-a-train.webp","link":""},"the-tiger":{"isim":"The Tiger","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-tiger.webp","link":""},"blucher-battle-on-oslo":{"isim":"Blücher - Battle on Oslo","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/blucher.webp","link":""},"trap-house":{"isim":"Trap House","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/trap-house-hdfc.webp","link":""},"wicked-i-yilik-ugruna":{"isim":"Wicked İyilik Uğruna","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/wicked-for-good.webp","link":""},"the-ruse":{"isim":"The Ruse","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-ruse.webp","link":""},"chainsaw-man-the-movie-reze-arc":{"isim":"Chainsaw Man - The Movie: Reze Arc","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/chainsaw-man-the-movie-reze-arc.webp","link":""},"venus-te-gorusuruz":{"isim":"Venüs'te Görüşürüz","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/see-you-on-venus.webp","link":""},"olume-kosan-adam":{"isim":"Ölüme Koşan Adam","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-running-man-hdfc.webp","link":""},"butun-seytanlar-burada":{"isim":"Bütün Şeytanlar Burada","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/all-the-devils-are-here.webp","link":""},"play-dead":{"isim":"Play Dead","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/play-dead.webp","link":""},"tatilde-tanistigimiz-i-nsanlar":{"isim":"Tatilde Tanıştığımız İnsanlar","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/people-we-meet-on-vacation.webp","link":""},"sisu-2":{"isim":"Sisu 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sisu-road-to-revenge.webp","link":""},"zootropolis-2":{"isim":"Zootropolis 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/zootopia-2.webp","link":""},"detective-knight-independence":{"isim":"Detective Knight Independence","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-independence.webp","link":""},"detective-knight-redemption":{"isim":"Detective Knight Redemption","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/detective-knight-redemption.webp","link":""},"suddenly":{"isim":"Suddenly","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/suddenly-hdfc-hdfc.webp","link":""},"cover-up":{"isim":"Cover-Up","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/cover-up.webp","link":""},"sauvages":{"isim":"Sauvages","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/savages.webp","link":""},"one-last-adventure-the-making-of-stranger-things-5":{"isim":"One Last Adventure: The Making of Stranger Things 5","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/one-last-adventure-the-making-of-stranger-things-5.webp","link":""},"the-rip":{"isim":"The Rip","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-rip.webp","link":""},"toz-yumagi-dust-bunny":{"isim":"Toz Yumağı - Dust Bunny","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/dust-bunny.webp","link":""},"yariscilar-buyuk-hesaplasma":{"isim":"Yarışçılar: Büyük Hesaplaşma","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/running-man-revengers.webp","link":""},"the-getback":{"isim":"The Getback","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-getback.webp","link":""},"the-enchanted-tinderbox":{"isim":"The Enchanted Tinderbox","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-enchanted-tinderbox.webp","link":""},"sicc-n-8":{"isim":"Siccîn 8","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sijjin-8.webp","link":""},"the-gentleman":{"isim":"The Gentleman","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-gentleman.webp","link":""},"hood":{"isim":"Hood","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/hood.webp","link":""},"elinden-gelenin-en-i-yisi":{"isim":"Elinden Gelenin En İyisi","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-best-you-can.webp","link":""},"the-bad-shepherd":{"isim":"The Bad Shepherd","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-bad-shepherd.webp","link":""},"birlikte":{"isim":"Birlikte","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/together-hdfc.webp","link":""},"sore-gelecekten-gelen-es":{"isim":"Sore: Gelecekten Gelen Eş","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sore-a-wife-from-the-future.webp","link":""},"freddynin-pizza-dukkaninda-bes-gece-2":{"isim":"Freddynin Pizza Dükkanında Beş Gece 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/five-nights-at-freddy-s-2.webp","link":""},"crazy-old-lady":{"isim":"Crazy Old Lady","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/crazy-old-lady.webp","link":""},"vermiglio":{"isim":"Vermiglio","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/vermiglio.webp","link":""},"sleepwalker":{"isim":"Sleepwalker","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/sleepwalker.webp","link":""},"the-internship":{"isim":"The Internship","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-internship.webp","link":""},"sihirbazlar-cetesi-daha-bir-sey-gormediniz":{"isim":"Sihirbazlar Çetesi Daha Bir Şey Görmediniz","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/now-you-see-me-now-you-don-t.webp","link":""},"oscar-shaw":{"isim":"Oscar Shaw","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/oscar-shaw.webp","link":""},"the-inheritance":{"isim":"The Inheritance","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-inheritance.webp","link":""},"not-without-hope":{"isim":"Not Without Hope","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/not-without-hope.webp","link":""},"beraber":{"isim":"Beraber","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/belonging.webp","link":""},"we-bury-the-dead":{"isim":"We Bury the Dead","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/we-bury-the-dead.webp","link":""},"kisa-ziyaret-uzun-hikaye":{"isim":"Kısa Ziyaret Uzun Hikaye","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-travellers.webp","link":""},"bugonia":{"isim":"Bugonia","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/bugonia.webp","link":""},"guller":{"isim":"Güller","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-roses.webp","link":""},"telusu-kada":{"isim":"Telusu Kada","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/telusu-kada.webp","link":""},"thoughts-prayers":{"isim":"Thoughts & Prayers","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/thoughts-prayers.webp","link":""},"champagne-problems":{"isim":"Champagne Problems","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/champagne-problems.webp","link":""},"violent-ends":{"isim":"Violent Ends","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/violent-ends.webp","link":""},"special-unit-the-first-murder":{"isim":"Special Unit - The First Murder","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/special-unit-the-first-murder.webp","link":""},"the-carman-family-deaths":{"isim":"The Carman Family Deaths","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-carman-family-deaths.webp","link":""},"herd":{"isim":"Herd","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/herd.webp","link":""},"bacaklarim-olsaydi-sana-tekme-atardim":{"isim":"Bacaklarım Olsaydı Sana Tekme Atardım","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/if-i-had-legs-i-d-kick-you.webp","link":""},"tanrilar-ve-seytanlar-mahavatar-narsimha":{"isim":"Tanrılar ve Şeytanlar - Mahavatar Narsimha","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/mahavatar-narsimha.webp","link":""},"the-son-of-a-thousand-men":{"isim":"The Son of a Thousand Men","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-son-of-a-thousand-men.webp","link":""},"day-of-a-lion":{"isim":"Day of a Lion","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/day-of-a-lion.webp","link":""},"13-days-13-nights-in-the-hell-of-kabul":{"isim":"13 Days 13 Nights In the Hell of Kabul","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/13-days-13-nights-in-the-hell-of-kabul.webp","link":""},"anniversary":{"isim":"Anniversary","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/anniversary.webp","link":""},"the-hand-that-rocks-the-cradle":{"isim":"The Hand That Rocks the Cradle","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-hand-that-rocks-the-cradle-hdfc.webp","link":""},"to-kill-a-wolf":{"isim":"To Kill a Wolf","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/to-kill-a-wolf.webp","link":""},"buyuk-yaris":{"isim":"Büyük Yarış","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/grand-prix-of-europe.webp","link":""},"8x8":{"isim":"8x8","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/8x8.webp","link":""},"a-very-jonas-christmas-movie":{"isim":"A Very Jonas Christmas Movie","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/a-very-jonas-christmas-movie.webp","link":""},"buyuk-cesur-ve-guzel-bir-yolculuk":{"isim":"Büyük Cesur ve Güzel Bir Yolculuk","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/a-big-bold-beautiful-journey.webp","link":""},"as-in-heaven":{"isim":"As in Heaven","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/as-in-heaven.webp","link":""},"ciplak-silah":{"isim":"Çıplak Silah","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-naked-gun.webp","link":""},"su-yuzu":{"isim":"Su Yüzü","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/on-the-water-surface.webp","link":""},"sampiyon-keci-tum-zamanlarin-en-i-yisi":{"isim":"Şampiyon Keçi: Tüm Zamanların En İyisi","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/goat.webp","link":""},"evimdeki-yabanci":{"isim":"Evimdeki Yabancı","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-stranger-in-my-home.webp","link":""},"come-see-me-in-the-good-light":{"isim":"Come See Me in the Good Light","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/come-see-me-in-the-good-light.webp","link":""},"orumcek-kadinin-opucugu":{"isim":"Örümcek Kadının Öpücüğü","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/kiss-of-the-spider-woman.webp","link":""},"what-matters-most":{"isim":"What Matters Most","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/what-matters-most.webp","link":""},"savas-ustune-savas":{"isim":"Savaş Üstüne Savaş","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/one-battle-after-another.webp","link":""},"turbulence":{"isim":"Turbulence","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/turbulence-hdfc.webp","link":""},"only-on-earth":{"isim":"Only on Earth","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/only-on-earth.webp","link":""},"sessiz-gece-kanli-gece":{"isim":"Sessiz Gece Kanlı Gece","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/silent-night-deadly-night.webp","link":""},"lone-samurai":{"isim":"Lone Samurai","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/lone-samurai.webp","link":""},"last-seen-alive":{"isim":"Last Seen Alive","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/last-seen-alive.webp","link":""},"raat-akeli-hai-the-bansal-murders":{"isim":"Raat Akeli Hai: The Bansal Murders","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/raat-akeli-hai-the-bansal-murders.webp","link":""},"the-thing-with-feathers":{"isim":"The Thing with Feathers","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-thing-with-feathers.webp","link":""},"yasama-atesi":{"isim":"Yaşama Ateşi","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/soul-on-fire.webp","link":""},"siyah-telefon-2":{"isim":"Siyah Telefon 2","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/black-phone-2.webp","link":""},"influencers":{"isim":"Influencers","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/influencers.webp","link":""},"bicaklar-cekildi-olu-adamin-uyanisi":{"isim":"Bıçaklar Çekildi Ölü Adamın Uyanışı","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/wake-up-dead-man-a-knives-out-mystery.webp","link":""},"lost-in-the-spotlight":{"isim":"Lost in the Spotlight","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/lost-in-the-spotlight.webp","link":""},"the-fakenapping":{"isim":"The Fakenapping","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/the-fakenapping.webp","link":""},"truth-treason":{"isim":"Truth & Treason","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/truth-treason.webp","link":""},"biz-melek-degiliz":{"isim":"Biz Melek Değiliz","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/we-re-no-angels.webp","link":""},"yavasca-soyle-tell-me-softly":{"isim":"Yavaşça Söyle - Tell Me Softly","resim":"https://www.hdfilmcehennemi.nl/images/list/poster/tell-me-softly.webp","link":""}};
         
-        // Yükleme tamamlandığında
+        // JSON URL'si (kalan filmler)
+        const JSON_URL = 'https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/hdfilmcehennemi.json';
+        
+        // Tüm filmler (başta ilk 99)
+        let tümFilmler = {};
+        
+        // Sayfa yüklendiğinde
         window.onload = function() {
-            console.log(`🎬 Önizleme için ${Object.keys(filmler).length} film yüklendi`);
+            console.log(`🎬 İlk 99 film yüklendi`);
+            Object.assign(tümFilmler, filmler);
             renderFilms();
+            loadExtraFilmsFromJSON();
             
-            // Loading'i kaldır
             setTimeout(() => {
                 document.getElementById('loading').style.display = 'none';
             }, 500);
         };
+        
+        // JSON'dan kalan filmleri yükle
+        function loadExtraFilmsFromJSON() {
+            fetch(JSON_URL)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`📥 JSON'dan ${Object.keys(data).length} film yükleniyor...`);
+                    
+                    // İlk 99 hariç kalanları ekle
+                    let count = 0;
+                    Object.keys(data).forEach(key => {
+                        if (!tümFilmler[key]) {
+                            tümFilmler[key] = data[key];
+                            count++;
+                        }
+                    });
+                    
+                    console.log(`✅ ${count} yeni film eklendi`);
+                    console.log(`🎬 Toplam Film: ${Object.keys(tümFilmler).length}`);
+                    
+                    // Başlığı güncelle
+                    updateBaslik();
+                })
+                .catch(err => {
+                    console.error('JSON yükleme hatası:', err);
+                });
+        }
         
         // Filmleri ekrana bas
         function renderFilms() {
@@ -274,11 +308,10 @@
                 var film = filmler[key];
                 var item = document.createElement("div");
                 item.className = "filmpanel";
+                item.setAttribute('data-film-name', film.isim.toLowerCase());
                 
-                // FİLME TIKLAYINCA DİREKT IFRAME AÇ
                 item.onclick = function() { 
                     if (film.link) {
-                        // Yeni sekmede iframe aç
                         window.open(film.link, '_blank');
                     } else {
                         alert("Bu film için video linki bulunamadı.");
@@ -293,37 +326,36 @@
                 `;
                 container.appendChild(item);
                 filmCount++;
-                
-                // Her 10 filmde bir loading text'ini güncelle
-                if (filmCount % 10 === 0) {
-                    document.getElementById('loadingText').textContent = 
-                        `Filmler yükleniyor... (${filmCount}/${Object.keys(filmler).length})`;
-                }
             });
             
-            // TOPLAM FİLM SAYISINI GÖSTER
             var baslik = document.querySelector('.baslik');
-            baslik.textContent += ` (${Object.keys(filmler).length} Film)`;
+            baslik.textContent = `HDFİLMCEHENNEMİ FİLM ARŞİVİ (İlk 99 Film + JSON)`;
             
             console.log(`✅ ${filmCount} film render edildi`);
         }
         
-        // ARAMA FONKSİYONU
-        function searchFilms() {
-            var searchTerm = document.getElementById('filmSearch').value.toLowerCase();
+        // Başlığı günceleme
+        function updateBaslik() {
+            var baslik = document.querySelector('.baslik');
+            baslik.textContent = `HDFİLMCEHENNEMİ FİLM ARŞİVİ (${Object.keys(tümFilmler).length} Film Toplam)`;
+        }
+        
+        // CANLI ARAMA (tüm filmler içinde)
+        function liveSearch() {
+            var searchTerm = document.getElementById('filmSearch').value.toLowerCase().trim();
             var container = document.getElementById('filmListesiContainer');
-            var panels = container.querySelectorAll('.filmpanel');
+            
+            if (searchTerm.length === 0) {
+                resetFilmSearch();
+                return;
+            }
+            
+            // Önce DOM'da var olanları gizle/göster
+            var panels = container.querySelectorAll('.filmpanel:not(.baslik)');
             var found = false;
             
             panels.forEach(function(panel) {
-                if (panel.classList.contains('baslik')) return;
-                
-                var filmName = "";
-                var filmIsimDiv = panel.querySelector('.filmisim');
-                if (filmIsimDiv) {
-                    filmName = filmIsimDiv.textContent.toLowerCase();
-                }
-                
+                var filmName = panel.getAttribute('data-film-name');
                 if (filmName.includes(searchTerm)) {
                     panel.style.display = 'block';
                     found = true;
@@ -332,22 +364,83 @@
                 }
             });
             
+            // Sonra JSON'daki filmlerde ara
+            Object.keys(tümFilmler).forEach(key => {
+                var film = tümFilmler[key];
+                if (!document.querySelector(`[data-film-id="${key}"]`)) {
+                    var filmName = (film.isim || film[0] || '').toLowerCase();
+                    if (filmName.includes(searchTerm)) {
+                        found = true;
+                        createAndAddFilmPanel(key, film);
+                    }
+                }
+            });
+            
+            // Sonuç bulunamadı mesajı
             if (!found && searchTerm) {
+                var existingError = container.querySelector('.hataekran');
+                if (existingError) existingError.remove();
+                
                 var noResults = document.createElement('div');
                 noResults.className = 'hataekran';
                 noResults.innerHTML = '<i class="fas fa-search"></i><div class="hatayazi">"${searchTerm}" için film bulunamadı!</div>';
                 container.appendChild(noResults);
+            } else if (found && searchTerm) {
+                var existingError = container.querySelector('.hataekran');
+                if (existingError) existingError.remove();
             }
-            
-            return false;
         }
         
+        // Film paneli oluştur ve ekle
+        function createAndAddFilmPanel(key, film) {
+            var container = document.getElementById("filmListesiContainer");
+            
+            if (document.querySelector(`[data-film-id="${key}"]`)) {
+                return; // Zaten var
+            }
+            
+            var item = document.createElement("div");
+            item.className = "filmpanel";
+            item.setAttribute('data-film-id', key);
+            item.setAttribute('data-film-name', (film.isim || film[0] || '').toLowerCase());
+            
+            var filmData = typeof film === 'object' && film.isim ? film : {
+                isim: film[0] || '',
+                resim: film[1] || '',
+                link: film[2] || ''
+            };
+            
+            item.onclick = function() { 
+                if (filmData.link) {
+                    window.open(filmData.link, '_blank');
+                } else {
+                    alert("Bu film için video linki bulunamadı.");
+                }
+            };
+            
+            item.innerHTML = `
+                <div class="filmresim"><img src="${filmData.resim}" onerror="this.src='https://via.placeholder.com/300x450/15161a/ffffff?text=No+Image'"></div>
+                <div class="filmisimpanel">
+                    <div class="filmisim">${filmData.isim}</div>
+                </div>
+            `;
+            container.appendChild(item);
+        }
+        
+        // Arama sıfırla
         function resetFilmSearch() {
             var container = document.getElementById('filmListesiContainer');
             var panels = container.querySelectorAll('.filmpanel');
+            
+            // Arama yapılarak eklenen filmleri kaldır
             panels.forEach(function(panel) {
-                panel.style.display = 'block';
+                if (panel.getAttribute('data-film-id')) {
+                    panel.remove();
+                } else {
+                    panel.style.display = 'block';
+                }
             });
+            
             var noResults = container.querySelector('.hataekran');
             if (noResults) {
                 noResults.remove();
