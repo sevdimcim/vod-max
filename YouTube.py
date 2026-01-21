@@ -1,291 +1,353 @@
-import yt_dlp
-import re
-from datetime import datetime
-import json
+#!/usr/bin/env python3
+"""
+YouTube Canlı Yayın → M3U8 Dönüştürücü
+GitHub Actions için otomatik mod
+"""
 
-def extract_youtube_live_m3u8(youtube_url):
-    """
-    YouTube canlı yayınından M3U8 playlistini çıkarır
-    """
-    print(f"🔍 YouTube canlı yayın analiz ediliyor: {youtube_url}")
+import yt_dlp
+import json
+import re
+import sys
+import os
+from datetime import datetime
+
+def clean_filename(name):
+    """Dosya adı için güvenli karakterlere çevir"""
+    if not name:
+        return "youtube_stream"
+    name = re.sub(r'[^\w\s\-_]', '', name)
+    name = re.sub(r'\s+', '_', name)
+    return name[:50]
+
+def extract_live_stream_info(url):
+    """YouTube canlı yayın bilgilerini çıkar"""
+    print(f"🔍 YouTube analiz ediliyor: {url}")
     
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
         'extract_flat': False,
-        'youtube_include_dash_manifest': False,
-        'youtube_include_hls_manifest': True,
     }
     
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            # Video bilgilerini al
-            info = ydl.extract_info(youtube_url, download=False)
+            info = ydl.extract_info(url, download=False)
             
-            # Canlı yayın kontrolü
-            if not info.get('is_live'):
-                print("⚠ UYARI: Bu bir canlı yayın değil!")
-                # Yine de devam edebiliriz
-                
-            video_title = info.get('title', 'Bilinmeyen_Yayin')
-            video_id = info.get('id', 'unknown')
-            channel = info.get('uploader', 'Bilinmeyen_Kanal')
+            result = {
+                'id': info.get('id', 'unknown'),
+                'title': info.get('title', 'YouTube Live Stream'),
+                'channel': info.get('uploader', 'Unknown Channel'),
+                'is_live': info.get('is_live', False),
+                'view_count': info.get('view_count', 0),
+                'duration': info.get('duration', 0),
+                'hls_urls': []
+            }
             
-            print(f"📺 Kanal: {channel}")
-            print(f"🎬 Başlık: {video_title}")
-            print(f"🔗 Video ID: {video_id}")
-            print(f"📊 Kalite seçenekleri taranıyor...")
-            
-            # HLS manifest URL'lerini bul
-            m3u8_urls = []
-            
-            # Formatları kontrol et
+            # HLS formatlarını bul
             formats = info.get('formats', [])
+            hls_count = 0
             
-            for f in formats:
-                if f.get('protocol') == 'm3u8_native' or 'hls' in f.get('protocol', ''):
-                    format_info = {
-                        'url': f.get('url', ''),
-                        'format_id': f.get('format_id', ''),
-                        'format_note': f.get('format_note', ''),
-                        'height': f.get('height', 0),
-                        'width': f.get('width', 0),
-                        'tbr': f.get('tbr', 0),  # bitrate
-                        'vcodec': f.get('vcodec', ''),
-                        'acodec': f.get('acodec', ''),
-                        'fps': f.get('fps', 0),
-                        'dynamic_range': f.get('dynamic_range', 'SDR'),
+            for fmt in formats:
+                protocol = str(fmt.get('protocol', '')).lower()
+                url = fmt.get('url', '')
+                
+                if ('hls' in protocol or 'm3u8' in protocol or 
+                    'm3u8' in url or 'googlevideo.com' in url):
+                    
+                    format_data = {
+                        'url': url,
+                        'format_id': fmt.get('format_id', 'N/A'),
+                        'height': fmt.get('height', 0),
+                        'width': fmt.get('width', 0),
+                        'fps': fmt.get('fps', 30),
+                        'vcodec': fmt.get('vcodec', 'avc1.4d402a'),
+                        'acodec': fmt.get('acodec', 'mp4a.40.2'),
+                        'tbr': fmt.get('tbr', 0),  # bitrate
                     }
-                    m3u8_urls.append(format_info)
+                    
+                    result['hls_urls'].append(format_data)
+                    hls_count += 1
             
-            # URL yoksa, manifest'i manuel oluştur
-            if not m3u8_urls:
-                print("M3U8 URL'leri bulunamadı, manifest oluşturuluyor...")
-                m3u8_urls = generate_hls_manifest_from_info(info)
-            
-            # M3U8 playlist oluştur
-            playlist_content = generate_m3u8_playlist(m3u8_urls, video_title, channel)
-            
-            # Dosyaya kaydet
-            safe_title = re.sub(r'[^\w\-_]', '_', video_title)[:50]
-            filename = f"{safe_title}_{video_id}.m3u8"
-            
-            with open(filename, 'w', encoding='utf-8') as f:
-                f.write(playlist_content)
-            
-            print(f"\n✅ M3U8 playlist oluşturuldu: {filename}")
-            print(f"📁 Toplam {len(m3u8_urls)} kalite seçeneği eklendi")
-            
-            # Ek bilgileri JSON olarak da kaydet
-            save_stream_info(info, m3u8_urls, filename.replace('.m3u8', '.json'))
-            
-            return filename, playlist_content
+            print(f"✅ {hls_count} HLS stream bulundu")
+            return result
             
     except Exception as e:
-        print(f"❌ Hata oluştu: {str(e)}")
-        return None, None
+        print(f"❌ Hata: {str(e)}")
+        return None
 
-def generate_hls_manifest_from_info(info):
-    """
-    Video bilgilerinden HLS manifest URL'leri oluştur
-    """
-    video_id = info.get('id', '')
-    formats = []
+def generate_m3u8_playlist(stream_info, custom_name=None):
+    """M3U8 playlist oluştur"""
+    if not stream_info or not stream_info['hls_urls']:
+        print("❌ HLS stream bulunamadı")
+        return None
     
-    # YouTube HLS manifest URL şablonu
-    base_patterns = [
-        f"https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/*/ei/*/id/{video_id}/itag/{{itag}}/*",
-        f"https://rr*.googlevideo.com/videoplayback/*/id/{video_id}/itag/{{itag}}/*",
-    ]
+    # Dosya adını belirle
+    if custom_name:
+        base_name = clean_filename(custom_name)
+    else:
+        base_name = clean_filename(stream_info['title'])
     
-    # Standart format ID'leri (YouTube HLS için)
-    hls_formats = [
-        {'itag': '91', 'height': 144, 'note': '144p'},
-        {'itag': '92', 'height': 240, 'note': '240p'},
-        {'itag': '93', 'height': 360, 'note': '360p'},
-        {'itag': '94', 'height': 480, 'note': '480p'},
-        {'itag': '95', 'height': 720, 'note': '720p'},
-        {'itag': '96', 'height': 1080, 'note': '1080p'},
-        {'itag': '300', 'height': 720, 'note': '720p60'},
-        {'itag': '301', 'height': 1080, 'note': '1080p60'},
-    ]
+    stream_id = stream_info['id'][:10]  # ID'yi kısalt
+    filename = f"{base_name}_{stream_id}.m3u8"
     
-    for fmt in hls_formats:
-        formats.append({
-            'url': f"https://manifest.googlevideo.com/api/manifest/hls_playlist/id/{video_id}/itag/{fmt['itag']}/source/yt_live_broadcast/playlist_type/LIVE",
-            'format_id': fmt['itag'],
-            'format_note': fmt['note'],
-            'height': fmt['height'],
-            'width': fmt['height'] * 16 // 9,
-            'vcodec': 'avc1.4D40XX',
-            'acodec': 'mp4a.40.2',
-            'dynamic_range': 'SDR',
-        })
+    print(f"📝 M3U8 oluşturuluyor: {filename}")
     
-    return formats
-
-def generate_m3u8_playlist(formats, title, channel):
-    """
-    M3U8 playlist içeriğini oluştur
-    """
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    playlist = [
+    # M3U8 içeriği
+    lines = [
         '#EXTM3U',
-        f'# Generated: {now}',
-        f'# Title: {title}',
-        f'# Channel: {channel}',
-        f'# Sources: YouTube Live Stream',
+        f'#EXT-X-VERSION:3',
+        f'# Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}',
+        f'# Title: {stream_info["title"]}',
+        f'# Channel: {stream_info["channel"]}',
+        f'# Live: {stream_info["is_live"]}',
+        f'# Viewers: {stream_info["view_count"]}',
         '#EXT-X-INDEPENDENT-SEGMENTS',
         ''
     ]
     
     # Formatları çözünürlüğe göre sırala (düşükten yükseğe)
-    formats.sort(key=lambda x: x.get('height', 0))
+    streams = sorted(stream_info['hls_urls'], key=lambda x: x.get('height', 0))
     
-    for fmt in formats:
-        height = fmt.get('height', 0)
-        width = fmt.get('width', 0)
-        tbr = fmt.get('tbr', 0) or 500000  # Varsayılan bitrate
-        vcodec = fmt.get('vcodec', 'avc1.4D40XX').split('.')[0]
-        acodec = fmt.get('acodec', 'mp4a.40.2').split('.')[0]
-        fps = fmt.get('fps', 30)
-        dynamic_range = fmt.get('dynamic_range', 'SDR')
+    for stream in streams:
+        height = stream.get('height', 0)
+        width = stream.get('width', 0)
+        fps = stream.get('fps', 30)
+        tbr = stream.get('tbr', 0)
+        vcodec = stream.get('vcodec', 'avc1.4d402a')
+        acodec = stream.get('acodec', 'mp4a.40.2')
         
-        # BANDWIDTH hesapla (bitrate * 1.2 güvenlik faktörü)
-        bandwidth = int(tbr * 1.2) if tbr > 0 else height * 2000
+        # Bandwidth hesapla
+        if tbr > 0:
+            bandwidth = int(tbr * 1000)
+        elif height > 0:
+            bandwidth = height * 150000  # 150kbps per pixel height
+        else:
+            bandwidth = 500000  # Varsayılan 500kbps
         
-        # CODECS formatı
-        codecs_str = f'{acodec},{vcodec}'
+        # Codec temizleme
+        vcodec_clean = vcodec.split('.')[0] if '.' in vcodec else vcodec
+        acodec_clean = acodec.split('.')[0] if '.' in acodec else acodec
         
-        # EXT-X-STREAM-INF satırı
-        stream_info = f'#EXT-X-STREAM-INF:BANDWIDTH={bandwidth},CODECS="{codecs_str}"'
+        # Stream bilgi satırı
+        stream_line = f'#EXT-X-STREAM-INF:BANDWIDTH={bandwidth},CODECS="{acodec_clean},{vcodec_clean}"'
         
         if height and width:
-            stream_info += f',RESOLUTION={width}x{height}'
+            stream_line += f',RESOLUTION={width}x{height}'
         
-        stream_info += f',FRAME-RATE={fps},VIDEO-RANGE={dynamic_range},CLOSED-CAPTIONS=NONE'
+        stream_line += f',FRAME-RATE={fps},VIDEO-RANGE=SDR,CLOSED-CAPTIONS=NONE'
         
-        playlist.append(stream_info)
-        playlist.append(fmt.get('url', ''))
-        playlist.append('')
+        lines.append(stream_line)
+        lines.append(stream['url'])
+        lines.append('')
     
-    return '\n'.join(playlist)
+    content = '\n'.join(lines)
+    
+    # Dosyaya yaz
+    os.makedirs('playlists', exist_ok=True)
+    filepath = os.path.join('playlists', filename)
+    
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
+    print(f"✅ M3U8 oluşturuldu: {filename}")
+    print(f"   📊 {len(streams)} stream eklendi")
+    
+    if streams:
+        resolutions = sorted(set(s.get('height', 0) for s in streams))
+        print(f"   📏 Çözünürlükler: {', '.join(str(r) for r in resolutions if r > 0)}p")
+    
+    return filename
 
-def save_stream_info(info, formats, json_filename):
-    """Akış bilgilerini JSON olarak kaydet"""
-    stream_data = {
-        'metadata': {
-            'title': info.get('title'),
-            'id': info.get('id'),
-            'channel': info.get('uploader'),
-            'is_live': info.get('is_live', False),
-            'duration': info.get('duration'),
-            'view_count': info.get('view_count'),
-            'timestamp': datetime.now().isoformat(),
-        },
-        'formats': formats,
-        'generator': 'YouTube-Live-to-M3U8 v1.0',
+def process_channel(url, name=None):
+    """Tek kanal işle"""
+    print(f"\n{'='*60}")
+    print(f"🎬 İŞLENİYOR: {name if name else 'YouTube Stream'}")
+    print(f"🔗 URL: {url}")
+    print(f"{'='*60}")
+    
+    # URL formatını kontrol et
+    if 'youtube.com/live/' not in url and 'youtu.be/' not in url:
+        if 'youtube.com/watch?v=' in url:
+            # Normal video URL'sini live'a çevir
+            video_id = url.split('v=')[1].split('&')[0]
+            url = f"https://www.youtube.com/live/{video_id}"
+            print(f"📝 URL düzeltildi: {url}")
+        else:
+            print("⚠️  Uyarı: Standart YouTube canlı URL formatı değil")
+    
+    # Stream bilgilerini al
+    stream_info = extract_live_stream_info(url)
+    
+    if not stream_info:
+        print("❌ Stream bilgileri alınamadı")
+        return False
+    
+    if not stream_info['hls_urls']:
+        print("❌ HLS streamleri bulunamadı")
+        print("   YouTube bu stream için HLS sağlamıyor olabilir")
+        return False
+    
+    # M3U8 oluştur
+    m3u8_file = generate_m3u8_playlist(stream_info, name)
+    
+    if m3u8_file:
+        # Metadata dosyası oluştur
+        metadata = {
+            'generated_at': datetime.now().isoformat(),
+            'original_url': url,
+            'channel_name': name,
+            'stream_info': {
+                'id': stream_info['id'],
+                'title': stream_info['title'],
+                'channel': stream_info['channel'],
+                'is_live': stream_info['is_live'],
+                'view_count': stream_info['view_count'],
+                'stream_count': len(stream_info['hls_urls']),
+                'resolutions': sorted(set(s.get('height', 0) for s in stream_info['hls_urls']))
+            },
+            'generator': 'YouTube-M3U8-Generator v1.0'
+        }
+        
+        metadata_file = f"playlists/{m3u8_file.replace('.m3u8', '.json')}"
+        with open(metadata_file, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, indent=2, ensure_ascii=False)
+        
+        print(f"📁 Metadata kaydedildi: {metadata_file}")
+        return True
+    
+    return False
+
+def batch_process(file_path):
+    """Toplu işlem - channels.txt dosyasını işle"""
+    print(f"\n📦 TOPLU İŞLEM MODU")
+    print(f"📄 Dosya: {file_path}")
+    print(f"{'='*60}")
+    
+    if not os.path.exists(file_path):
+        print(f"❌ Dosya bulunamadı: {file_path}")
+        return
+    
+    success_count = 0
+    fail_count = 0
+    processed_channels = []
+    
+    with open(file_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    
+    total_lines = len([l for l in lines if l.strip() and not l.startswith('#')])
+    print(f"📋 Toplam {total_lines} kanal bulundu")
+    
+    for line_num, line in enumerate(lines, 1):
+        line = line.strip()
+        
+        # Boş satır ve yorumları atla
+        if not line or line.startswith('#'):
+            continue
+        
+        # Format: name|url veya sadece url
+        parts = line.split('|')
+        if len(parts) >= 2:
+            name, url = parts[0].strip(), parts[1].strip()
+        else:
+            url = line
+            name = None
+        
+        print(f"\n[{success_count + fail_count + 1}/{total_lines}] {name if name else url}")
+        
+        try:
+            if process_channel(url, name):
+                success_count += 1
+                processed_channels.append({'name': name, 'url': url, 'status': 'success'})
+            else:
+                fail_count += 1
+                processed_channels.append({'name': name, 'url': url, 'status': 'failed'})
+                
+        except Exception as e:
+            print(f"❌ İşlem hatası: {str(e)}")
+            fail_count += 1
+            processed_channels.append({'name': name, 'url': url, 'status': 'error', 'error': str(e)})
+    
+    # Sonuç raporu
+    print(f"\n{'='*60}")
+    print("📊 İŞLEM SONUÇLARI")
+    print(f"{'='*60}")
+    print(f"✅ Başarılı: {success_count}")
+    print(f"❌ Başarısız: {fail_count}")
+    print(f"📁 Toplam: {success_count + fail_count}")
+    
+    # Sonuçları JSON'a kaydet
+    results_file = f"playlists/batch_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    results = {
+        'timestamp': datetime.now().isoformat(),
+        'total': success_count + fail_count,
+        'success': success_count,
+        'failed': fail_count,
+        'channels': processed_channels
     }
     
-    with open(json_filename, 'w', encoding='utf-8') as f:
-        json.dump(stream_data, f, indent=2, ensure_ascii=False)
+    with open(results_file, 'w', encoding='utf-8') as f:
+        json.dump(results, f, indent=2, ensure_ascii=False)
+    
+    print(f"📋 Sonuçlar kaydedildi: {results_file}")
+    
+    return success_count > 0
 
 def main():
-    """Ana program"""
+    """Ana fonksiyon - GitHub Actions için otomatik mod"""
     print("=" * 60)
-    print("YouTube Canlı Yayın → M3U8 Playlist Dönüştürücü")
-    print("=" * 60)
-    print("Amaç: YouTube canlı TV yayınlarını M3U8 formatına dönüştürmek")
-    print("Örnek: https://www.youtube.com/live/na_jT2Q1rfA")
+    print("🎬 YouTube Canlı → M3U8 Dönüştürücü")
     print("=" * 60)
     
-    while True:
-        print("\n1. YouTube canlı yayın linkinden M3U8 oluştur")
-        print("2. YouTube kanal linkinden canlı yayınları listele")
-        print("3. Test (Halk TV örneği)")
-        print("4. Çıkış")
-        
-        choice = input("\nSeçiminiz (1-4): ").strip()
-        
-        if choice == "1":
-            url = input("YouTube canlı yayın URL'si: ").strip()
-            if not url.startswith('http'):
-                print("Geçerli bir URL girin!")
-                continue
+    # Komut satırı argümanlarını kontrol et
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--batch" and len(sys.argv) > 2:
+            # Toplu işlem modu
+            batch_process(sys.argv[2])
             
-            filename, content = extract_youtube_live_m3u8(url)
+        elif sys.argv[1] == "--url" and len(sys.argv) > 2:
+            # Tek URL modu
+            url = sys.argv[2]
+            name = sys.argv[3] if len(sys.argv) > 3 else None
+            process_channel(url, name)
             
-            if filename and content:
-                print(f"\n📋 Oluşturulan M3U8 içeriği:")
-                print("-" * 40)
-                # İlk 10 satırı göster
-                lines = content.split('\n')
-                for i, line in enumerate(lines[:15]):
-                    print(line)
-                if len(lines) > 15:
-                    print(f"... ve {len(lines)-15} satır daha")
-                print("-" * 40)
-                print(f"✅ Dosya kaydedildi: {filename}")
-        
-        elif choice == "2":
-            channel_url = input("YouTube kanal URL'si (@haber gibi): ").strip()
-            list_channel_live_streams(channel_url)
-        
-        elif choice == "3":
-            # Halk TV test
+        elif sys.argv[1] == "--test":
+            # Test modu
+            print("🧪 TEST MODU: Halk TV")
             test_url = "https://www.youtube.com/live/na_jT2Q1rfA"
-            print(f"Test URL: {test_url}")
-            filename, content = extract_youtube_live_m3u8(test_url)
-        
-        elif choice == "4":
-            print("Program sonlandırılıyor...")
-            break
-        
-        else:
-            print("Geçersiz seçim!")
-
-def list_channel_live_streams(channel_url):
-    """Kanalda şu anda canlı yayın var mı kontrol et"""
-    ydl_opts = {
-        'quiet': True,
-        'extract_flat': True,
-        'playlistend': 20,
-    }
-    
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(channel_url, download=False)
+            process_channel(test_url, "HalkTV_Test")
             
-            if 'entries' in info:
-                print(f"\n📺 Kanal: {info.get('title', 'Bilinmeyen')}")
-                print("🔍 Canlı yayınlar aranıyor...")
-                
-                live_streams = []
-                for entry in info['entries']:
-                    if entry.get('live_status') == 'is_live':
-                        live_streams.append(entry)
-                
-                if live_streams:
-                    print(f"✅ {len(live_streams)} canlı yayın bulundu:")
-                    for i, stream in enumerate(live_streams, 1):
-                        stream_url = f"https://www.youtube.com/watch?v={stream['id']}"
-                        print(f"{i}. {stream.get('title', 'Bilinmeyen')}")
-                        print(f"   🔗 {stream_url}")
-                        print(f"   👁️ {stream.get('view_count', 0)} izlenme")
-                        print()
-                else:
-                    print("⚠ Şu anda canlı yayın bulunmuyor.")
-            else:
-                print("Kanal bilgileri alınamadı.")
-                
-    except Exception as e:
-        print(f"Hata: {str(e)}")
+        elif sys.argv[1] == "--help":
+            # Yardım
+            print("Kullanım:")
+            print("  python YouTube.py --batch channels.txt    # Toplu işlem")
+            print("  python YouTube.py --url URL [NAME]        # Tek kanal")
+            print("  python YouTube.py --test                  # Test (Halk TV)")
+            print("  python YouTube.py --help                  # Bu yardım")
+            print("\nÖrnek channels.txt formatı:")
+            print("  HalkTV|https://www.youtube.com/live/na_jT2Q1rfA")
+            print("  TRT1|https://www.youtube.com/live/TRT1_LIVE_ID")
+            print("  https://www.youtube.com/live/OTHER_ID     # İsimsiz")
+            
+        else:
+            print(f"❌ Bilinmeyen argüman: {sys.argv[1]}")
+            print("   --help ile yardım alın")
+    
+    else:
+        # Hiç argüman yoksa test modunda çalış
+        print("ℹ️  Argüman yok, test modunda çalıştırılıyor...")
+        print("   Kullanım: python YouTube.py --help")
+        print("\n🧪 TEST MODU BAŞLIYOR...")
+        test_url = "https://www.youtube.com/live/na_jT2Q1rfA"
+        process_channel(test_url, "HalkTV_Test")
 
 if __name__ == "__main__":
-    try:
-        import yt_dlp
-        main()
-    except ImportError:
-        print("yt-dlp kütüphanesi yüklü değil!")
-        print("Kurulum: pip install yt-dlp")
+    # GitHub Actions için gerekli klasörleri oluştur
+    os.makedirs('playlists', exist_ok=True)
+    os.makedirs('logs', exist_ok=True)
+    
+    # Programı başlat
+    main()
+    
+    print("\n" + "=" * 60)
+    print("✨ Program tamamlandı")
+    print("=" * 60)
