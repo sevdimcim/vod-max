@@ -1,108 +1,97 @@
-name: Update YouTube Live M3U8 Playlists
+name: YouTube M3U8 Playlist Generator
 
 on:
-  # Manuel çalıştırma için (GitHub UI'dan)
   workflow_dispatch:
     inputs:
       channel_url:
-        description: 'YouTube Channel URL (optional)'
+        description: 'YouTube Live URL'
         required: false
-        default: ''
+        default: 'https://www.youtube.com/live/na_jT2Q1rfA'
+      channel_name:
+        description: 'Channel Name'
+        required: false
+        default: 'HalkTV'
   
-  # Her gün otomatik çalıştır
   schedule:
-    - cron: '0 */6 * * *'  # 6 saatte bir (günde 4 kez)
+    - cron: '0 */3 * * *'  # 3 saatte bir
   
-  # Kod değiştiğinde çalıştır
   push:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - 'YouTube.py'
       - 'channels.txt'
-      - '.github/workflows/update-m3u8.yml'
 
 jobs:
-  update-playlists:
+  generate-m3u8:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout code
+      uses: actions/checkout@v4
     
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
     
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install yt-dlp
-        pip install requests
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install yt-dlp
+      run: pip install yt-dlp
     
-    - name: Create necessary directories
+    - name: Create directories
       run: |
         mkdir -p playlists
         mkdir -p logs
     
-    - name: Run YouTube M3U8 Generator
-      env:
-        CHANNEL_URL: ${{ github.event.inputs.channel_url }}
+    - name: Run YouTube M3U8 Script
+      id: run-script
       run: |
-        echo "=== YouTube M3U8 Generator ==="
-        echo "Start time: $(date)"
+        echo "🔍 Starting M3U8 generation..."
         
-        # Kanal listesi dosyasını kontrol et
-        if [ -f channels.txt ]; then
-          echo "Processing channels from channels.txt..."
+        CHANNEL_URL="${{ github.event.inputs.channel_url }}"
+        CHANNEL_NAME="${{ github.event.inputs.channel_name }}"
+        
+        if [ -f "channels.txt" ] && [ -s "channels.txt" ]; then
+          echo "📋 Using channels.txt file"
           python YouTube.py --batch channels.txt
         elif [ ! -z "$CHANNEL_URL" ]; then
-          echo "Processing single channel: $CHANNEL_URL"
-          python YouTube.py --url "$CHANNEL_URL"
+          echo "🎬 Processing: $CHANNEL_NAME ($CHANNEL_URL)"
+          python YouTube.py --url "$CHANNEL_URL" --name "$CHANNEL_NAME"
         else
-          echo "No channel specified, running in interactive mode..."
-          echo -e "1\nhttps://www.youtube.com/live/na_jT2Q1rfA" | python YouTube.py
+          echo "⚠️ No input provided, running default test"
+          python YouTube.py --url "https://www.youtube.com/live/na_jT2Q1rfA" --name "HalkTV_Test"
         fi
         
-        echo "End time: $(date)"
-        echo "=== Process Complete ==="
+        # Count generated files
+        FILE_COUNT=$(find playlists -name "*.m3u8" -type f 2>/dev/null | wc -l)
+        echo "FILE_COUNT=$FILE_COUNT" >> $GITHUB_OUTPUT
+        echo "✅ Found $FILE_COUNT M3U8 files"
     
-    - name: List generated files
-      run: |
-        echo "Generated M3U8 files:"
-        ls -la playlists/ || echo "No playlists directory"
-        echo "Log files:"
-        ls -la logs/ || echo "No logs directory"
-    
-    - name: Commit and push changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        
-        # Değişiklikleri kontrol et
-        git add playlists/ logs/ || echo "No new files to add"
-        
-        # Değişiklik varsa commit yap
-        if git diff --cached --quiet; then
-          echo "No changes to commit"
-        else
-          git commit -m "📺 Auto-update M3U8 playlists $(date '+%Y-%m-%d %H:%M:%S')"
-          git push origin HEAD:${{ github.ref }}
-        fi
-    
-    - name: Upload M3U8 files as artifact
-      uses: actions/upload-artifact@v3
+    - name: Upload M3U8 Playlists
+      uses: actions/upload-artifact@v4
       with:
-        name: m3u8-playlists
+        name: youtube-m3u8-playlists
         path: playlists/
-        if-no-files-found: warn
+        retention-days: 7
     
-    - name: Upload logs
-      uses: actions/upload-artifact@v3
+    - name: Upload Logs
+      uses: actions/upload-artifact@v4
       with:
         name: generation-logs
         path: logs/
-        if-no-files-found: ignore
+        retention-days: 3
+    
+    - name: Commit M3U8 Files
+      if: steps.run-script.outputs.FILE_COUNT != '0'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        
+        git add playlists/
+        
+        if git diff --cached --quiet; then
+          echo "📌 No new M3U8 files to commit"
+        else
+          git commit -m "🤖 Auto-update M3U8 playlists $(date '+%Y-%m-%d %H:%M')"
+          git push
+        fi
