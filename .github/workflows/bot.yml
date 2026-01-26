@@ -1,0 +1,55 @@
+name: CanliDizi Bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'CanliDizi URL'
+        required: true
+        default: 'https://www.canlidizi14.com/kismetse-olur-askin-gucu-73-bolum-izle.html'
+
+jobs:
+  find-m3u8:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        
+    - name: Install ChromeDriver
+      run: |
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1 | cut -d'.' -f1-3)
+        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+        wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
+    
+    - name: Install dependencies
+      run: |
+        pip install selenium requests beautifulsoup4 lxml
+    
+    - name: Run bot
+      run: |
+        python canlidizi_bot.py --test-all "${{ github.event.inputs.url }}"
+    
+    - name: Upload result
+      uses: actions/upload-artifact@v3
+      with:
+        name: m3u8-result
+        path: |
+          m3u8_result.txt
+          result.json
