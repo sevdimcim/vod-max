@@ -17,18 +17,16 @@ jobs:
       - name: Python kur
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.10"
 
-      - name: Gerekli paketleri yükle
+      - name: Paketleri yükle
         run: |
-          pip install selenium selenium-wire webdriver-manager
+          pip install selenium-wire webdriver-manager
 
-      - name: Chrome bağımlılıkları
+      - name: Chromium kur
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            chromium-browser \
-            chromium-chromedriver
+          sudo apt-get install -y chromium-browser chromium-chromedriver
 
       - name: Scripti çalıştır
         run: |
