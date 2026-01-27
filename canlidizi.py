@@ -1,50 +1,38 @@
-from seleniumwire import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time
 import re
 
-# -----------------------
-# Chrome ayarları
-# -----------------------
-chrome_options = Options()
-chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-chrome_options.add_argument("--mute-audio")
-chrome_options.add_argument("--headless=new")  # ister kapat
+caps = DesiredCapabilities.CHROME
+caps["goog:loggingPrefs"] = {"performance": "ALL"}
 
-driver = webdriver.Chrome(
-    service=Service(ChromeDriverManager().install()),
-    options=chrome_options
-)
+options = Options()
+options.add_argument("--headless=new")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-gpu")
 
-# -----------------------
-# HEDEF SAYFA
-# -----------------------
+driver = webdriver.Chrome(options=options, desired_capabilities=caps)
+
 url = "https://www.canlidizi14.com/kismetse-olur-askin-gucu-74-bolum-izle.html"
 driver.get(url)
 
-# fireplayer yüklenmesi
-time.sleep(8)
+time.sleep(10)
+
+logs = driver.get_log("performance")
 
 m3u8_links = set()
 
-# -----------------------
-# NETWORK DİNLE
-# -----------------------
-for request in driver.requests:
-    if request.response:
-        if ".m3u8" in request.url:
-            m3u8_links.add(request.url)
+for entry in logs:
+    message = entry["message"]
+    if ".m3u8" in message:
+        found = re.findall(r'https?://[^"]+\.m3u8[^"]*', message)
+        for f in found:
+            m3u8_links.add(f)
 
 driver.quit()
 
-# -----------------------
-# SONUÇ
-# -----------------------
-if m3u8_links:
-    print("\n🎯 BULUNAN M3U8 LİNKLERİ:\n")
-    for link in m3u8_links:
-        print(link)
-else:
-    print("❌ m3u8 bulunamadı")
+print("\n🎯 BULUNAN M3U8:\n")
+for m in m3u8_links:
+    print(m)
