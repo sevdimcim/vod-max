@@ -2,27 +2,39 @@ name: CanliDizi FirePlayer Extractor
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   run:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Repo checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Python kurulumu
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Paketleri kur
+      - name: Chrome kurulumu
         run: |
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+
+      - name: ChromeDriver kurulumu
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
+          wget -q https://chromedriver.storage.googleapis.com/${CHROME_VERSION}.0.0/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/bin/chromedriver
+          sudo chmod +x /usr/bin/chromedriver
+
+      - name: Gerekli paketler
+        run: |
+          pip install --upgrade pip
           pip install selenium webdriver-manager
 
-      - name: Chromium kur
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-
-      - name: Çalıştır
-        run: |
-          python canlidizi.py
+      - name: Script
