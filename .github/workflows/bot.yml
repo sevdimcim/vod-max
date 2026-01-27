@@ -1,4 +1,4 @@
-name: CanliDizi FirePlayer
+name: CanliDizi FirePlayer Extractor
 
 on:
   workflow_dispatch:
@@ -8,25 +8,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Repo checkout
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install Chrome
-        run: |
-          sudo apt update
-          sudo apt install -y wget unzip
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      - name: Install requirements
+      - name: Install Playwright
         run: |
-          pip install selenium
+          pip install playwright
+          playwright install chromium
 
-      - name: Run script
+      - name: Run extractor
         run: |
           python canlidizi.py
