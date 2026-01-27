@@ -1,25 +1,48 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from playwright.sync_api import sync_playwright
 import time
-import re
 
-options = Options()
-options.add_argument("--headless=new")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
+URL = "https://www.canlidizi14.com/kismetse-olur-askin-gucu-74-bolum-izle.html"
 
-driver = webdriver.Chrome(options=options)
+def run():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox"]
+        )
 
-driver.get("https://www.canlidizi14.com/kismetse-olur-askin-gucu-74-bolum-izle.html")
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                       "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
 
-time.sleep(10)
+        page = context.new_page()
 
-html = driver.page_source
+        print("Sayfa açılıyor...")
+        page.goto(URL, wait_until="networkidle", timeout=60000)
 
-links = re.findall(r"https?://[^\s\"']+\.m3u8[^\s\"']*", html)
+        m3u8_links = set()
 
-print("\n=== M3U8 BULUNAN ===\n")
-for l in set(links):
-    print(l)
+        def handle_request(request):
+            url = request.url
+            if ".m3u8" in url:
+                print("\n🔥 M3U8 YAKALANDI 🔥")
+                print(url)
+                m3u8_links.add(url)
 
-driver.quit()
+        page.on("request", handle_request)
+
+        # fireplayer oynasın diye bekle
+        time.sleep(20)
+
+        if not m3u8_links:
+            print("\n❌ M3U8 yakalanamadı")
+        else:
+            print("\n✅ TOPLAM BULUNAN:")
+            for i, link in enumerate(m3u8_links, 1):
+                print(f"{i}. {link}")
+
+        browser.close()
+
+
+if __name__ == "__main__":
+    run()
