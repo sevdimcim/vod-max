@@ -1,26 +1,41 @@
-name: CanliDizi FirePlayer Extractor
+name: Dizipal Bot Çalıştır
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # GitHub arayüzünden manuel "Run" butonu ile çalıştırmak için
+  push:
+    branches: [ "main" ] # Kodu pushladığında otomatik çalışsın istersen
 
 jobs:
-  run:
+  scrape:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Kodları Çek (Checkout)
+      uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+    - name: Python Kurulumu
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - name: Install Playwright
-        run: |
-          pip install playwright
-          playwright install chromium
+    - name: Gerekli Paketleri Yükle
+      # undetected-chromedriver ve tarayıcı için
+      run: |
+        pip install undetected-chromedriver
 
-      - name: Run extractor
-        run: |
-          python canlidizi.py
+    - name: Botu Çalıştır (Sanal Ekran ile)
+      # Xvfb sanal bir ekran oluşturur (1920x1080).
+      # Bu sayede Cloudflare bizim gerçek bir kullanıcı olduğumuzu sanar.
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb google-chrome-stable
+        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py
+
+    - name: Sonucu İndir (Artifact)
+      # Oluşan HTML dosyasını GitHub'dan indirilebilir hale getirir.
+      if: always() # Hata olsa bile çalışmayı dene
+      uses: actions/upload-artifact@v4
+      with:
+        name: dizipal-html
+        path: dizipal_anasayfa.html
+        retention-days: 1
