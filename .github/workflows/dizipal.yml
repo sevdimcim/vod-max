@@ -1,13 +1,46 @@
-    - name: Botu Çalıştır
+name: Dizipal 134 Sayfa Maratonu
+
+on:
+  workflow_dispatch: # Manuel başlatmak için en iyisi
+  schedule:
+    - cron: '0 0 * * *' # İstersen her gece 00:00'da otomatik çalışır
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    # İşlemin 6 saate kadar (GitHub sınırı) çalışmasına izin veriyoruz
+    timeout-minutes: 360 
+
+    steps:
+    - name: Kodları Çek
+      uses: actions/checkout@v4
+
+    - name: Python Kurulumu
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Gerekli Paketleri Kur
+      run: |
+        pip install undetected-chromedriver selenium
+
+    - name: Chrome ve Xvfb Kur
       run: |
         sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
+        sudo apt-get install -y google-chrome-stable xvfb
+
+    - name: Botu Çalıştır
+      # xvfb-run ile sanal ekran açıp botu turbo modda başlatıyoruz
+      run: |
         xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py
 
-    - name: Verileri Kaydet ve Pushla
+    - name: Sonuçları GitHub'a Yükle
+      # İşlem ister başarıyla bitsin ister hata versin, o ana kadar çekilen veriyi kaydet
+      if: always()
       run: |
-        git config --global user.name "Dizipal Bot"
-        git config --global user.email "bot@dizipal.com"
+        git config --global user.name "Dizipal-Bot"
+        git config --global user.email "bot@dizipal.uk"
         git add dizipal.json
-        git commit -m "Update Dizipal JSON Data" || exit 0
+        # Eğer değişiklik yoksa hata vermemesi için "|| exit 0" ekledik
+        git commit -m "Güncel film listesi: $(date)" || exit 0
         git push
