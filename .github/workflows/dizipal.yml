@@ -1,19 +1,22 @@
 name: Dizipal 134 Sayfa Maratonu
 
 on:
-  workflow_dispatch: # Manuel başlatmak için en iyisi
+  workflow_dispatch: # Manuel başlatmak için
   schedule:
-    - cron: '0 0 * * *' # İstersen her gece 00:00'da otomatik çalışır
+    - cron: '0 0 * * *' # İstersen her gece yarısı otomatik çalışır
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    # İşlemin 6 saate kadar (GitHub sınırı) çalışmasına izin veriyoruz
+    # GitHub'ın tanıdığı maksimum süre (6 saat)
     timeout-minutes: 360 
 
     steps:
     - name: Kodları Çek
       uses: actions/checkout@v4
+      with:
+        # Tüm geçmişi çek ki rebase yaparken sorun çıkmasın
+        fetch-depth: 0 
 
     - name: Python Kurulumu
       uses: actions/setup-python@v5
@@ -30,17 +33,29 @@ jobs:
         sudo apt-get install -y google-chrome-stable xvfb
 
     - name: Botu Çalıştır
-      # xvfb-run ile sanal ekran açıp botu turbo modda başlatıyoruz
       run: |
+        # Sanal ekran üzerinden botu başlat
         xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py
 
     - name: Sonuçları GitHub'a Yükle
-      # İşlem ister başarıyla bitsin ister hata versin, o ana kadar çekilen veriyi kaydet
+      # İşlem ister başarıyla bitsin ister hata versin, çekilen veriyi kurtar
       if: always()
       run: |
         git config --global user.name "Dizipal-Bot"
         git config --global user.email "bot@dizipal.uk"
-        git add dizipal.json
-        # Eğer değişiklik yoksa hata vermemesi için "|| exit 0" ekledik
-        git commit -m "Güncel film listesi: $(date)" || exit 0
-        git push
+        
+        # Dosya yoksa veya boşsa kontrol et
+        if [ -f dizipal.json ]; then
+          # Uzak depodaki değişiklikleri çek ve botun verisiyle birleştir (Rebase çakışmayı önler)
+          git pull origin main --rebase
+          
+          git add dizipal.json
+          # Değişiklik yoksa hata vermemesi için exit 0
+          git commit -m "Veri tabanı güncellendi: $(date)" || exit 0
+          
+          # Force yerine güvenli push
+          git push origin main
+        else
+          echo "Dosya bulunamadı, push yapılmıyor."
+        fi
+        
