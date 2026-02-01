@@ -1,89 +1,72 @@
-name: HDFilmCehennemi Film Scraper
+name: HDFilmCehennemi Botu
 
 on:
+  workflow_dispatch:  # Manuel çalıştırma için
   schedule:
-    # Her gün 08:00 UTC'de çalıştır (Türkiye saatiyle 11:00)
-    - cron: '0 8 * * *'
-    
-  # Manuel tetikleme için
-  workflow_dispatch:
-    inputs:
-      pages:
-        description: 'Kaç sayfa taranacak?'
-        required: false
-        default: '5'
-        type: string
-      delay:
-        description: 'Filmler arası bekleme (saniye)'
-        required: false
-        default: '0.5'
-        type: string
+    - cron: '0 */6 * * *'  # Her 6 saatte bir çalışsın (0, 6, 12, 18. saatler)
+  push:
+    paths:
+      - 'hdfilmcehennemi.py'  # Bot dosyası değişirse çalışsın
 
 jobs:
-  scrape-films:
+  run-bot:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      
-    - name: Setup Python
+    # 1. Repoyu al
+    - name: 📥 Repoyu İndir
+      uses: actions/checkout@v4
+    
+    # 2. Python kur
+    - name: 🐍 Python 3.10 Kur
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        
-    - name: Install dependencies
+    
+    # 3. Gerekli programları kur
+    - name: 📦 Kütüphaneleri Yükle
       run: |
         python -m pip install --upgrade pip
-        pip install requests beautifulsoup4
-        
-    - name: Run Film Scraper
+        pip install requests beautifulsoup4 lxml
+    
+    # 4. Botu çalıştır (15 sayfa, 0.03 saniye bekleme)
+    - name: 🤖 Film Botunu Çalıştır
+      run: |
+        python hdfilmcehennemi.py 15 0.03
       env:
-        PAGES: ${{ inputs.pages || '5' }}
-        DELAY: ${{ inputs.delay || '0.5' }}
+        PYTHONUNBUFFERED: "1"
+    
+    # 5. Sonuçları göster
+    - name: 📊 İşlem Sonuçları
       run: |
-        echo "📅 Scraping started at: $(date)"
-        echo "📊 Pages to scrape: $PAGES"
-        echo "⏱️ Delay between films: $DELAY seconds"
-        python hdfilmcehennemi.py $PAGES $DELAY
-        
-    - name: Commit and Push Changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        
-        # Dosyalar değişti mi kontrol et
-        git add hdfilmcehennemi.html hdfilmcehennemi.json
-        if git diff --cached --quiet; then
-          echo "⚠️ No changes detected, skipping commit"
-        else
-          echo "🔄 Files updated, committing changes..."
-          git commit -m "🤖 Auto-update: Film data refreshed [$(date +'%Y-%m-%d %H:%M:%S')]"
-          git push origin main
-          echo "✅ Changes pushed to repository"
-        fi
-        
-    - name: Create Summary
-      if: always()
-      run: |
-        echo "## 🎬 HDFilmCehennemi Scraping Summary" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- **Scraping Time:** $(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
-        echo "- **Pages Scraped:** ${{ inputs.pages || '5' }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Delay Between Films:** ${{ inputs.delay || '0.5' }} seconds" >> $GITHUB_STEP_SUMMARY
-        
+        echo "=== İŞLEM TAMAMLANDI ==="
         if [ -f "hdfilmcehennemi.json" ]; then
-          JSON_SIZE=$(stat -c%s "hdfilmcehennemi.json")
-          JSON_KB=$((JSON_SIZE / 1024))
-          FILM_COUNT=$(python3 -c "import json; data=json.load(open('hdfilmcehennemi.json')); print(len(data))")
-          echo "- **JSON File Size:** ${JSON_KB} KB" >> $GITHUB_STEP_SUMMARY
-          echo "- **Total Films:** ${FILM_COUNT}" >> $GITHUB_STEP_SUMMARY
-          echo "- **JSON URL:** https://" >> $GITHUB_STEP_SUMMARY
+          echo "✅ JSON dosyası oluşturuldu"
+          echo "Boyut: $(ls -lh hdfilmcehennemi.json | awk '{print $5}')"
+        else
+          echo "❌ JSON dosyası oluşturulamadı"
         fi
         
         if [ -f "hdfilmcehennemi.html" ]; then
-          HTML_SIZE=$(stat -c%s "hdfilmcehennemi.html")
-          HTML_KB=$((HTML_SIZE / 1024))
-          echo "- **HTML File Size:** ${HTML_KB} KB" >> $GITHUB_STEP_SUMMARY
-          echo "- **Live Preview:** https://" >> $GITHUB_STEP_SUMMARY
+          echo "✅ HTML dosyası oluşturuldu"
+          echo "Boyut: $(ls -lh hdfilmcehennemi.html | awk '{print $5}')"
+        else
+          echo "❌ HTML dosyası oluşturulamadı"
+        fi
+    
+    # 6. Değişiklikleri GitHub'a yükle
+    - name: 🔄 GitHub'a Gönder
+      run: |
+        git config --local user.email "github-bot@example.com"
+        git config --local user.name "GitHub Bot"
+        
+        # Değişiklik var mı kontrol et
+        git add hdfilmcehennemi.json hdfilmcehennemi.html || true
+        
+        if git diff --staged --quiet; then
+          echo "🟢 Yeni film yok, gönderilmeyecek"
+        else
+          git commit -m "🤖 Bot güncellemesi: $(date '+%d.%m.%Y %H:%M')"
+          git push
+          echo "✅ Yeni filmler GitHub'a gönderildi"
         fi
