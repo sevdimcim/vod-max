@@ -1,0 +1,13 @@
+    - name: Botu Çalıştır
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py
+
+    - name: Verileri Kaydet ve Pushla
+      run: |
+        git config --global user.name "Dizipal Bot"
+        git config --global user.email "bot@dizipal.com"
+        git add dizipal.json
+        git commit -m "Update Dizipal JSON Data" || exit 0
+        git push
