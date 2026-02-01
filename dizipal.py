@@ -1,43 +1,58 @@
 import undetected_chromedriver as uc
 import time
+import sys
 
 def save_page_source():
-    # Tarayıcı ayarları
     options = uc.ChromeOptions()
-    # Cloudflare headless (arkaplanda çalışma) modunu bazen yakalar, 
-    # bu yüzden tarayıcı açılacak şekilde bırakıyoruz.
     
-    print("Tarayıcı başlatılıyor...")
-    driver = uc.Chrome(options=options)
+    # GitHub Actions/Linux için gerekli argümanlar
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+    
+    # Dil ayarını Türkçe yapalım ki site şüphelenmesin
+    options.add_argument('--lang=tr')
 
+    print("Tarayıcı başlatılıyor...")
+    
     try:
-        url = "https://dizipal.uk/"
-        print(f"{url} adresine gidiliyor...")
+        # headless=False bırakıyoruz çünkü xvfb-run ile çalıştırıyoruz. 
+        # Bu, Cloudflare'i geçmek için en doğal yöntemdir.
+        driver = uc.Chrome(options=options)
         
-        # Siteye git
+        url = "https://dizipal.uk/"
+        print(f"Hedef siteye gidiliyor: {url}")
+        
         driver.get(url)
         
-        # Cloudflare "Just a moment" ekranını geçmesi için bekleme süresi.
-        # İnternet hızına göre değişebilir ama 10-15 saniye genellikle yeterlidir.
-        print("Cloudflare kontrolü için 15 saniye bekleniyor...")
-        time.sleep(15)
+        # Cloudflare "Verify you are human" ekranını geçmek için bekleme
+        # Bu süre zarfında uc kütüphanesi arkada gerekli yamaları yapar.
+        print("Cloudflare doğrulaması için 25 saniye bekleniyor...")
+        time.sleep(25)
         
         # Sayfa kaynağını al
-        page_source = driver.page_source
+        source = driver.page_source
         
-        # Dosyaya kaydet
-        file_name = "dizipal_anasayfa.html"
-        with open(file_name, "w", encoding="utf-8") as file:
-            file.write(page_source)
+        if "Just a moment" in source or "Cloudflare" in driver.title:
+            print("Uyarı: Cloudflare engeli hala aşılamadı. Süreyi uzatmayı deneyin.")
+        else:
+            print("Doğrulama başarılı gibi görünüyor.")
+
+        # HTML olarak kaydet
+        with open("dizipal_anasayfa.html", "w", encoding="utf-8") as f:
+            f.write(source)
             
-        print(f"Başarılı! Kaynak kod '{file_name}' dosyasına kaydedildi.")
-        
+        print(f"Dosya başarıyla kaydedildi. Boyut: {len(source)} karakter.")
+
     except Exception as e:
-        print(f"Bir hata oluştu: {e}")
+        print(f"Hata meydana geldi: {e}")
+        sys.exit(1) # Hata durumunda Actions'a hata bildir
         
     finally:
-        # Tarayıcıyı kapat
-        driver.quit()
+        if 'driver' in locals():
+            driver.quit()
+            print("Tarayıcı kapatıldı.")
 
 if __name__ == "__main__":
     save_page_source()
+    
