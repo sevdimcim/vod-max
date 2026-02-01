@@ -1,9 +1,9 @@
-name: DiziPal Bot
+name: DiziPal Film Botu
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Manuel çalıştırma
   schedule:
-    - cron: '0 */6 * * *'  # Her 6 saatte bir
+    - cron: '0 */6 * * *'  # Her 6 saatte bir otomatik
   push:
     branches: [ main ]
 
@@ -15,29 +15,29 @@ jobs:
     - name: Kodları Çek
       uses: actions/checkout@v4
     
-    - name: Python Kur
+    - name: Python Kurulumu
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
     
-    - name: Paketleri Kur
+    - name: Gerekli Paketleri Kur
       run: |
         pip install undetected-chromedriver beautifulsoup4
     
-    - name: Chrome Kur
+    - name: Chrome ve Xvfb Kur
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget
+        sudo apt-get install -y wget xvfb
         wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
         echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
         sudo apt-get update
-        sudo apt-get install -y google-chrome-stable xvfb
+        sudo apt-get install -y google-chrome-stable
     
     - name: Botu Çalıştır
       run: |
-        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py 2 1
+        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py
     
-    - name: Sonuçları Yükle
+    - name: Sonuçları GitHub'a Yükle
       uses: actions/upload-artifact@v4
       with:
         name: dizipal-output
