@@ -1,58 +1,60 @@
 import undetected_chromedriver as uc
 import time
 import sys
+import subprocess
+import re
+
+def get_chrome_version():
+    try:
+        # Sistemdeki Chrome versiyonunu çek (Linux/GitHub Actions)
+        output = subprocess.check_output(['google-chrome', '--version']).decode('utf-8')
+        version = re.search(r'Google Chrome (\d+)', output).group(1)
+        return int(version)
+    except Exception:
+        return None
 
 def save_page_source():
+    chrome_version = get_chrome_version()
+    print(f"Tespit edilen Chrome ana sürümü: {chrome_version}")
+
     options = uc.ChromeOptions()
-    
-    # GitHub Actions/Linux için gerekli argümanlar
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
-    
-    # Dil ayarını Türkçe yapalım ki site şüphelenmesin
     options.add_argument('--lang=tr')
 
-    print("Tarayıcı başlatılıyor...")
-    
     try:
-        # headless=False bırakıyoruz çünkü xvfb-run ile çalıştırıyoruz. 
-        # Bu, Cloudflare'i geçmek için en doğal yöntemdir.
-        driver = uc.Chrome(options=options)
+        # version_main parametresi ile sürücüyü Chrome sürümüne sabitliyoruz
+        print("Tarayıcı başlatılıyor...")
+        driver = uc.Chrome(options=options, version_main=chrome_version)
         
         url = "https://dizipal.uk/"
-        print(f"Hedef siteye gidiliyor: {url}")
+        print(f"Hedef: {url}")
         
         driver.get(url)
         
-        # Cloudflare "Verify you are human" ekranını geçmek için bekleme
-        # Bu süre zarfında uc kütüphanesi arkada gerekli yamaları yapar.
-        print("Cloudflare doğrulaması için 25 saniye bekleniyor...")
-        time.sleep(25)
+        # Cloudflare'in geçilmesi için bekleme
+        print("Cloudflare için bekleniyor (30 saniye)...")
+        time.sleep(30)
         
-        # Sayfa kaynağını al
         source = driver.page_source
         
-        if "Just a moment" in source or "Cloudflare" in driver.title:
-            print("Uyarı: Cloudflare engeli hala aşılamadı. Süreyi uzatmayı deneyin.")
-        else:
-            print("Doğrulama başarılı gibi görünüyor.")
-
-        # HTML olarak kaydet
+        # Dosyayı kaydet
         with open("dizipal_anasayfa.html", "w", encoding="utf-8") as f:
             f.write(source)
             
-        print(f"Dosya başarıyla kaydedildi. Boyut: {len(source)} karakter.")
+        print(f"Bitti! Kaydedilen boyut: {len(source)} karakter.")
+
+        # Eğer kaynak çok kısaysa muhtemelen hala Cloudflare ekranındayızdır
+        if len(source) < 5000:
+            print("Uyarı: Sayfa kaynağı çok kısa, engel aşılmamış olabilir.")
 
     except Exception as e:
-        print(f"Hata meydana geldi: {e}")
-        sys.exit(1) # Hata durumunda Actions'a hata bildir
-        
+        print(f"Hata: {e}")
+        sys.exit(1)
     finally:
         if 'driver' in locals():
             driver.quit()
-            print("Tarayıcı kapatıldı.")
 
 if __name__ == "__main__":
     save_page_source()
-    
