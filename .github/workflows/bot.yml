@@ -1,41 +1,47 @@
-name: Dizipal Bot Çalıştır
+name: DiziPal Bot
 
 on:
-  workflow_dispatch: # GitHub arayüzünden manuel "Run" butonu ile çalıştırmak için
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'  # Her 6 saatte bir
   push:
-    branches: [ "main" ] # Kodu pushladığında otomatik çalışsın istersen
+    branches: [ main ]
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Kodları Çek (Checkout)
+    - name: Kodları Çek
       uses: actions/checkout@v4
-
-    - name: Python Kurulumu
+    
+    - name: Python Kur
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-
-    - name: Gerekli Paketleri Yükle
-      # undetected-chromedriver ve tarayıcı için
+    
+    - name: Paketleri Kur
       run: |
-        pip install undetected-chromedriver
-
-    - name: Botu Çalıştır (Sanal Ekran ile)
-      # Xvfb sanal bir ekran oluşturur (1920x1080).
-      # Bu sayede Cloudflare bizim gerçek bir kullanıcı olduğumuzu sanar.
+        pip install undetected-chromedriver beautifulsoup4
+    
+    - name: Chrome Kur
       run: |
         sudo apt-get update
-        sudo apt-get install -y xvfb google-chrome-stable
-        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py
-
-    - name: Sonucu İndir (Artifact)
-      # Oluşan HTML dosyasını GitHub'dan indirilebilir hale getirir.
-      if: always() # Hata olsa bile çalışmayı dene
+        sudo apt-get install -y wget
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable xvfb
+    
+    - name: Botu Çalıştır
+      run: |
+        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal_bot.py 2 1
+    
+    - name: Sonuçları Yükle
       uses: actions/upload-artifact@v4
       with:
-        name: dizipal-html
-        path: dizipal_anasayfa.html
-        retention-days: 1
+        name: dizipal-output
+        path: |
+          dizipal.json
+          dizipal.html
+        retention-days: 7
