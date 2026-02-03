@@ -14,27 +14,34 @@ def yayin_linki_yakala():
         r1 = requests.get(ana_site, headers=headers, timeout=15)
         soup1 = BeautifulSoup(r1.text, 'html.parser')
         
+        # Giriş butonunu bul
         giris_butonu = soup1.find('a', class_='site-button') or soup1.find('a', href=re.compile(r'selcuk'))
 
         if giris_butonu:
             guncel_giris_adresi = giris_butonu['href']
-            r2 = requests.get(guncel_giris_adresi, headers=headers, timeout=15)
+            print(f"Giris Adresi: {guncel_giris_adresi}")
             
-            # Sadece ID kısmını alan temiz regex
-            player_match = re.search(r'src="(https://[a-zA-Z0-9.-]+\.click/index\.php\?id=)[^"#]+"', r2.text)
+            r2 = requests.get(guncel_giris_adresi, headers=headers, timeout=15)
+            html_content = r2.text
+            
+            # Daha esnek Regex: src=' veya src=" fark etmez, id'den sonrasını almaz
+            # Pattern: src içindeki .click/index.php?id= kısmını arar
+            player_match = re.search(r'src=["\'](https://[a-zA-Z0-9.-]+\.click/index\.php\?id=)[^"\'#]+["\']', html_content)
             
             if player_match:
                 final_player_link = player_match.group(1)
                 
-                # Dosyayı kesin olarak ana dizine kaydetmek için path belirle
                 file_path = os.path.join(os.getcwd(), "Slck-player.txt")
                 with open(file_path, "w", encoding="utf-8") as f:
                     f.write(final_player_link)
                 print(f"SUCCESS: {final_player_link}")
             else:
-                print("FAIL: Player link regex matched nothing.")
+                print("FAIL: Player link bulunamadı. Sayfa kaynağı kontrol ediliyor...")
+                # Hata ayıklama için sayfa içinde 'click' geçen yerleri yazdır
+                debug_match = re.findall(r'https?://[a-zA-Z0-9.-]+\.click[^\s"\'<>]*', html_content)
+                print(f"Bulunan benzer linkler: {debug_match}")
         else:
-            print("FAIL: Entry button (xyz link) not found.")
+            print("FAIL: Giris butonu bulunamadi.")
             
     except Exception as e:
         print(f"ERROR: {e}")
