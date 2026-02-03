@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WARS TV</title>
+    <style>
+        :root {
+            --accent: #9d4edd;
+            --bg: #000000;
+            --card-bg: #111111;
+            --border: #222222;
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+            padding-top: 76px;
+            touch-action: pan-y;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(0,0,0,0.95);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            margin-right: 10px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: #fff;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            padding: 15px;
+        }
+
+        .channel-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            will-change: transform, border-color, box-shadow;
+        }
+
+        .channel-card img {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+            margin-bottom: 8px;
+            transition: transform 0.15s ease;
+            will-change: transform;
+        }
+
+        .channel-card span {
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            transition: color 0.15s ease;
+        }
+
+        @media (hover: hover) {
+            .channel-card:hover {
+                background: #1a1a1a;
+                border-color: var(--accent);
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(157, 78, 221, 0.3);
+            }
+            .channel-card:hover img { transform: scale(1.08); }
+            .channel-card:hover span { color: #fff; }
+        }
+
+        .channel-card.focused {
+            background: #1a1a1a;
+            border-color: #00a8ff;
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
+            z-index: 10;
+        }
+
+        .channel-card.focused img { transform: scale(1.1); }
+        .channel-card.focused span { color: #fff; }
+
+        .channel-card.focused::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #00a8ff;
+            box-shadow: 0 0 10px #00a8ff;
+        }
+
+        @media (min-width: 1200px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; padding: 30px; }
+            .channel-card span { font-size: 13px; }
+        }
+
+        @media (max-width: 480px) {
+            .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px; }
+            .channel-card { padding: 10px 5px; }
+            .channel-card span { font-size: 10px; }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="https://i.hizliresim.com/j9cgp9e.png" alt="Logo" class="logo">
+        <div class="title">
+            WARS TV
+        </div>
+    </div>
+    
+    <div class="grid" id="mainGrid">
+        <div class="loading">Kanallar yükleniyor...</div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // KANAL LİSTESİ
+            const CHANNELS = [
+                {name: "BEIN SPOR 1 HD", id: "5062", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/1.png"},
+                {name: "BEIN SPOR 2 HD", id: "5063", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/2.png"},
+                {name: "BEIN SPOR 3 HD", id: "5064", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/3.png"},
+                {name: "BEIN SPOR 4 HD", id: "5065", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/4.png"},
+                {name: "BEIN SPOR 5 HD", id: "5066", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/5.png"},
+                {name: "BEIN MAX 1 HD", id: "5067", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/mx1.png"},
+                {name: "BEIN MAX 2 HD", id: "5068", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/mx2.png"},
+                {name: "SMART SPOR 1 HD", id: "5091", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/sm.png"},
+                {name: "SMART SPORT 2 HD", id: "5092", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/sm.png"},
+                {name: "TİVİBU SPOR HD", id: "5081", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/ts.png"},
+                {name: "TİVİBU SPOR 1 HD", id: "5082", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/ts.png"},
+                {name: "TİVİBU SPOR 2 HD", id: "5083", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/ts.png"},
+                {name: "TİVİBU SPOR 3 HD", id: "5084", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/ts.png"},
+                {name: "TİVİBU SPOR 4 HD", id: "5085", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/ts.png"},
+                {name: "S SPORT 1 HD", id: "5101", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/s.png"},
+                {name: "S SPORT 2 HD", id: "5102", logo: "https://raw.githubusercontent.com/sevdimcim/vod-max/refs/heads/main/image/s.png"}
+            ];
+            
+            let cards = [];
+            let currentIndex = 0;
+            let gridColumns = 0;
+            const CLICK_DELAY = 300;
+            let lastClickTime = 0;
+            let activeDomain = null;
+            
+            // 1. AKTİF DOMAİNİ BUL (SESSİZCE - GİZLİ)
+            async function findActiveDomain() {
+                const domainBase = 'betyaptv';
+                const domainEnd = '.live';
+                
+                for (let i = 147; i <= 200; i++) {
+                    const testDomain = domainBase + i + domainEnd;
+                    const testUrl = 'https://' + testDomain + '/';
+                    
+                    try {
+                        // HEAD isteği yap (hızlı ve sessiz)
+                        await fetch(testUrl, { 
+                            method: 'HEAD',
+                            mode: 'no-cors',
+                            cache: 'no-store'
+                        });
+                        
+                        // Domain bulundu (sadece konsola yaz)
+                        activeDomain = testDomain;
+                        console.log('✓ Aktif domain bulundu:', activeDomain);
+                        return activeDomain;
+                        
+                    } catch (e) {
+                        continue; // Hata alırsak sessizce devam et
+                    }
+                }
+                
+                console.log('✗ Aktif domain bulunamadı');
+                return null;
+            }
+            
+            // 2. KANALLARI YÜKLE
+            function loadChannels() {
+                const grid = $('#mainGrid');
+                grid.html('');
+                
+                if (!activeDomain) {
+                    grid.html('<div class="loading">Hata: Aktif domain bulunamadı. Lütfen sayfayı yenileyin.</div>');
+                    return;
+                }
+                
+                // Domaini SUBTITLE'da GÖSTERME! Sabit yazı kalacak
+                $('.subtitle').text('Premium Spor Kanalları'); // Bu sabit kalacak
+                
+                CHANNELS.forEach((channel, index) => {
+                    // Linki oluştur (domain sadece burada kullanılacak)
+                    const channelUrl = `https://${activeDomain}/wp-content/themes/ikisifirbirdokuz/match-center.php?id=${channel.id}`;
+                    
+                    const card = $(`
+                        <div class='channel-card' data-channel='${channel.name}' data-href='${channelUrl}' data-index='${index}'>
+                            <img src='${channel.logo}' alt='${channel.name}'>
+                            <span>${channel.name}</span>
+                        </div>
+                    `);
+                    
+                    card.on('click', function(e) {
+                        const now = Date.now();
+                        if (now - lastClickTime < CLICK_DELAY) return;
+                        lastClickTime = now;
+                        
+                        const cardIndex = parseInt($(this).data('index'));
+                        setFocus(cardIndex);
+                        
+                        setTimeout(() => {
+                            window.open(channelUrl, '_blank', 'noopener,noreferrer');
+                        }, 100);
+                    });
+                    
+                    grid.append(card);
+                });
+                
+                cards = $('.channel-card').toArray();
+                
+                if (cards.length > 0) {
+                    setFocus(0);
+                }
+                
+                updateGridColumns();
+                setupKeyboardControls();
+                setupTouchSwipe();
+            }
+            
+            // 3. KONTROL FONKSİYONLARI
+            function updateGridColumns() {
+                const gridStyle = window.getComputedStyle(document.getElementById('mainGrid'));
+                const gridTemplateColumns = gridStyle.gridTemplateColumns;
+                gridColumns = gridTemplateColumns.split(' ').filter(col => col.trim() !== '').length;
+            }
+            
+            function removeFocusFromAllCards() {
+                cards.forEach(card => {
+                    $(card).removeClass('focused');
+                });
+            }
+            
+            function setFocus(index) {
+                if (cards.length === 0 || index < 0) return;
+                
+                removeFocusFromAllCards();
+                currentIndex = index;
+                
+                $(cards[currentIndex]).addClass('focused');
+                
+                const card = cards[currentIndex];
+                const cardRect = card.getBoundingClientRect();
+                const gridRect = document.getElementById('mainGrid').getBoundingClientRect();
+                
+                if (cardRect.top < gridRect.top + 100 || cardRect.bottom > gridRect.bottom - 100) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                }
+            }
+            
+            // 4. KUMANDA KONTROLLERİ
+            function setupKeyboardControls() {
+                $(document).on('keydown', function(e) {
+                    const total = cards.length;
+                    if (total === 0) return;
+                    
+                    if (gridColumns === 0) updateGridColumns();
+                    
+                    switch(e.key) {
+                        case 'ArrowRight': 
+                            e.preventDefault();
+                            if (currentIndex < total - 1) {
+                                currentIndex++;
+                                setFocus(currentIndex);
+                            }
+                            break;
+                        case 'ArrowLeft': 
+                            e.preventDefault();
+                            if (currentIndex > 0) {
+                                currentIndex--;
+                                setFocus(currentIndex);
+                            }
+                            break;
+                        case 'ArrowDown': 
+                            e.preventDefault();
+                            if (gridColumns > 0 && currentIndex + gridColumns < total) {
+                                currentIndex += gridColumns;
+                                setFocus(currentIndex);
+                            } else if (gridColumns === 0 && currentIndex + 3 < total) {
+                                currentIndex += 3;
+                                setFocus(currentIndex);
+                            }
+                            break;
+                        case 'ArrowUp': 
+                            e.preventDefault();
+                            if (gridColumns > 0 && currentIndex - gridColumns >= 0) {
+                                currentIndex -= gridColumns;
+                                setFocus(currentIndex);
+                            } else if (gridColumns === 0 && currentIndex - 3 >= 0) {
+                                currentIndex -= 3;
+                                setFocus(currentIndex);
+                            }
+                            break;
+                        case 'Enter': 
+                            e.preventDefault();
+                            if (cards[currentIndex]) {
+                                const now = Date.now();
+                                if (now - lastClickTime < CLICK_DELAY) return;
+                                lastClickTime = now;
+                                
+                                const href = $(cards[currentIndex]).data('href');
+                                if (href) {
+                                    window.open(href, '_blank', 'noopener,noreferrer');
+                                }
+                            }
+                            break;
+                    }
+                });
+            }
+            
+            // 5. DOKUNMATİK SWIPE
+            function setupTouchSwipe() {
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let isSwiping = false;
+                
+                $(document).on('touchstart', function(e) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    isSwiping = false;
+                });
+                
+                $(document).on('touchmove', function(e) {
+                    const touchEndX = e.touches[0].clientX;
+                    const touchEndY = e.touches[0].clientY;
+                    const deltaX = touchEndX - touchStartX;
+                    const deltaY = touchEndY - touchStartY;
+                    
+                    if (Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+                        isSwiping = true;
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                $(document).on('touchend', function(e) {
+                    const touchEndX = e.changedTouches[0].clientX;
+                    const touchEndY = e.changedTouches[0].clientY;
+                    const deltaX = touchEndX - touchStartX;
+                    const deltaY = touchEndY - touchStartY;
+                    
+                    if (isSwiping && Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+                        if (deltaX > 0) {
+                            if (currentIndex > 0) {
+                                currentIndex--;
+                                setFocus(currentIndex);
+                            }
+                        } else {
+                            if (currentIndex < cards.length - 1) {
+                                currentIndex++;
+                                setFocus(currentIndex);
+                            }
+                        }
+                    }
+                    isSwiping = false;
+                });
+            }
+            
+            // 6. BAŞLATMA
+            async function initialize() {
+                // Loading mesajını göster
+                $('#mainGrid').html('<div class="loading">Loading</div>');
+                
+                // Domaini bul
+                await findActiveDomain();
+                
+                // Loading mesajını güncelle
+                $('#mainGrid').html('<div class="loading">Kanallar yükleniyor...</div>');
+                
+                // Kanalları yükle
+                loadChannels();
+                
+                // Pencere boyutu değişikliği
+                $(window).on('resize', updateGridColumns);
+            }
+            
+            // UYGULAMAYI BAŞLAT
+            initialize();
+        });
+    </script>
+</body>
+</html>
