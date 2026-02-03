@@ -1,61 +1,38 @@
-name: Dizipal 134 Sayfa Maratonu
+name: Selcuk Domain Update
 
 on:
-  workflow_dispatch: # Manuel başlatmak için
+  workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # İstersen her gece yarısı otomatik çalışır
+    - cron: '*/5 * * * *'
+
+permissions:
+  contents: write
 
 jobs:
-  scrape:
+  build:
     runs-on: ubuntu-latest
-    # GitHub'ın tanıdığı maksimum süre (6 saat)
-    timeout-minutes: 360 
-
     steps:
-    - name: Kodları Çek
-      uses: actions/checkout@v4
-      with:
-        # Tüm geçmişi çek ki rebase yaparken sorun çıkmasın
-        fetch-depth: 0 
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
-    - name: Python Kurulumu
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
 
-    - name: Gerekli Paketleri Kur
-      run: |
-        pip install undetected-chromedriver selenium
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4
 
-    - name: Chrome ve Xvfb Kur
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y google-chrome-stable xvfb
+      - name: Run Script
+        run: python selcuk-domain.py
 
-    - name: Botu Çalıştır
-      run: |
-        # Sanal ekran üzerinden botu başlat
-        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py
-
-    - name: Sonuçları GitHub'a Yükle
-      # İşlem ister başarıyla bitsin ister hata versin, çekilen veriyi kurtar
-      if: always()
-      run: |
-        git config --global user.name "Dizipal-Bot"
-        git config --global user.email "bot@dizipal.uk"
-        
-        # Dosya yoksa veya boşsa kontrol et
-        if [ -f dizipal.json ]; then
-          # Uzak depodaki değişiklikleri çek ve botun verisiyle birleştir (Rebase çakışmayı önler)
-          git pull origin main --rebase
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add Slck-player.txt
+          # Eğer dosya içeriği aynıysa hata vermeden devam etmesini sağlar
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update player link" && git push)
           
-          git add dizipal.json
-          # Değişiklik yoksa hata vermemesi için exit 0
-          git commit -m "Veri tabanı güncellendi: $(date)" || exit 0
-          
-          # Force yerine güvenli push
-          git push origin main
-        else
-          echo "Dosya bulunamadı, push yapılmıyor."
-        fi
-        
