@@ -19,7 +19,8 @@ def yayin_linki_yakala():
             guncel_giris_adresi = giris_butonu['href']
             
             r2 = requests.get(guncel_giris_adresi, headers=headers, timeout=15)
-            player_match = re.search(r'src="(https://[a-zA-Z0-9.-]+\.click/index\.php\?id=[^"]+)"', r2.text)
+            # Regex güncellendi: id kısmından sonrasını (reklamları) atar
+            player_match = re.search(r'src="(https://[a-zA-Z0-9.-]+\.click/index\.php\?id=)[^"#]+"', r2.text)
             
             if player_match:
                 final_player_link = player_match.group(1)
@@ -37,4 +38,4 @@ def yayin_linki_yakala():
 
 if __name__ == "__main__":
     yayin_linki_yakala()
-  
+    
