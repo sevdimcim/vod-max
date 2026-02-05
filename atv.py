@@ -338,7 +338,7 @@ def create_html_file(data, processed_count, total_count):
     html_template = f'''<!DOCTYPE html>
 <html lang="tr">
 <head>
-    <title>TITAN TV ATV VOD</title>
+    <title>WARS TV ATV VOD</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css?family=PT+Sans:700i" rel="stylesheet">
@@ -619,8 +619,8 @@ def create_html_file(data, processed_count, total_count):
 <body>
     <div class="aramapanel">
         <div class="aramapanelsol">
-            <div class="logo"><img src="https://i.hizliresim.com/t75soiq.png"></div>
-            <div class="logoisim">TITAN TV ATV VOD</div>
+            <div class="logo"><img src="https://i.hizliresim.com/j9cgp9e.png"></div>
+            <div class="logoisim">WARS TV ATV VOD</div>
         </div>
         <div class="aramapanelsag">
             <form action="" name="ara" method="GET" onsubmit="return searchSeries()">
