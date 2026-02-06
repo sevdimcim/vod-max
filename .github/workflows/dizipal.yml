@@ -1,0 +1,48 @@
+name: Dizipal Botu
+
+on:
+  # Manuel tetikleme (Actions sekmesinden "Run workflow" butonu)
+  workflow_dispatch:
+  # Otomatik zamanlama (Her gün Türkiye saatiyle 03:00 civarı - UTC 00:00)
+  schedule:
+    - cron: '0 0 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Depoyu Çek (Checkout)
+      uses: actions/checkout@v4
+
+    - name: Python Kurulumu
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Chrome ve Gerekli Kütüphaneleri Kur
+      run: |
+        # Chrome ve Sanal Ekran (Xvfb) kurulumu
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable xvfb
+        
+        # Python kütüphaneleri
+        pip install undetected-chromedriver selenium
+
+    - name: Botu Çalıştır
+      # Xvfb kullanarak sanal bir ekran yaratıyoruz, böylece tarayıcı "headless" olmadan çalışıyor sanıyor.
+      run: |
+        xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python dizipal.py
+
+    - name: Sonuçları Kaydet (Git Commit & Push)
+      run: |
+        git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "actions@github.com"
+        
+        # Eğer json dosyası değiştiyse commit at, değişmediyse hata verme
+        git add dizipal-tabi.json
+        git commit -m "Veriler güncellendi: $(date +'%Y-%m-%d')" || echo "Değişiklik yok, commit atılmadı."
+        git push
