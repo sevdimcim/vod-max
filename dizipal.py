@@ -5,7 +5,6 @@ import json
 import re
 import subprocess
 import os
-import sys
 
 def get_chrome_version():
     try:
@@ -48,7 +47,6 @@ def scrape_dizipal_series():
         driver.get(base_url)
         time.sleep(10)
 
-        print("--- Dizi Listesi Toplanıyor ---")
         series_items = driver.find_elements(By.CLASS_NAME, "post-item")
         series_list = []
         
@@ -56,22 +54,16 @@ def scrape_dizipal_series():
             try:
                 anchor = item.find_element(By.TAG_NAME, "a")
                 img = item.find_element(By.TAG_NAME, "img")
-                series_data = {
+                series_list.append({
                     "isim": anchor.get_attribute("title"),
                     "resim": get_full_res_image(img.get_attribute("srcset")) or img.get_attribute("src"),
                     "ana_link": anchor.get_attribute("href")
-                }
-                series_list.append(series_data)
+                })
             except:
                 continue
-        
-        print(f"Toplam {len(series_list)} dizi bulundu.")
 
-        # HER BİR DİZİ İÇİN
         for index, series in enumerate(series_list):
             series_name = series['isim']
-            print(f"\n[{index+1}/{len(series_list)}] İşleniyor: {series_name}")
-            
             series_key = series_name.replace(" ", "-").replace("/", "-")
             
             if series_key not in results:
@@ -85,12 +77,8 @@ def scrape_dizipal_series():
                 driver.get(series['ana_link'])
                 time.sleep(2)
 
-                # --- SEZON URL'LERİNİ TOPLA ---
-                # Set kullanarak aynı linki iki kere eklemeyi önleyelim ama sıralamayı korumak için list kullanalım
-                season_urls = [driver.current_url] 
-                
+                season_urls = [driver.current_url]
                 try:
-                    # Sezon linklerini bul (URL'de ?sezon= geçenler)
                     season_elements = driver.find_elements(By.XPATH, "//a[contains(@href, '?sezon=')]")
                     for s_el in season_elements:
                         s_link = s_el.get_attribute("href")
@@ -99,52 +87,31 @@ def scrape_dizipal_series():
                 except:
                     pass
                 
-                # Sezon linklerini sıralayalım ki 1. sezon, 2. sezon diye sırayla gitsin
-                # Link yapısı genelde ...?sezon=2 şeklindedir. String sıralaması iş görür.
-                season_urls.sort() 
+                season_urls.sort()
 
-                # --- TÜM BÖLÜM LİNKLERİNİ TEK BİR LİSTEDE BİRLEŞTİR ---
                 master_episode_list = []
                 seen_episodes = set()
-
-                print("   > Bölüm linkleri toplanıyor (Sezonlar taranıyor)...")
                 
                 for s_url in season_urls:
                     if s_url != driver.current_url:
                         driver.get(s_url)
                         time.sleep(1.5)
                     
-                    # Sayfadaki bölüm linklerini al
-                    # DİKKAT: Sayfada bölümler genelde 1'den sona doğru sıralıdır.
-                    # Eğer site tersten sıralıyorsa (en yeni en üstteyse) burada `ep_elements` listesini reverse() etmek gerekebilir.
-                    # Dizipal genelde düz sıralar varsayıyoruz.
                     ep_elements = driver.find_elements(By.XPATH, "//a[contains(@href, '/bolum/')]")
-                    
                     for ep in ep_elements:
                         l = ep.get_attribute("href")
                         if l not in seen_episodes:
                             master_episode_list.append(l)
                             seen_episodes.add(l)
 
-                print(f"   > Toplam {len(master_episode_list)} bölüm bulundu. Sırayla çekiliyor...")
-
-                # --- LİNKLERİ İŞLE VE NUMARALANDIR (Mutlak Numaralandırma) ---
-                # enumerate(list, 1) -> Sayacı 1'den başlatır.
+                # ŞİMDİ İŞLEME VE TEMİZLEME
                 for ep_num, ep_link in enumerate(master_episode_list, 1):
-                    
-                    # JSON'da oluşturacağımız başlık formatı: "Ayşe 16. Bölüm"
                     custom_title = f"{series_name} {ep_num}. Bölüm"
 
-                    # Bu başlık zaten var mı kontrol et (Tekrar çekmemek için)
-                    already_saved = False
-                    for saved_ep in results[series_key]["bolumler"]:
-                        # Sadece başlık kontrolü yapmak riskli olabilir (isim değiştiği için), link kontrolü daha sağlıklı
-                        if saved_ep.get("sayfa_link") == ep_link:
-                            already_saved = True
-                            break
+                    # Kontrolü embed linki veya başlık üzerinden yapıyoruz
+                    already_saved = any(d.get('bolum_baslik') == custom_title for d in results[series_key]["bolumler"])
                     
                     if already_saved:
-                        print(f"      (Atlandı) Zaten var: {custom_title}")
                         continue
 
                     try:
@@ -154,32 +121,27 @@ def scrape_dizipal_series():
                         iframe = driver.find_element(By.TAG_NAME, "iframe")
                         embed_link = iframe.get_attribute("src")
 
+                        # JSON'a eklenecek veri (SAYFA LİNKİ YOK)
                         episode_data = {
-                            "bolum_baslik": custom_title, # İsteğine uygun format
-                            "sayfa_link": ep_link,
-                            "embed_link": embed_link
+                            "bolum_baslik": custom_title,
+                            "link": embed_link  # "embed_link" ismini de kısalttım istersen
                         }
                         
                         results[series_key]["bolumler"].append(episode_data)
-                        print(f"      OK: {custom_title}")
+                        print(f"Eklendi: {custom_title}")
 
                     except Exception as e:
-                        print(f"      Hata: {custom_title} - {e}")
                         continue
                 
-                # Her dizi bitiminde kaydet
                 with open("dizipal-tabi.json", "w", encoding="utf-8") as f:
                     json.dump(results, f, ensure_ascii=False, indent=2)
 
             except Exception as e:
-                print(f"   Dizi Hatası: {series_name} - {e}")
                 continue
 
-    except Exception as e:
-        print(f"Genel Hata: {e}")
     finally:
         driver.quit()
-        print("İşlem bitti.")
+        print("Bitti.")
 
 if __name__ == "__main__":
     scrape_dizipal_series()
