@@ -46,23 +46,13 @@ def scrape_dizipal_series():
     try:
         # Taranacak sayfalar listesi (TOD)
         pages_to_scrape = [
-            "https://dizipal.uk/platform/mubi/page/1/",
-            "https://dizipal.uk/platform/mubi/page/2/",
-            "https://dizipal.uk/platform/mubi/page/3/",
-            "https://dizipal.uk/platform/mubi/page/4/",
-            "https://dizipal.uk/platform/mubi/page/5/",
-            "https://dizipal.uk/platform/mubi/page/6/",
-            "https://dizipal.uk/platform/mubi/page/7/",
-            "https://dizipal.uk/platform/mubi/page/8/",
-            "https://dizipal.uk/platform/mubi/page/9/",
-            "https://dizipal.uk/platform/mubi/page/10/",
-            "https://dizipal.uk/platform/mubi/page/11/",
-            "https://dizipal.uk/platform/mubi/page/12/",
-            "https://dizipal.uk/platform/mubi/page/13/",
-            "https://dizipal.uk/platform/mubi/page/14/",
-            "https://dizipal.uk/platform/mubi/page/15/",
-            "https://dizipal.uk/platform/mubi/page/16/",
-            "https://dizipal.uk/platform/mubi/page/17/"
+            "https://dizipal.uk/platform/apple-tv/page/1/",
+            "https://dizipal.uk/platform/apple-tv/page/2/",
+            "https://dizipal.uk/platform/apple-tv/page/3/",
+            "https://dizipal.uk/platform/apple-tv/page/4/",
+            "https://dizipal.uk/platform/apple-tv/page/5/",
+            "https://dizipal.uk/platform/apple-tv/page/6/",
+            "https://dizipal.uk/platform/apple-tv/page/7/"
         ]
 
         series_list = []
