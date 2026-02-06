@@ -46,12 +46,12 @@ def scrape_dizipal_series():
     try:
         # Taranacak sayfalar listesi (TOD)
         pages_to_scrape = [
-            "https://dizipal.uk/platform/tod/page/1/",
-            "https://dizipal.uk/platform/tod/page/2/",
-            "https://dizipal.uk/platform/tod/page/3/",
-            "https://dizipal.uk/platform/tod/page/4/",
-            "https://dizipal.uk/platform/tod/page/5/",
-            "https://dizipal.uk/platform/tod/page/6/"
+            "https://dizipal.uk/platform/tv/page/1/",
+            "https://dizipal.uk/platform/tv/page/2/",
+            "https://dizipal.uk/platform/tv/page/3/",
+            "https://dizipal.uk/platform/tv/page/4/",
+            "https://dizipal.uk/platform/tv/page/5/",
+            "https://dizipal.uk/platform/tv/page/6/"
         ]
 
         series_list = []
