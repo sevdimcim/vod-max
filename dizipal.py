@@ -30,11 +30,13 @@ def scrape_dizipal_series():
     options.add_argument('--disable-gpu')
     options.add_argument('--lang=tr')
 
+    json_filename = "dizipal-tod.json"
     results = {}
     
-    if os.path.exists("dizipal-tabi.json"):
+    # Mevcut dosya varsa yükle
+    if os.path.exists(json_filename):
         try:
-            with open("dizipal-tabi.json", "r", encoding="utf-8") as f:
+            with open(json_filename, "r", encoding="utf-8") as f:
                 results = json.load(f)
         except:
             results = {}
@@ -42,30 +44,46 @@ def scrape_dizipal_series():
     driver = uc.Chrome(options=options, version_main=version)
 
     try:
-        base_url = "https://dizipal.uk/platform/tabii/"
-        print("Giriş yapılıyor...")
-        driver.get(base_url)
-        time.sleep(10)
+        # Taranacak sayfalar listesi (TOD için 2 sayfa var)
+        pages_to_scrape = [
+            "https://dizipal.uk/platform/tod/page/1/",
+            "https://dizipal.uk/platform/tod/page/2/"
+        ]
 
-        series_items = driver.find_elements(By.CLASS_NAME, "post-item")
         series_list = []
-        
-        for item in series_items:
-            try:
-                anchor = item.find_element(By.TAG_NAME, "a")
-                img = item.find_element(By.TAG_NAME, "img")
-                series_list.append({
-                    "isim": anchor.get_attribute("title"),
-                    "resim": get_full_res_image(img.get_attribute("srcset")) or img.get_attribute("src"),
-                    "ana_link": anchor.get_attribute("href")
-                })
-            except:
-                continue
 
+        print("TOD platformu taranıyor...")
+
+        # 1. ADIM: Önce iki sayfadaki tüm dizileri listeye toplayalım
+        for page_url in pages_to_scrape:
+            print(f"Sayfa taranıyor: {page_url}")
+            driver.get(page_url)
+            time.sleep(5) # Sayfa yüklenmesi için bekleme
+
+            series_items = driver.find_elements(By.CLASS_NAME, "post-item")
+            
+            for item in series_items:
+                try:
+                    anchor = item.find_element(By.TAG_NAME, "a")
+                    img = item.find_element(By.TAG_NAME, "img")
+                    series_data = {
+                        "isim": anchor.get_attribute("title"),
+                        "resim": get_full_res_image(img.get_attribute("srcset")) or img.get_attribute("src"),
+                        "ana_link": anchor.get_attribute("href")
+                    }
+                    series_list.append(series_data)
+                except:
+                    continue
+        
+        print(f"Toplam {len(series_list)} içerik bulundu. Bölümler çekilmeye başlanıyor...")
+
+        # 2. ADIM: Toplanan dizilerin içini gez
         for index, series in enumerate(series_list):
             series_name = series['isim']
             series_key = series_name.replace(" ", "-").replace("/", "-")
             
+            print(f"[{index+1}/{len(series_list)}] İşleniyor: {series_name}")
+
             if series_key not in results:
                 results[series_key] = {
                     "isim": series_name,
@@ -92,6 +110,7 @@ def scrape_dizipal_series():
                 master_episode_list = []
                 seen_episodes = set()
                 
+                # Sezonları gez ve bölüm linklerini topla
                 for s_url in season_urls:
                     if s_url != driver.current_url:
                         driver.get(s_url)
@@ -104,11 +123,11 @@ def scrape_dizipal_series():
                             master_episode_list.append(l)
                             seen_episodes.add(l)
 
-                # ŞİMDİ İŞLEME VE TEMİZLEME
+                # Bölüm içlerine gir ve embed linkini al
                 for ep_num, ep_link in enumerate(master_episode_list, 1):
                     custom_title = f"{series_name} {ep_num}. Bölüm"
 
-                    # Kontrolü embed linki veya başlık üzerinden yapıyoruz
+                    # Zaten kayıtlıysa atla
                     already_saved = any(d.get('bolum_baslik') == custom_title for d in results[series_key]["bolumler"])
                     
                     if already_saved:
@@ -121,27 +140,29 @@ def scrape_dizipal_series():
                         iframe = driver.find_element(By.TAG_NAME, "iframe")
                         embed_link = iframe.get_attribute("src")
 
-                        # JSON'a eklenecek veri (SAYFA LİNKİ YOK)
                         episode_data = {
                             "bolum_baslik": custom_title,
-                            "link": embed_link  # "embed_link" ismini de kısalttım istersen
+                            "link": embed_link
                         }
                         
                         results[series_key]["bolumler"].append(episode_data)
-                        print(f"Eklendi: {custom_title}")
+                        print(f"   -> Eklendi: {custom_title}")
+
+                        # Her bölüm eklendiğinde kaydet (Veri kaybını önlemek için)
+                        with open(json_filename, "w", encoding="utf-8") as f:
+                            json.dump(results, f, ensure_ascii=False, indent=2)
 
                     except Exception as e:
+                        print(f"   -> Hata: {custom_title} alınamadı.")
                         continue
                 
-                with open("dizipal-tabi.json", "w", encoding="utf-8") as f:
-                    json.dump(results, f, ensure_ascii=False, indent=2)
-
             except Exception as e:
+                print(f"Dizi hatası: {series_name}")
                 continue
 
     finally:
         driver.quit()
-        print("Bitti.")
+        print("İşlem tamamlandı.")
 
 if __name__ == "__main__":
     scrape_dizipal_series()
