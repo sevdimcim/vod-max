@@ -1,0 +1,4 @@
+İçerik Kodlaması: br
+İçerik Uzunluğu: 32115 bytes
+❌ Hata: BrotliDecompress failed
+📁 Ham binary kaydedildi: atom_binary.bin
