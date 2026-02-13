@@ -24,6 +24,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 1
+        token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: 📅 Tarih Bilgisi
       id: date
@@ -35,24 +36,21 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-        cache: 'pip'  # ŞİMDİ ÇALIŞIR (requirements.txt var)
     
     - name: 📦 Paketleri Yükle
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt  # requirements.txt'den yükle
+        pip install requests brotli
     
     - name: 🚀 Betiği Çalıştır
       id: run_script
       run: |
-        echo "🕒 Başlangıç: ${{ env.TR_SAAT }} (TR)"
+        echo "🕒 Başlangıç: ${{ env.TR_SAAT }}"
         python atom.py 2>&1 | tee script_output.txt
         
         if [ ${PIPESTATUS[0]} -eq 0 ]; then
-          echo "✅ Betik başarılı" >> $GITHUB_STEP_SUMMARY
           echo "status=success" >> $GITHUB_OUTPUT
         else
-          echo "❌ Betik başarısız" >> $GITHUB_STEP_SUMMARY
           echo "status=failed" >> $GITHUB_OUTPUT
         fi
       continue-on-error: true
@@ -63,48 +61,22 @@ jobs:
         echo '```' >> $GITHUB_STEP_SUMMARY
         ls -la >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
-        
-        if [ -f "atom.txt" ]; then
-          DOSYA_BOYUT=$(wc -c < atom.txt)
-          SATIR_SAYISI=$(wc -l < atom.txt)
-          echo "✅ **atom.txt bulundu**" >> $GITHUB_STEP_SUMMARY
-          echo "- **Boyut:** $DOSYA_BOYUT bytes" >> $GITHUB_STEP_SUMMARY
-          echo "- **Satır:** $SATIR_SAYISI satır" >> $GITHUB_STEP_SUMMARY
-          
-          # İlk 5 satırı göster
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📄 İlk 5 satır:" >> $GITHUB_STEP_SUMMARY
-          echo '```html' >> $GITHUB_STEP_SUMMARY
-          head -5 atom.txt >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-        else
-          echo "❌ **atom.txt bulunamadı!**" >> $GITHUB_STEP_SUMMARY
-        fi
     
     - name: 💾 Değişiklikleri Kaydet
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
+        # Değişiklikleri ekle
         git add atom.txt script_output.txt 2>/dev/null || true
         
-        if [ -f "README.md" ]; then
-          sed -i '/## 📊 Son Durum/d' README.md 2>/dev/null || true
-          echo "" >> README.md
-          echo "## 📊 Son Durum" >> README.md
-          echo "- **Tarih:** ${{ env.TR_SAAT }}" >> README.md
-          echo "- **Durum:** ${{ steps.run_script.outputs.status }}" >> README.md
-          if [ -f "atom.txt" ]; then
-            echo "- **Dosya:** atom.txt ($(wc -c < atom.txt) bytes)" >> README.md
-          fi
-          git add README.md
-        fi
-        
+        # Commit oluştur
         git commit -m "🤖 Otomatik güncelleme: ${{ env.TR_SAAT }}" || echo "Değişiklik yok"
     
-    - name: 📤 GitHub'a Gönder
+    - name: 📤 GitHub'a Gönder (Force Push)
       uses: ad-m/github-push-action@v0.8.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ github.ref }}
-        force: false
+        force: true  # Force push aktif!
+        directory: '.'
