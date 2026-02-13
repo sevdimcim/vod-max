@@ -1,95 +1,81 @@
 import requests
-import os
-from datetime import datetime
+import zlib
+import brotli
+import gzip
+from io import BytesIO
 
 def sayfa_kaydet():
-    """atomsportv488.top sitesinin kaynağını al ve kaydet"""
-    
-    # Hedef URL
     url = "https://atomsportv488.top/"
-    
-    # Kaydedilecek dosya adı
     dosya_adi = "atom.txt"
     
-    # İşlem zamanı
-    zaman = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    print(f"[{zaman}] İşlem başlatıldı...")
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',  # Tüm sıkıştırmaları kabul et
+        'Accept-Language': 'tr-TR,tr;q=0.9,en;q=0.8',
+        'Cache-Control': 'no-cache'
+    }
     
     try:
-        # Headers (bot engellemesini aşmak için)
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'tr-TR,tr;q=0.9,en;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1'
-        }
+        # İstek gönder (sıkıştırmayı otomatik çözer)
+        session = requests.Session()
+        response = session.get(url, headers=headers, timeout=30)
         
-        print(f"📡 {url} adresine bağlanılıyor...")
+        # İçeriği manuel çöz (gerekirse)
+        content = response.content
         
-        # İstek gönder
-        response = requests.get(url, headers=headers, timeout=30)
-        response.encoding = 'utf-8'
+        # Sıkıştırılmış mı kontrol et
+        content_encoding = response.headers.get('Content-Encoding', '')
         
-        print(f"📊 HTTP Durum Kodu: {response.status_code}")
+        print(f"İçerik Kodlaması: {content_encoding}")
+        print(f"İçerik Uzunluğu: {len(content)} bytes")
         
-        if response.status_code == 200:
-            # Sayfa kaynağını al
-            sayfa_kaynagi = response.text
-            
-            # Dosyaya kaydet
-            with open(dosya_adi, 'w', encoding='utf-8') as f:
-                f.write(sayfa_kaynagi)
-            
-            # Dosya bilgileri
-            dosya_boyutu = len(sayfa_kaynagi)
-            satir_sayisi = len(sayfa_kaynagi.split('\n'))
-            
-            print(f"✅ Dosya kaydedildi: {dosya_adi}")
-            print(f"📄 Boyut: {dosya_boyutu} karakter, {satir_sayisi} satır")
-            
-            # README için bilgi
-            with open('README.md', 'a', encoding='utf-8') as readme:
-                readme.write(f"\n## 📅 Son Güncelleme: {zaman}\n")
-                readme.write(f"- **Dosya:** {dosya_adi}\n")
-                readme.write(f"- **Boyut:** {dosya_boyutu} karakter\n")
-                readme.write(f"- **Durum:** Başarılı ✅\n")
-            
-            return True
-        else:
-            hata_msg = f"Hata: {response.status_code}"
-            print(f"❌ {hata_msg}")
-            
-            with open('README.md', 'a', encoding='utf-8') as readme:
-                readme.write(f"\n## 📅 Son Güncelleme: {zaman}\n")
-                readme.write(f"- **Durum:** Başarısız ❌\n")
-                readme.write(f"- **Hata:** {hata_msg}\n")
-            
-            return False
-            
-    except requests.exceptions.Timeout:
-        print("❌ Hata: Bağlantı zaman aşımı")
-        return False
-    except requests.exceptions.ConnectionError:
-        print("❌ Hata: Bağlantı hatası - Site kapalı olabilir")
-        return False
+        # Sıkıştırmayı çöz
+        if 'br' in content_encoding:
+            # Brotli çöz
+            content = brotli.decompress(content)
+            print("Brotli çözüldü")
+        elif 'gzip' in content_encoding:
+            # Gzip çöz
+            content = gzip.decompress(content)
+            print("Gzip çözüldü")
+        elif 'deflate' in content_encoding:
+            # Deflate çöz
+            content = zlib.decompress(content)
+            print("Deflate çözüldü")
+        
+        # UTF-8'e çevir (hata varsa ignore et)
+        try:
+            text_content = content.decode('utf-8')
+        except UnicodeDecodeError:
+            # Latin-1 dene
+            try:
+                text_content = content.decode('latin-1')
+            except:
+                # Hiçbiri olmazsa, hex olarak kaydet
+                text_content = content.hex()
+        
+        # Dosyaya kaydet
+        with open(dosya_adi, 'w', encoding='utf-8', errors='ignore') as f:
+            f.write(text_content)
+        
+        print(f"✅ Kaydedildi: {dosya_adi}")
+        print(f"📊 Boyut: {len(text_content)} karakter")
+        
+        # İlk 500 karakteri göster
+        print("\n📄 İlk 500 karakter:")
+        print("-" * 50)
+        print(text_content[:500])
+        print("-" * 50)
+        
     except Exception as e:
-        print(f"❌ Beklenmedik hata: {str(e)}")
-        return False
+        print(f"❌ Hata: {e}")
+        
+        # Ham içeriği binary olarak kaydet
+        if 'response' in locals():
+            with open('atom_binary.bin', 'wb') as f:
+                f.write(response.content)
+            print("📁 Ham binary kaydedildi: atom_binary.bin")
 
 if __name__ == "__main__":
-    print("="*50)
-    print("🚀 atom.py - Sayfa Kaynağı Alıcı")
-    print("="*50)
-    
-    # Çalıştır
-    basarili = sayfa_kaydet()
-    
-    if basarili:
-        print("\n✨ İşlem başarıyla tamamlandı!")
-    else:
-        print("\n⚠️ İşlem sırasında hata oluştu!")
-    
-    print("="*50)
+    sayfa_kaydet()
