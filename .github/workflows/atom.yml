@@ -1,81 +1,53 @@
 name: Atom Sayfa Kaynağını Otomatik Al
 
-# Çalışma zamanları
 on:
-  # Elle çalıştırma butonu
   workflow_dispatch:
-    inputs:
-      manuel_calistir:
-        description: 'Manuel çalıştırma'
-        required: false
-        default: 'true'
-  
-  # Otomatik zamanlama (her 3 saatte bir)
   schedule:
-    - cron: '0 */3 * * *'  # Her 3 saatte bir (Türkiye saatiyle 03:00, 06:00, ...)
-    
-  # Push yapıldığında
+    - cron: '0 */3 * * *'
   push:
     branches: [ main, master ]
-    paths:
-      - 'atom.py'
-      - '.github/workflows/atom_otomatik.yml'
-  
-  # Pull request açıldığında
   pull_request:
     branches: [ main, master ]
 
-# İzinler
 permissions:
   contents: write
   actions: read
   checks: write
 
-# İş tanımı
 jobs:
   sayfa-kaydet:
     runs-on: ubuntu-latest
-    timeout-minutes: 10  # Maksimum 10 dakika çalışsın
+    timeout-minutes: 10
     
     steps:
-    # 1. Repoyu klonla
     - name: 📥 Repoyu Klonla
       uses: actions/checkout@v3
       with:
-        fetch-depth: 1  # Sadece son commit
+        fetch-depth: 1
     
-    # 2. Tarih ve saat bilgisi
     - name: 📅 Tarih Bilgisi
       id: date
       run: |
         echo "TR_SAAT=$(TZ='Europe/Istanbul' date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
         echo "UTC_SAAT=$(date -u '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
     
-    # 3. Python kur
     - name: 🐍 Python Kur
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'  # Son kararlı sürüm
-        cache: 'pip'  # Pip cache'i kullan
+        python-version: '3.11'
+        cache: 'pip'  # ŞİMDİ ÇALIŞIR (requirements.txt var)
     
-    # 4. Gerekli paketleri yükle
     - name: 📦 Paketleri Yükle
       run: |
         python -m pip install --upgrade pip
-        pip install requests brotli zlib
+        pip install -r requirements.txt  # requirements.txt'den yükle
     
-    # 5. Betiği çalıştır
     - name: 🚀 Betiği Çalıştır
       id: run_script
       run: |
         echo "🕒 Başlangıç: ${{ env.TR_SAAT }} (TR)"
-        echo "🕒 Başlangıç: ${{ env.UTC_SAAT }} (UTC)"
-        echo ""
-        
-        # Betiği çalıştır ve çıktıyı logla
         python atom.py 2>&1 | tee script_output.txt
         
-        # Çalışma durumunu kontrol et
         if [ ${PIPESTATUS[0]} -eq 0 ]; then
           echo "✅ Betik başarılı" >> $GITHUB_STEP_SUMMARY
           echo "status=success" >> $GITHUB_OUTPUT
@@ -83,18 +55,15 @@ jobs:
           echo "❌ Betik başarısız" >> $GITHUB_STEP_SUMMARY
           echo "status=failed" >> $GITHUB_OUTPUT
         fi
-      continue-on-error: true  # Hata olsa bile devam et
+      continue-on-error: true
     
-    # 6. Dosyaları kontrol et
     - name: 📂 Dosyaları Kontrol Et
       run: |
         echo "## 📁 Dizin içeriği" >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
         ls -la >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
         
-        # atom.txt kontrolü
         if [ -f "atom.txt" ]; then
           DOSYA_BOYUT=$(wc -c < atom.txt)
           SATIR_SAYISI=$(wc -l < atom.txt)
@@ -102,36 +71,24 @@ jobs:
           echo "- **Boyut:** $DOSYA_BOYUT bytes" >> $GITHUB_STEP_SUMMARY
           echo "- **Satır:** $SATIR_SAYISI satır" >> $GITHUB_STEP_SUMMARY
           
-          # İlk 10 satır
+          # İlk 5 satırı göster
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📄 İlk 10 satır:" >> $GITHUB_STEP_SUMMARY
+          echo "### 📄 İlk 5 satır:" >> $GITHUB_STEP_SUMMARY
           echo '```html' >> $GITHUB_STEP_SUMMARY
-          head -10 atom.txt >> $GITHUB_STEP_SUMMARY
+          head -5 atom.txt >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
         else
           echo "❌ **atom.txt bulunamadı!**" >> $GITHUB_STEP_SUMMARY
         fi
-        
-        # Binary dosya kontrolü
-        if [ -f "atom_binary.bin" ]; then
-          BIN_BOYUT=$(wc -c < atom_binary.bin)
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📁 **Binary dosya bulundu:** atom_binary.bin" >> $GITHUB_STEP_SUMMARY
-          echo "- **Boyut:** $BIN_BOYUT bytes" >> $GITHUB_STEP_SUMMARY
-        fi
     
-    # 7. Değişiklikleri commit et
     - name: 💾 Değişiklikleri Kaydet
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
-        # Değişen dosyaları ekle
-        git add atom.txt atom_binary.bin script_output.txt 2>/dev/null || true
+        git add atom.txt script_output.txt 2>/dev/null || true
         
-        # README varsa güncelle
         if [ -f "README.md" ]; then
-          # README'ye sonuç ekle
           sed -i '/## 📊 Son Durum/d' README.md 2>/dev/null || true
           echo "" >> README.md
           echo "## 📊 Son Durum" >> README.md
@@ -143,36 +100,11 @@ jobs:
           git add README.md
         fi
         
-        # Commit oluştur
         git commit -m "🤖 Otomatik güncelleme: ${{ env.TR_SAAT }}" || echo "Değişiklik yok"
-        
-    # 8. GitHub'a gönder
+    
     - name: 📤 GitHub'a Gönder
       uses: ad-m/github-push-action@v0.8.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ github.ref }}
-        force: false  # Force push yapma
-    
-    # 9. İstatistikleri göster
-    - name: 📊 İstatistikler
-      run: |
-        echo "## 📊 İşlem İstatistikleri" >> $GITHUB_STEP_SUMMARY
-        echo "- **Başlangıç:** ${{ env.TR_SAAT }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Bitiş:** $(TZ='Europe/Istanbul' date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
-        echo "- **Workflow:** ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Repo:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Run ID:** ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-        
-    # 10. Hata varsa bildirim (opsiyonel)
-    - name: ⚠️ Hata Bildirimi
-      if: steps.run_script.outputs.status == 'failed'
-      run: |
-        echo "## ⚠️ Hata Oluştu" >> $GITHUB_STEP_SUMMARY
-        echo "Betik çalışırken hata oluştu. Logları kontrol edin." >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        cat script_output.txt >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
+        force: false
