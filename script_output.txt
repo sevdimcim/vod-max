@@ -1,4 +1,2 @@
-İçerik Kodlaması: br
-İçerik Uzunluğu: 32115 bytes
-❌ Hata: brotli: decoder failed
-📁 Ham binary kaydedildi: atom_binary.bin
+Baglaniliyor: https://atomsportv488.top/
+Basarili: Sayfa kaynagi atom.txt dosyasina yazildi.
