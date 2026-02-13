@@ -1,82 +1,33 @@
-name: Atom Sayfa Kaynağını Otomatik Al
+name: WARSTV Kaynak Cekici
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 */3 * * *'
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-
-permissions:
-  contents: write
-  actions: read
-  checks: write
+    - cron: '*/30 * * * *' # Her 30 dakikada bir otomatik calisir
+  workflow_dispatch: # Manuel olarak butona basip calistirmak istersen
 
 jobs:
-  sayfa-kaydet:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    
     steps:
-    - name: 📥 Repoyu Klonla
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 1
-        token: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: 📅 Tarih Bilgisi
-      id: date
-      run: |
-        echo "TR_SAAT=$(TZ='Europe/Istanbul' date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
-        echo "UTC_SAAT=$(date -u '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
-    
-    - name: 🐍 Python Kur
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
-    - name: 📦 Paketleri Yükle
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests brotli
-    
-    - name: 🚀 Betiği Çalıştır
-      id: run_script
-      run: |
-        echo "🕒 Başlangıç: ${{ env.TR_SAAT }}"
-        python atom.py 2>&1 | tee script_output.txt
-        
-        if [ ${PIPESTATUS[0]} -eq 0 ]; then
-          echo "status=success" >> $GITHUB_OUTPUT
-        else
-          echo "status=failed" >> $GITHUB_OUTPUT
-        fi
-      continue-on-error: true
-    
-    - name: 📂 Dosyaları Kontrol Et
-      run: |
-        echo "## 📁 Dizin içeriği" >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        ls -la >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-    
-    - name: 💾 Değişiklikleri Kaydet
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        
-        # Değişiklikleri ekle
-        git add atom.txt script_output.txt 2>/dev/null || true
-        
-        # Commit oluştur
-        git commit -m "🤖 Otomatik güncelleme: ${{ env.TR_SAAT }}" || echo "Değişiklik yok"
-    
-    - name: 📤 GitHub'a Gönder (Force Push)
-      uses: ad-m/github-push-action@v0.8.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.ref }}
-        force: true  # Force push aktif!
-        directory: '.'
+      - name: Repoyu Kopyala
+        uses: actions/checkout@v3
+
+      - name: Python Kur
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Kutuphaneleri Yukle
+        run: pip install requests
+
+      - name: Kaynak Kodunu Cek
+        run: python atom.py
+
+      - name: Degisiklikleri Kaydet ve Pushla
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add atom.txt
+          git commit -m "Sayfa kaynagi guncellendi: $(date)" || exit 0
+          git push
+          
