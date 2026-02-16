@@ -1,191 +1,220 @@
-import cloudscraper
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
 import json
 import re
+import subprocess
 import os
-import time
-from urllib.parse import urljoin
-from concurrent.futures import ThreadPoolExecutor
+import html
 
 # --- AYARLAR ---
-BASE_URL = "https://dizipal.cx"
-MAX_WORKERS = 15
-OUTPUT_FOLDER = "atom"
+BASE_URL = "https://dizipal.cx" # Çalışan domain (değişirse buradan güncelle)
+PLATFORM_SLUG = "hbomax"
+OUTPUT_FILE = "hbomax.json"
 
-# Platform Listesi (URL slug : Dosya Adı)
-# TV'yi turkcelltv olarak kaydetmek istediğin için mapping yaptık.
-PLATFORMS = {
-    "netflix": "netflix",
-    "exxen": "exxen",
-    "prime-video": "prime-video",
-    "tabii": "tabii",
-    "apple-tv": "apple-tv",
-    "disney": "disney",
-    "hbomax": "hbomax",
-    "gain": "gain",
-    "mubi": "mubi",
-    "tod": "tod",
-    "hulu": "hulu",
-    "tv": "turkcelltv"  # URL'de 'tv', dosyada 'turkcelltv' olacak
-}
-
-# Tarayıcı simülasyonu
-scraper = cloudscraper.create_scraper(
-    browser={'browser': 'chrome', 'platform': 'windows', 'desktop': True}
-)
-
-def get_source(url):
+def get_chrome_version():
+    """Chrome versiyonunu tespit eder (Linux/GitHub Actions için önemli)"""
     try:
-        # Sayfa geçişlerinde çok seri istek atıp ban yememek için minik bekleme
-        time.sleep(0.5) 
-        res = scraper.get(url, timeout=10)
-        return res.text if res.status_code == 200 else None
+        output = subprocess.check_output(['google-chrome', '--version']).decode('utf-8')
+        version = re.search(r'Google Chrome (\d+)', output).group(1)
+        return int(version)
     except:
         return None
 
-def get_highest_res_image(srcset_content):
-    """srcset içindeki en yüksek kaliteli resim linkini ayıklar."""
-    if not srcset_content:
-        return ""
-    parts = [s.strip().split(' ')[0] for s in srcset_content.split(',')]
-    return parts[-1] if parts else ""
-
-def fetch_iframe_only(ep_url):
-    html = get_source(ep_url)
-    if html:
-        iframe = re.search(r'<iframe[^>]+src=["\']([^"\']+)["\']', html)
-        if iframe:
-            return iframe.group(1)
-    return None
-
 def clean_key(text):
-    text = re.sub(r'[\s\:\,\']+', '-', text)
+    """JSON keyleri için temizleme yapar"""
+    text = html.unescape(text)
+    text = re.sub(r'[\s\:\,\'’"”]+', '-', text)
     text = re.sub(r'-+', '-', text)
     return text.strip('-')
 
-def scrape_platform(slug, filename_base):
-    """Tek bir platformu baştan sona tarar ve kaydeder."""
-    
-    json_path = os.path.join(OUTPUT_FOLDER, f"{filename_base}.json")
-    
-    # Eğer dosya varsa üzerine yazmak yerine mevcut veriyi okuyup devam edebilirsin
-    # Şimdilik sıfırdan başlatalım ki temiz olsun:
-    results = {} 
-    
-    print(f"\n🌍 PLATFORM TARANIYOR: {slug.upper()} -> {filename_base}.json")
-    
-    page_num = 1
-    found_any_on_platform = False
+def get_full_res_image(srcset):
+    """Resim kalitesini seçer"""
+    if not srcset:
+        return ""
+    links = [s.strip().split(' ')[0] for s in srcset.split(',')]
+    return links[-1] if links else ""
 
-    while True:
-        page_url = f"{BASE_URL}/platform/{slug}/page/{page_num}/"
-        print(f"   📄 Sayfa {page_num} kontrol ediliyor...")
-        
-        html = get_source(page_url)
-        
-        # Sayfa boşsa veya içerik yoksa döngüyü kır (Otomatik Sayfa Algılama)
-        if not html:
-            print(f"   ⛔ Sayfa {page_num} yüklenemedi, platform tamamlandı sanırım.")
-            break
-        
-        # İçerik var mı kontrolü (post-item class'ı var mı?)
-        items = re.findall(r'<div class="post-item">.*?href="(.*?)".*?title="(.*?)".*?data-srcset="(.*?)"', html, re.S)
-        
-        if not items:
-            print(f"   🚫 Sayfa {page_num} içinde içerik bulunamadı. Platform sonu.")
-            break
-            
-        found_any_on_platform = True
-        
-        # Bu sayfadaki içerikleri işle
-        for link, title, srcset in items:
-            original_name = title
-            json_key = clean_key(original_name)
-            
-            # Eğer zaten eklediysek atla
-            if json_key in results:
-                continue
-                
-            poster_url = get_highest_res_image(srcset)
-            main_link = urljoin(BASE_URL, link)
-            
-            print(f"      💎 İşleniyor: {original_name}")
-            
-            results[json_key] = {
-                "isim": original_name,
-                "resim": poster_url,
-                "bolumler": []
-            }
-            
-            # İçerik detayına git
-            source = get_source(main_link)
-            if not source: continue
+def scrape_hbomax():
+    version = get_chrome_version()
+    print(f"Sistem Chrome Versiyonu: {version}")
 
-            # Sezon ve Bölüm Toplama
-            seasons = re.findall(r'href=["\']([^"\']+\?sezon=\d+)["\']', source)
-            season_urls = sorted(list(set([urljoin(BASE_URL, s) for s in seasons])))
-            
-            if not season_urls: 
-                season_urls = [main_link]
-            else:
-                if main_link not in season_urls: 
-                    season_urls.insert(0, main_link)
+    options = uc.ChromeOptions()
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--lang=tr')
+    # GitHub Actions'da 'xvfb' kullanıyorsan headless yapmana gerek yok.
+    # Eğer hata alırsan '--headless=new' ekleyebilirsin ama CF bazen yakalar.
 
-            all_ep_links = []
-            for s_url in season_urls:
-                s_html = get_source(s_url)
-                if s_html:
-                    eps = re.findall(r'href=["\']([^"\']+(?:bolum|anime-bolum)/[^"\']+)["\']', s_html)
-                    # Bölüm sıralaması
-                    eps = sorted(list(set(eps)), key=lambda x: [int(c) if c.isdigit() else c for c in re.split(r'(\d+)', x)])
-                    for e in eps:
-                        full_e = urljoin(BASE_URL, e)
-                        if full_e not in all_ep_links:
-                            all_ep_links.append(full_e)
-
-            if all_ep_links:
-                # Thread ile hızlıca iframe çek
-                with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-                    iframe_list = list(executor.map(fetch_iframe_only, all_ep_links))
-                
-                count = 1
-                for iframe_link in iframe_list:
-                    if iframe_link:
-                        results[json_key]["bolumler"].append({
-                            "bolum_baslik": f"{original_name} {count}. Bölüm",
-                            "link": iframe_link
-                        })
-                        count += 1
-            else:
-                # Film durumu
-                iframe = re.search(r'<iframe[^>]+src=["\']([^"\']+)["\']', source)
-                if iframe:
-                    results[json_key]["bolumler"].append({
-                        "bolum_baslik": f"{original_name} (Film)",
-                        "link": iframe.group(1)
-                    })
-
-            # Her içerik eklendiğinde dosyayı güncelle (Crash olursa veri kaybı olmasın)
-            with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(results, f, ensure_ascii=False, indent=2)
-        
-        # Bir sonraki sayfaya geç
-        page_num += 1
-
-def main():
-    # 1. Klasör oluştur
-    if not os.path.exists(OUTPUT_FOLDER):
-        os.makedirs(OUTPUT_FOLDER)
-        print(f"📁 '{OUTPUT_FOLDER}' klasörü oluşturuldu.")
-
-    # 2. Her platformu sırayla tara
-    for slug, filename in PLATFORMS.items():
+    # Mevcut veriyi yükle
+    results = {}
+    if os.path.exists(OUTPUT_FILE):
         try:
-            scrape_platform(slug, filename)
-        except Exception as e:
-            print(f"❌ {slug} platformunda hata oluştu: {str(e)}")
-            continue
+            with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+                results = json.load(f)
+            print(f"Mevcut dosya yüklendi. {len(results)} içerik var.")
+        except:
+            pass
 
-    print("\n🏁 TÜM İŞLEMLER TAMAMLANDI! 🏁")
+    driver = uc.Chrome(options=options, version_main=version)
+
+    try:
+        # 1. ADIM: ANASAYFAYA GİT VE BEKLE (CF GEÇİŞİ)
+        print("Cloudflare geçişi için bekleniyor...")
+        driver.get(BASE_URL)
+        time.sleep(15) 
+
+        page_num = 1
+        
+        while True:
+            platform_url = f"{BASE_URL}/platform/{PLATFORM_SLUG}/page/{page_num}/"
+            print(f"\n--- Sayfa {page_num} Taranıyor: {platform_url} ---")
+            
+            driver.get(platform_url)
+            time.sleep(3)
+
+            # Sayfa boş mu veya bitti mi kontrolü
+            if "Sayfa bulunamadı" in driver.title or len(driver.find_elements(By.CLASS_NAME, "post-item")) == 0:
+                print("Sayfa boş veya bitti. İşlem tamamlandı.")
+                break
+
+            # Sayfadaki içerikleri topla
+            items = driver.find_elements(By.CLASS_NAME, "post-item")
+            page_contents = []
+            
+            for item in items:
+                try:
+                    anchor = item.find_element(By.TAG_NAME, "a")
+                    img = item.find_element(By.TAG_NAME, "img")
+                    title = anchor.get_attribute("title")
+                    
+                    # Key kontrolü (Zaten varsa atla - Vakit kazan)
+                    key = clean_key(title)
+                    if key in results:
+                        continue
+
+                    page_contents.append({
+                        "title": title,
+                        "url": anchor.get_attribute("href"),
+                        "img": get_full_res_image(img.get_attribute("srcset")) or img.get_attribute("src"),
+                        "key": key
+                    })
+                except:
+                    continue
+            
+            print(f"Bu sayfada işlenecek yeni içerik sayısı: {len(page_contents)}")
+
+            # İçerik detaylarına gir
+            for content in page_contents:
+                try:
+                    print(f"> İnceleniyor: {content['title']}")
+                    driver.get(content['url'])
+                    time.sleep(2) # Yükleme beklemesi
+
+                    key = content['key']
+                    results[key] = {
+                        "isim": content['title'],
+                        "resim": content['img'],
+                        "bolumler": []
+                    }
+
+                    # --- SENARYO 1: FİLM Mİ? (Direkt Iframe var mı?) ---
+                    iframes = driver.find_elements(By.TAG_NAME, "iframe")
+                    has_episodes = False
+                    
+                    # Sayfada bölüm listesi var mı kontrol et
+                    # Genelde 'bölümler' listesi varsa dizidir.
+                    episode_elements = driver.find_elements(By.CSS_SELECTOR, "a[href*='bolum']")
+                    
+                    if not episode_elements and iframes:
+                        # Bu bir FİLM
+                        embed_src = iframes[0].get_attribute("src")
+                        results[key]["bolumler"].append({
+                            "bolum_baslik": f"{content['title']} (Film)",
+                            "link": embed_src
+                        })
+                        print(f"  + Film eklendi.")
+                    
+                    else:
+                        # --- SENARYO 2: DİZİ (Sezon ve Bölümler) ---
+                        print("  + Dizi tespit edildi, bölümler taranıyor...")
+                        
+                        # 1. Sezon Linklerini Bul
+                        season_links = []
+                        # URL yapısında ?sezon=X arıyoruz
+                        season_elements = driver.find_elements(By.CSS_SELECTOR, "a[href*='?sezon=']")
+                        
+                        temp_season_urls = set()
+                        for s in season_elements:
+                            href = s.get_attribute("href")
+                            temp_season_urls.add(href)
+                        
+                        # Eğer sezon linki bulamadıysak ama bölüm linkleri varsa (Tek sezonluk dizi)
+                        if not temp_season_urls:
+                            season_links.append(content['url']) # Mevcut sayfa tek sezon
+                        else:
+                            season_links = sorted(list(temp_season_urls))
+
+                        # Tüm Sezonları Gez
+                        all_episode_urls = []
+                        
+                        for s_link in season_links:
+                            if s_link != driver.current_url:
+                                driver.get(s_link)
+                                time.sleep(1.5)
+                            
+                            # Bölüm linklerini topla (Regex ile daha güvenli)
+                            # href içinde 'bolum' geçenleri al
+                            eps = driver.find_elements(By.CSS_SELECTOR, "a[href*='bolum']")
+                            for ep in eps:
+                                ep_url = ep.get_attribute("href")
+                                if ep_url not in all_episode_urls:
+                                    all_episode_urls.append(ep_url)
+
+                        # Bölüm linklerini sırala (opsiyonel, genelde site sırayla verir)
+                        print(f"  + Toplam {len(all_episode_urls)} bölüm bulundu. Linkler alınıyor...")
+
+                        # Her bölüme gir ve iframe al (En yavaş kısım burası)
+                        ep_count = 1
+                        for ep_url in all_episode_urls:
+                            try:
+                                driver.get(ep_url)
+                                # Iframe yüklenene kadar bekle (max 5 sn)
+                                WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
+                                
+                                ep_iframe = driver.find_element(By.TAG_NAME, "iframe")
+                                src = ep_iframe.get_attribute("src")
+                                
+                                results[key]["bolumler"].append({
+                                    "bolum_baslik": f"{content['title']} {ep_count}. Bölüm", # İstersen başlığı sayfadan da çekebilirsin
+                                    "link": src
+                                })
+                                ep_count += 1
+                                # Çok hızlı yaparsak IP ban yiyebiliriz
+                                time.sleep(0.5) 
+                            except Exception as e_ep:
+                                print(f"    ! Bölüm hatası: {e_ep}")
+                                continue
+
+                    # İçerik bittiğinde anlık kaydet
+                    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+                        json.dump(results, f, ensure_ascii=False, indent=2)
+
+                except Exception as e:
+                    print(f"Hata oluştu ({content['title']}): {e}")
+                    continue
+
+            page_num += 1
+
+    except Exception as e:
+        print(f"Kritik Hata: {e}")
+
+    finally:
+        driver.quit()
+        print(f"Bot durdu. Toplam {len(results)} içerik kaydedildi.")
 
 if __name__ == "__main__":
-    main()
+    scrape_hbomax()
