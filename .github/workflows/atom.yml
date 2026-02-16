@@ -1,33 +1,46 @@
-name: WARSTV Kaynak Cekici
+name: Atom Scraper Bot
 
 on:
   schedule:
-    - cron: '*/30 * * * *' # Her 30 dakikada bir otomatik calisir
-  workflow_dispatch: # Manuel olarak butona basip calistirmak istersen
+    # Her 4 saatte bir çalışır (00:00, 04:00, 08:00 vs.)
+    - cron: '0 */4 * * *'
+  workflow_dispatch: # Manuel tetikleme butonu ekler
+
+permissions:
+  contents: write # Botun repoya dosya yükleyebilmesi için gerekli izin
 
 jobs:
-  build:
+  run-scraper:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Repoyu Kopyala
+      - name: Depoyu Çek (Checkout)
         uses: actions/checkout@v3
 
-      - name: Python Kur
+      - name: Python Kurulumu
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
-      - name: Kutuphaneleri Yukle
-        run: pip install requests
+      - name: Kütüphaneleri Yükle
+        run: |
+          python -m pip install --upgrade pip
+          pip install cloudscraper
 
-      - name: Kaynak Kodunu Cek
+      - name: Atom Scriptini Çalıştır
         run: python atom.py
 
-      - name: Degisiklikleri Kaydet ve Pushla
+      - name: Değişiklikleri Kaydet ve Gönder (Commit & Push)
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add atom.txt
-          git commit -m "Sayfa kaynagi guncellendi: $(date)" || exit 0
+          git config --global user.name "Atom Bot"
+          git config --global user.email "actions@github.com"
+          
+          # atom klasörünü git'e ekle
+          git add atom/
+          
+          # Eğer değişiklik varsa commit et, yoksa hata verme devam et
+          git commit -m "⚡ Otomatik Güncelleme: JSON verileri yenilendi" || echo "Değişiklik yok, commit atlanıyor."
+          
+          # Değişiklikleri ana repoya gönder
           git push
           
