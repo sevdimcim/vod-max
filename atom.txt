@@ -571,7 +571,7 @@ document.getElementById('searchInput').addEventListener('keyup', function() {
 </script>
 
 <div class="reklam-3" style="max-width:100%;height:100%;margin:0 auto;">
-         <a href="https://bit24.live/metromacgiris" target="_blank"><center><img src="assets/img/318461000x50_metro.gif" alt="reklamlar" /></center></a>
+         <a href="https://bit24.live/metromacgiris" target="_blank"><center><img src="assets/img/237501000x50.gif" alt="reklamlar" /></center></a>
        </div>
 
 
