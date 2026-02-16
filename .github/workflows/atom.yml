@@ -2,10 +2,7 @@ name: HBO Max Günlük Bot
 
 on:
   schedule:
-    # 4 saatte bir çalışır (UTC saatine göredir, TR saatiyle 3 saat fark edebilir ama periyot 4 saattir)
     - cron: '0 */4 * * *'
-  
-  # Manuel tetikleme butonu ekler
   workflow_dispatch:
 
 permissions:
@@ -16,26 +13,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Depoyu Çek (Checkout)
+      - name: Depoyu Cek
         uses: actions/checkout@v4
 
-      - name: Python Kurulumu (3.10)
+      - name: Python Kur
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Gerekli Kütüphaneleri Yükle
-        run: |
-          pip install selenium undetected-chromedriver
-
-      - name: Chrome ve Sanal Ekran (Xvfb) Hazırlığı
-        # undetected-chromedriver linux sunucuda ekran kartı arar, bu yüzden sanal ekran kuruyoruz.
+      - name: Sistem Paketlerini Yukle
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable xvfb
 
-      - name: Botu Çalıştır (atom.py)
-        # xvfb-run komutu sanal bir monitör oluşturur ve scripti orada çalıştırır.
+      - name: Python Kutuphanelerini Yukle
         run: |
-          xvfb-run --auto-servernum --
+          pip install selenium undetected-chromedriver
+
+      - name: Botu Calistir
+        # Komutu pipe (|) ile blok haline getirdim ki eksik okumasın
+        run: |
+          xvfb-run python atom.py
+
+      - name: Degisiklikleri Kaydet
+        run: |
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "actions@github.com"
+          git add hbomax.json
+          git commit -m "HBO Max Guncellendi: $(date +'%Y-%m-%d %H:%M')" || exit 0
+          git push
           
