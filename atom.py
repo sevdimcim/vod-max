@@ -10,7 +10,7 @@ import os
 import html
 
 # --- AYARLAR ---
-BASE_URL = "https://dizipal.cx" # Çalışan domain (değişirse buradan güncelle)
+BASE_URL = "https://dizipal.bar" # Çalışan domain (değişirse buradan güncelle)
 PLATFORM_SLUG = "hbomax"
 OUTPUT_FILE = "hbomax.json"
 
