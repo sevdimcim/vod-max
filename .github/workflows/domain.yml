@@ -1,0 +1,32 @@
+name: Otomatik Domain Guncelleyici
+
+on:
+  push:
+    branches:
+      - main  # Main branch'ine her dosya attığında çalışır
+  workflow_dispatch: # İstersen manuel olarak da başlatabilirsin
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Depoyu Kontrol Et
+      uses: actions/checkout@v3
+
+    - name: Python Kurulumu
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Domain Guncelleme Scriptini Calistir
+      run: python domain.py
+
+    - name: Degisiklikleri Kaydet ve Pushla
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "action@github.com"
+        git add .
+        git diff-index --quiet HEAD || git commit -m "Otomatik domain guncellemesi: dizipal.bar"
+        git push
+        
