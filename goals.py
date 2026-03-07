@@ -3,37 +3,39 @@ import re
 import json
 from urllib.parse import urlparse
 
-def get_active_domain():
-    print("Scanning domains...")
-    for i in range(1011, 1100):
-        url = f"https://taraftarium{i}.xyz"
+def find_valid_base_url():
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+    
+    print("Scanning domains for a valid baseUrl...")
+    for i in range(1010, 1100):
+        domain = f"https://taraftarium{i}.xyz"
         try:
-            response = requests.get(url, timeout=2)
+            response = requests.get(domain, headers=headers, timeout=3)
             if response.status_code == 200:
-                print(f"Active domain found: {url}")
-                return url
+                print(f"Active domain found: {domain}, checking for baseUrl...")
+                target_url = f"{domain}/channel.html?id=taraftarium"
+                try:
+                    source_response = requests.get(target_url, headers=headers, timeout=5)
+                    match = re.search(r"const\s+CONFIG\s*=\s*\{.*?baseUrl:\s*['\"]([^'\"]+)['\"]", source_response.text, re.IGNORECASE)
+                    
+                    if match:
+                        base_url = match.group(1).strip()
+                        if base_url:
+                            print(f"Valid Base URL found!: {base_url}")
+                            return base_url
+                        else:
+                            print("Regex matched, but baseUrl is empty. Moving to next domain...")
+                    else:
+                        print("No baseUrl found in page source. Moving to next domain...")
+                        
+                except requests.exceptions.RequestException as e:
+                    print(f"Failed to fetch {target_url}: {e}. Moving to next domain...")
         except requests.exceptions.RequestException:
             continue
-    print("No active domain found in range.")
-    return None
-
-def fetch_base_url(domain):
-    target_url = f"{domain}/channel.html?id=taraftarium"
-    print(f"Fetching base URL from: {target_url}")
-    try:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        }
-        response = requests.get(target_url, headers=headers, timeout=5)
-        match = re.search(r"const\s+CONFIG\s*=\s*\{.*?baseUrl:\s*['\"]([^'\"]+)['\"]", response.text, re.IGNORECASE)
-        if match:
-            base_url = match.group(1)
-            print(f"Base URL found: {base_url}")
-            return base_url
-        else:
-            print("Regex match failed.")
-    except requests.exceptions.RequestException as e:
-        print(f"Request failed: {e}")
+            
+    print("No valid baseUrl found in the entire range.")
     return None
 
 def update_json_data(new_domain):
@@ -59,15 +61,11 @@ def update_json_data(new_domain):
     print(f"JSON updated successfully. Items modified: {updated_count}")
 
 def main():
-    active_domain = get_active_domain()
-    if active_domain:
-        base_url = fetch_base_url(active_domain)
-        if base_url:
-            update_json_data(base_url)
-        else:
-            print("Process stopped: Base URL not found.")
+    valid_base_url = find_valid_base_url()
+    if valid_base_url:
+        update_json_data(valid_base_url)
     else:
-        print("Process stopped: Active domain not found.")
+        print("Process stopped: Could not find a working domain with a valid baseUrl.")
 
 if __name__ == "__main__":
     main()
