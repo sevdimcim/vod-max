@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 def get_active_domain():
     print("Scanning domains...")
-    for i in range(1010, 1100):
+    for i in range(1011, 1100):
         url = f"https://taraftarium{i}.xyz"
         try:
             response = requests.get(url, timeout=2)
