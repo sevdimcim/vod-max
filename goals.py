@@ -9,7 +9,7 @@ def find_valid_base_url():
     }
     
     print("Scanning domains for a valid baseUrl...")
-    for i in range(1025, 1100):
+    for i in range(1049, 1100):
         domain = f"https://taraftarium{i}.xyz"
         try:
             response = requests.get(domain, headers=headers, timeout=3)
