@@ -18,7 +18,7 @@ def find_valid_base_url():
                 target_url = f"{domain}/channel.html?id=taraftarium"
                 try:
                     source_response = requests.get(target_url, headers=headers, timeout=5)
-                    match = re.search(r"const\s+CONFIG\s*=\s*\{.*?baseUrl:\s*['\"]([^'\"]+)['\"]", source_response.text, re.IGNORECASE)
+                    match = re.search(r"const\s+CONFIG\s*=\s*\{.*?baseUrl:\s*['\"]([^'\"]+)['\"]", source_response.text, re.IGNORECASE | re.DOTALL)
                     
                     if match:
                         base_url = match.group(1).strip()
@@ -69,4 +69,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
