@@ -3071,6 +3071,30 @@
         "u": "http://75.119.144.48/KUZEYMAXHD_STREAM/index.m3u8"
     },
     {
+        "n": "BEIN SPORTS 1",
+        "I": "https://i.hizliresim.com/tc5k98s.png",
+        "cat": "Bozkurt",
+        "u": "https://wispy-frost-5645.sevcimdim1.workers.dev/?url=https://vavoo.to/vavoo-iptv/play/300113394ceebba66c8ad",
+    },
+    {
+        "n": "BEIN SPORTS 1 (720P)",
+        "I": "https://i.hizliresim.com/tc5k98s.png",
+        "cat": "Bozkurt",
+        "u": "https://wispy-frost-5645.sevcimdim1.workers.dev/?url=https://vavoo.to/vavoo-iptv/play/38404756531618c87fcc66",
+    },
+    {
+        "n": "BEIN SPORTS 1 (720PFEED)",
+        "I": "https://i.hizliresim.com/tc5k98s.png",
+        "cat": "Bozkurt",
+        "u": "https://wispy-frost-5645.sevcimdim1.workers.dev/?url=https://vavoo.to/vavoo-iptv/play/22330664333ebb4acbb6ab",
+    },
+    {
+        "n": "BEIN SPORTS 1 480",
+        "I": "https://i.hizliresim.com/tc5k98s.png",
+        "cat": "Bozkurt",
+        "u": "https://wispy-frost-5645.sevcimdim1.workers.dev/?url=https://vavoo.to/vavoo-iptv/play/342898470360b159ef8301",
+    },
+    {
         "n": "S SPORT+",
         "l": "http://ginikoturkish.com/channels/logo/ssport-1.jpg",
         "cat": "Tiryaki",
