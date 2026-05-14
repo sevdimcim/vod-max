@@ -2,7 +2,6 @@ import requests
 import re
 import json
 import urllib3
-from bs4 import BeautifulSoup
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -23,7 +22,7 @@ HEADERS = {
 
 def get_dynamic_base_url():
     """
-    Inat sistemindeki gerçek yayın base URL'sini çeker.
+    İnat sistemindeki gerçek yayın base URL'sini çeker.
     """
 
     try:
@@ -127,7 +126,7 @@ def update_json():
 
     updated = 0
 
-    # EKSTRA kanal aliasları
+    # ekstra aliaslar
     extra_alias = {
         "zirve": "BeIN Sports 1",
         "patron": "BeIN Sports 1"
@@ -144,11 +143,11 @@ def update_json():
         if media_url:
             existing_urls.add(media_url)
 
-        # ref/origin güncelle
+        # aktif inattv domainini ref/origin olarak yaz
         item["h2Val"] = f"{active_domain}/"
         item["h3Val"] = active_domain
 
-        # media_url varsa yeni baseurl ile güncelle
+        # mevcut cid çek
         match = re.search(
             r'/([^/]+)/mono\.m3u8',
             media_url
@@ -158,24 +157,32 @@ def update_json():
 
             cid = match.group(1)
 
-            item["media_url"] = (
+            new_stream_url = (
                 f"{base_url}/{cid}/mono.m3u8"
             )
 
+            # media_url güncelle
+            item["media_url"] = new_stream_url
+
+            # url güncelle
+            item["url"] = new_stream_url
+
             updated += 1
 
-    # patron + zirve ekle
+    # zirve + patron ekle
     for cid, channel_name in extra_alias.items():
 
-        new_url = f"{base_url}/{cid}/mono.m3u8"
+        new_stream_url = (
+            f"{base_url}/{cid}/mono.m3u8"
+        )
 
-        if new_url in existing_urls:
+        if new_stream_url in existing_urls:
             continue
 
         new_item = {
             "name": channel_name,
-            "media_url": new_url,
-            "url": new_url,
+            "media_url": new_stream_url,
+            "url": new_stream_url,
             "h2Val": f"{active_domain}/",
             "h3Val": active_domain
         }
