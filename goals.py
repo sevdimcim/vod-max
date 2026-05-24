@@ -49,22 +49,22 @@ def update_json_file(base_url_domain, taraftarium_domain):
         print(f"{JSON_FILE} okunamadı!")
         return False
 
-    channels = data[0]["data"]
+    items = data["list"]["item"]
     updated = 0
 
-    for channel in channels:
+    for item in items:
         for key in ["media_url", "url"]:
-            if key in channel and channel[key]:
-                if '/' in channel[key]:
-                    path = channel[key].split('/', 3)[-1] if channel[key].startswith('http') else channel[key]
-                    channel[key] = f"{base_url_domain}/{path}"
+            if key in item and item[key]:
+                if '/' in item[key]:
+                    path = item[key].split('/', 3)[-1] if item[key].startswith('http') else item[key]
+                    item[key] = f"{base_url_domain}/{path}"
                 else:
-                    channel[key] = base_url_domain
+                    item[key] = base_url_domain
                 updated += 1
 
         for key in ["h2Val", "h3Val"]:
-            if key in channel:
-                channel[key] = f"https://{taraftarium_domain}/"
+            if key in item:
+                item[key] = f"https://{taraftarium_domain}/" if key == "h2Val" else f"https://{taraftarium_domain}"
                 updated += 1
 
     with open(JSON_FILE, 'w', encoding='utf-8') as f:
