@@ -548,6 +548,20 @@
                 "url": "https://tzy.zirvedesin236.cfd/patron/mono.m3u8",
                 "h2Val": "https://inattv1303.xyz/",
                 "h3Val": "https://inattv1303.xyz"
+            },
+            {
+                "name": "BeIN Sports 1",
+                "media_url": "https://tzy.zirvedesin236.cfd/yayin1/mono.m3u8",
+                "url": "https://tzy.zirvedesin236.cfd/yayin1/mono.m3u8",
+                "h2Val": "https://inattv1303.xyz/",
+                "h3Val": "https://inattv1303.xyz"
+            },
+            {
+                "name": "BeIN Sports 1",
+                "media_url": "https://tzy.zirvedesin236.cfd/yayininat/mono.m3u8",
+                "url": "https://tzy.zirvedesin236.cfd/yayininat/mono.m3u8",
+                "h2Val": "https://inattv1303.xyz/",
+                "h3Val": "https://inattv1303.xyz"
             }
         ]
     }
