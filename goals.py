@@ -129,6 +129,8 @@ def update_json():
     # ekstra aliaslar
     extra_alias = {
         "zirve": "BeIN Sports 1",
+        "yayin1": "BeIN Sports 1",
+        "yayininat": "BeIN Sports 1",
         "patron": "BeIN Sports 1"
     }
 
