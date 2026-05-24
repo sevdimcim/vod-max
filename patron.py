@@ -5,7 +5,7 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-JSON_FILE = "trgoals_data.json"
+JSON_FILE = "patron_data.json"
 
 START_URL = "https://inattv1303.xyz"
 
