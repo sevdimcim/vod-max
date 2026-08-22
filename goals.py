@@ -3,7 +3,7 @@ import json
 import re
 import sys
 
-START_NUM = 1071
+START_NUM = 1080
 END_NUM = 1199
 BASE_DOMAIN_PATTERN = "taraftarium{}.xyz"
 CHECK_PATH = "/channel.html?id=taraftarium"
